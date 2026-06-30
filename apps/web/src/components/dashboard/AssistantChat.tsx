@@ -241,7 +241,7 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
             <div className="flex justify-start">
               <div className="rounded-md px-3.5 py-2.5 bg-[#0a0a14] border border-border">
                 <span className="flex items-center gap-1.5 text-sm text-text-muted">
-                  <SettingsIcon size={14} className="animate-spin" /> réflexion…
+                  <SettingsIcon size={14} className="animate-spin" /> réflexion… (~30 s en local)
                 </span>
               </div>
             </div>

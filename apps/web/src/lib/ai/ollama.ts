@@ -13,7 +13,8 @@ export async function ollamaJSON(
       model: OLLAMA_MODEL,
       stream: false,
       format: "json",
-      options: { temperature },
+      keep_alive: "30m", // keep the model in RAM so next calls are fast
+      options: { temperature, num_predict: 500 }, // cap output → faster
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },

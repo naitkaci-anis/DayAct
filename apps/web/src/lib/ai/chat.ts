@@ -41,7 +41,7 @@ function dateReference(todayISO: string) {
   const [y, m, d] = todayISO.split("-").map(Number);
   const base = new Date(y, m - 1, d);
   const lines: string[] = [];
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 8; i++) {
     const day = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i);
     const name = day.toLocaleDateString("fr-FR", { weekday: "long" });
     let label = name;
