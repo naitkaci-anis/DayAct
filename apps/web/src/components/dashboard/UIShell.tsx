@@ -6,6 +6,7 @@ import { Pomodoro } from "./Pomodoro";
 import { ReminderScheduler } from "./ReminderScheduler";
 import { AssistantChat } from "./AssistantChat";
 import { SearchOverlay } from "./SearchOverlay";
+import { NotificationsPanel } from "./NotificationsPanel";
 import { Composer, type ComposerState } from "@/components/spine/Composer";
 import { useStore, type Task } from "@/lib/store";
 
@@ -28,6 +29,7 @@ export function UIShell({ children }: { children: ReactNode }) {
   const [pomodoroOpen, setPomodoroOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
 
   const value: UIContextValue = {
     openNew: (preset) =>
@@ -49,12 +51,13 @@ export function UIShell({ children }: { children: ReactNode }) {
 
   return (
     <UIContext.Provider value={value}>
-      <div className="flex flex-col h-screen bg-void text-text overflow-hidden">
+      <div className="flex flex-col h-screen text-text overflow-hidden">
         <TopNav
           onNewTask={() => value.openNew()}
           onFocus={() => setPomodoroOpen(true)}
           onChat={() => setChatOpen(true)}
           onSearch={() => setSearchOpen(true)}
+          onNotifications={() => setNotifOpen(true)}
         />
 
         <main className="flex-1 overflow-y-auto">
@@ -81,6 +84,7 @@ export function UIShell({ children }: { children: ReactNode }) {
           value.openEdit(task);
         }}
       />
+      <NotificationsPanel open={notifOpen} onClose={() => setNotifOpen(false)} />
       <ReminderScheduler />
     </UIContext.Provider>
   );

@@ -1,11 +1,91 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { LogoMark } from "@/components/icons";
 import { signIn, signUp, type AuthState } from "@/lib/auth/actions";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { createClient } from "@/lib/supabase/client";
+
+function ForgotPassword() {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function send() {
+    const supabase = createClient();
+    if (!supabase || !email.trim()) return;
+    setStatus("sending");
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) {
+      setErrorMsg(error.message);
+      setStatus("error");
+    } else {
+      setStatus("sent");
+    }
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="mt-3 block w-full text-center text-xs text-text-muted hover:text-act-cyan transition-colors"
+      >
+        Mot de passe oublié ?
+      </button>
+    );
+  }
+
+  return (
+    <div className="mt-4 rounded-sm border border-border bg-deep p-4">
+      <p className="text-xs text-text mb-2 font-medium">Réinitialiser le mot de passe</p>
+      {status === "sent" ? (
+        <p className="text-xs text-done-green bg-done-green/10 border border-done-green/30 rounded-sm px-3 py-2">
+          📧 Si un compte existe pour <strong>{email}</strong>, un lien de réinitialisation vient
+          d'être envoyé. Vérifie ta boîte mail (et les spams).
+        </p>
+      ) : (
+        <>
+          <p className="text-[11px] text-text-muted mb-2">
+            Entre ton email : on t'envoie un lien pour choisir un nouveau mot de passe.
+          </p>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="anis@mail.com"
+            className="w-full px-3 py-2 rounded-sm bg-[#0a0a14] border border-border text-sm text-text placeholder:text-text-muted/60 focus:border-act-cyan outline-none mb-2"
+          />
+          {status === "error" && (
+            <p className="text-[11px] text-alert-red mb-2">{errorMsg}</p>
+          )}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={send}
+              disabled={status === "sending" || !email.trim()}
+              className="px-3 py-1.5 rounded-sm bg-act-cyan text-[#0a0a14] text-xs font-medium disabled:opacity-50"
+            >
+              {status === "sending" ? "Envoi…" : "Envoyer le lien"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="px-3 py-1.5 rounded-sm text-xs text-text-muted hover:text-text"
+            >
+              Annuler
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus();
@@ -106,6 +186,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           )}
 
           <SubmitButton label={isLogin ? "Se connecter" : "Créer mon compte"} />
+          {isLogin && isSupabaseConfigured && <ForgotPassword />}
         </form>
 
         <p className="text-center text-sm text-text-muted mt-5">

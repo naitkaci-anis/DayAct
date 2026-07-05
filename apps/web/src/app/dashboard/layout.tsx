@@ -1,4 +1,5 @@
 import { StoreProvider } from "@/lib/store";
+import { NotificationsProvider } from "@/lib/notifications";
 import { UIShell } from "@/components/dashboard/UIShell";
 
 export const metadata = {
@@ -10,7 +11,9 @@ export default function DashboardLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <StoreProvider>
-      <UIShell>{children}</UIShell>
+      <NotificationsProvider>
+        <UIShell>{children}</UIShell>
+      </NotificationsProvider>
     </StoreProvider>
   );
 }

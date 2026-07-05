@@ -1,85 +1,127 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useStore, tasksForDate, todayISO } from "@/lib/store";
+import { useStore, todayISO, addDays, reminderLeads } from "@/lib/store";
+import { useNotifications } from "@/lib/notifications";
+import { playReminderSound } from "@/lib/sound";
+import { formatDuration } from "@/lib/calendar";
 
-const STORAGE_KEY = "dayact-reminded";
+const SENT_KEY = "dayact-reminded-v2";
 
-function toMin(t: string) {
-  const [h, m] = t.split(":").map(Number);
-  return h * 60 + m;
+function taskStartMs(date: string, time: string) {
+  const [y, mo, d] = date.split("-").map(Number);
+  const [h, mi] = time.split(":").map(Number);
+  return new Date(y, mo - 1, d, h, mi, 0, 0).getTime();
+}
+
+// Human label for a "before" reminder.
+function leadLabel(leadMin: number) {
+  if (leadMin >= 1440) return "Demain";
+  if (leadMin >= 60) return `Dans ${Math.round(leadMin / 60)} h`;
+  return `Dans ${leadMin} min`;
 }
 
 /**
- * Headless component: fires a browser notification at each (not-done) task's
- * start time. Runs only when notifications are enabled and permission granted.
+ * Watches tasks and feeds the in-app notification center (+ browser popups & a
+ * sound when allowed). Per-task `reminder` preference drives the "before"
+ * reminders; "auto" = 1 day + 3 h before.
  */
 export function ReminderScheduler() {
   const { state } = useStore();
-  const notified = useRef<Set<string>>(new Set());
+  const notify = useNotifications();
+  const sent = useRef<Set<string>>(new Set());
 
-  // restore today's already-sent reminders
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as { date: string; ids: string[] };
-        if (parsed.date === todayISO()) notified.current = new Set(parsed.ids);
-      }
+      const raw = localStorage.getItem(SENT_KEY);
+      if (raw) sent.current = new Set(JSON.parse(raw) as string[]);
     } catch {
       /* ignore */
     }
   }, []);
 
   useEffect(() => {
-    if (!state.settings.notifications) return;
-    if (typeof window === "undefined" || !("Notification" in window)) return;
-
-    const LEAD = 10; // minutes before start for the anticipated reminder
-
-    const fire = (key: string, title: string, body: string) => {
-      if (notified.current.has(key)) return;
-      new Notification(title, { body });
-      notified.current.add(key);
+    const persist = () => {
       try {
-        localStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({ date: todayISO(), ids: [...notified.current] })
-        );
+        // keep it bounded
+        localStorage.setItem(SENT_KEY, JSON.stringify([...sent.current].slice(-400)));
       } catch {
         /* ignore */
       }
     };
 
+    const browserAllowed = () =>
+      state.settings.notifications &&
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      Notification.permission === "granted";
+
+    const fire = (
+      key: string,
+      title: string,
+      body: string,
+      type: "reminder" | "overdue",
+      taskId: string,
+      ring: boolean
+    ) => {
+      if (sent.current.has(key)) return;
+      notify.add({ type, title, body, taskId });
+      if (ring) playReminderSound();
+      if (browserAllowed()) new Notification(title, { body });
+      sent.current.add(key);
+      persist();
+    };
+
     const check = () => {
-      if (Notification.permission !== "granted") return;
       const today = todayISO();
-      const now = new Date();
-      const nowMin = now.getHours() * 60 + now.getMinutes();
-      const dayTasks = tasksForDate(state, today).filter((t) => !t.done);
+      const now = Date.now();
+      // window: yesterday → +2 days (covers overdue today + 1-day-before of upcoming)
+      const lo = addDays(today, -1);
+      const hi = addDays(today, 2);
 
-      for (let i = 0; i < dayTasks.length; i++) {
-        const t = dayTasks[i];
-        const start = toMin(t.time);
-        const next = dayTasks[i + 1];
+      for (const t of state.tasks) {
+        if (t.done) continue;
+        if (t.date < lo || t.date > hi) continue;
 
-        // 1) anticipated reminder ~10 min before
-        const lead = start - LEAD;
-        if (nowMin >= lead && nowMin < start && lead >= 0) {
+        const start = taskStartMs(t.date, t.time);
+        const end = start + t.durationMin * 60_000;
+
+        // "before" reminders, per task preference
+        for (const lead of reminderLeads[t.reminder] ?? []) {
+          const target = start - lead * 60_000;
+          if (now >= target && now < target + 60_000) {
+            fire(
+              `${t.id}|lead${lead}`,
+              `🔔 ${leadLabel(lead)} : ${t.title}`,
+              `Prévue le ${t.date.slice(5)} à ${t.time} · ${formatDuration(t.durationMin)}.`,
+              "reminder",
+              t.id,
+              true
+            );
+          }
+        }
+
+        // at start time
+        if (now >= start && now < start + 60_000) {
           fire(
-            `${today}|${t.id}|lead`,
-            `🔔 Dans ${start - nowMin} min : ${t.title}`,
-            `À ${t.time} · ${t.durationMin} min. Prépare-toi.`
+            `${t.id}|now`,
+            `⏰ ${t.title}`,
+            `C'est l'heure (${t.time}) · ${formatDuration(t.durationMin)}.`,
+            "reminder",
+            t.id,
+            true
           );
         }
 
-        // 2) it's happening now
-        if (start <= nowMin && nowMin - start <= 1) {
-          const after = next ? ` · ensuite : ${next.title} à ${next.time}` : "";
+        // slot passed without being done → "tâche dépassée" (today only, inbox + popup)
+        if (t.date === today && now >= end) {
           fire(
-            `${today}|${t.id}|now`,
-            `⏰ ${t.title}`,
-            `C'est l'heure (${t.time}) · ${t.durationMin} min${after}`
+            `${t.id}|overdue`,
+            `⚠ Tâche dépassée : ${t.title}`,
+            `Prévue à ${t.time}, elle n'a pas été marquée comme faite.`,
+            "overdue",
+            t.id,
+            false
           );
         }
       }
@@ -88,7 +130,7 @@ export function ReminderScheduler() {
     check();
     const id = setInterval(check, 30_000);
     return () => clearInterval(id);
-  }, [state]);
+  }, [state, notify]);
 
   return null;
 }

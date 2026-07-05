@@ -102,3 +102,13 @@ export function minutesToTime(min: number, dayStart: number, dayEnd: number) {
   const t = Math.round(Math.max(dayStart, Math.min(dayEnd, min)) / 5) * 5;
   return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
 }
+
+// Human duration: 45 → "45min", 360 → "6h", 390 → "6h30", 407 → "6h47".
+export function formatDuration(mins: number) {
+  if (mins <= 0) return "—";
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  if (h === 0) return `${m}min`;
+  if (m === 0) return `${h}h`;
+  return `${h}h${String(m).padStart(2, "0")}`;
+}

@@ -27,6 +27,20 @@ export type { Priority, TaskCategory };
 
 export type Recurrence = "none" | "daily" | "weekdays" | "weekly";
 
+// Reminder preference: "auto" = 1 day + 3h before; "none" = off; else a single lead.
+export type ReminderPref = "auto" | "none" | "10m" | "30m" | "1h" | "3h" | "1d";
+
+// Lead times (minutes before the task) for each preference.
+export const reminderLeads: Record<ReminderPref, number[]> = {
+  none: [],
+  auto: [1440, 180], // 1 jour + 3h
+  "10m": [10],
+  "30m": [30],
+  "1h": [60],
+  "3h": [180],
+  "1d": [1440],
+};
+
 export interface Task {
   id: string;
   title: string;
@@ -39,6 +53,7 @@ export interface Task {
   notes?: string;
   timeSpentMin: number; // actual time tracked (Pomodoro / chrono)
   recurrence: Recurrence;
+  reminder: ReminderPref;
 }
 
 export interface MoodEntry {
@@ -63,7 +78,7 @@ export interface Suggestion {
   headline: string;
   body: string;
   // optional task this suggestion can create on "apply"
-  task?: Omit<Task, "id" | "done" | "date" | "timeSpentMin" | "recurrence">;
+  task?: Omit<Task, "id" | "done" | "date" | "timeSpentMin" | "recurrence" | "reminder">;
 }
 
 export interface Settings {
@@ -199,6 +214,7 @@ function mk(
     done,
     timeSpentMin: 0,
     recurrence: "none",
+    reminder: "auto",
   };
 }
 
@@ -208,10 +224,11 @@ export type Action =
   | { type: "SET_DATE"; date: string }
   | {
       type: "ADD_TASK";
-      task: Omit<Task, "id" | "done" | "timeSpentMin" | "recurrence"> & {
+      task: Omit<Task, "id" | "done" | "timeSpentMin" | "recurrence" | "reminder"> & {
         done?: boolean;
         timeSpentMin?: number;
         recurrence?: Recurrence;
+        reminder?: ReminderPref;
       };
     }
   | { type: "UPDATE_TASK"; id: string; patch: Partial<Task> }
@@ -240,7 +257,14 @@ function reducer(state: State, action: Action): State {
         ...state,
         tasks: [
           ...state.tasks,
-          { id: newId(), done: false, timeSpentMin: 0, recurrence: "none", ...action.task },
+          {
+            id: newId(),
+            done: false,
+            timeSpentMin: 0,
+            recurrence: "none",
+            reminder: "auto",
+            ...action.task,
+          },
         ],
       };
 
@@ -319,6 +343,7 @@ function reducer(state: State, action: Action): State {
         date: state.selectedDate,
         timeSpentMin: 0,
         recurrence: "none",
+        reminder: "auto",
         ...sug.task,
       };
       return { ...state, dismissed, tasks: [...state.tasks, task] };
@@ -532,4 +557,42 @@ export function habitStreak(state: State, habitId: string) {
     }
   }
   return streak;
+}
+
+// Longest run of consecutive completed days ever recorded for this habit.
+export function habitBestStreak(state: State, habitId: string) {
+  const dates = state.habitLogs
+    .filter((l) => l.habitId === habitId)
+    .map((l) => l.date)
+    .sort();
+  if (dates.length === 0) return 0;
+  let best = 1;
+  let cur = 1;
+  for (let i = 1; i < dates.length; i++) {
+    if (dates[i] === dates[i - 1]) continue;
+    if (dates[i] === addDays(dates[i - 1], 1)) {
+      cur++;
+      best = Math.max(best, cur);
+    } else {
+      cur = 1;
+    }
+  }
+  return best;
+}
+
+// Completion rate (%) over the last `days` days, ending today.
+export function habitCompletionRate(state: State, habitId: string, days = 30) {
+  let done = 0;
+  const today = todayISO();
+  for (let i = 0; i < days; i++) {
+    if (isHabitDone(state, habitId, addDays(today, -i))) done++;
+  }
+  return Math.round((done / days) * 100);
+}
+
+// Habits completed on a given date (used to surface habits on the calendar).
+export function habitsCompletedOn(state: State, date: string): Habit[] {
+  return state.habits.filter((h) =>
+    state.habitLogs.some((l) => l.habitId === h.id && l.date === date)
+  );
 }

@@ -12,6 +12,7 @@ import {
   type Priority,
 } from "@/lib/store";
 import { isOverdue } from "@/lib/taskTime";
+import { formatDuration } from "@/lib/calendar";
 
 type Filter = "all" | "todo" | "done";
 
@@ -142,7 +143,7 @@ export default function TasksPage() {
                             {task.time}
                           </span>
                           <span className="text-[11px] text-text-muted">
-                            · {task.durationMin} min
+                            · {formatDuration(task.durationMin)}
                           </span>
                           {isOverdue(task) && (
                             <span className="text-[11px] text-alert-red font-medium">

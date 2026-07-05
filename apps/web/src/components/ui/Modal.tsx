@@ -42,8 +42,8 @@ export function Modal({
       />
 
       {/* panel */}
-      <div className="relative z-10 w-full max-w-md rounded-md border border-border bg-deep shadow-2xl animate-[popIn_0.18s_ease]">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+      <div className="relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col rounded-md border border-border bg-deep shadow-2xl animate-[popIn_0.18s_ease]">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
           <h3 className="text-sm font-medium text-text">{title}</h3>
           <button
             onClick={onClose}
@@ -53,7 +53,7 @@ export function Modal({
             <CloseIcon size={18} />
           </button>
         </div>
-        <div className="p-5">{children}</div>
+        <div className="p-5 overflow-y-auto">{children}</div>
       </div>
     </div>
   );

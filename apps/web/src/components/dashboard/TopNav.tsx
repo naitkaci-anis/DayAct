@@ -16,8 +16,10 @@ import {
   FlameIcon,
   SparkIcon,
   SearchIcon,
+  BellIcon,
 } from "@/components/icons";
 import { useStore } from "@/lib/store";
+import { useNotifications } from "@/lib/notifications";
 import { UserMenu } from "./UserMenu";
 
 const nav = [
@@ -39,28 +41,33 @@ export function TopNav({
   onFocus,
   onChat,
   onSearch,
+  onNotifications,
 }: {
   onNewTask: () => void;
   onFocus: () => void;
   onChat: () => void;
   onSearch: () => void;
+  onNotifications: () => void;
 }) {
   const pathname = usePathname();
   const { state } = useStore();
+  const { unread } = useNotifications();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-[#0a0a14]/85 backdrop-blur-sm">
+    <header className="relative z-30 mx-3 lg:mx-6 mt-3 rounded-[22px] glass">
       {/* top row: brand + actions */}
       <div className="flex items-center justify-between gap-4 px-5 lg:px-8 h-16">
-        <Link href="/dashboard" className="flex items-center gap-2.5">
+        <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0">
           <div className="flex items-center justify-center w-9 h-9 rounded-md border border-border bg-deep glow-cyan">
             <LogoMark size={20} />
           </div>
           <span className="text-lg font-light text-gradient-cyan tracking-tight">DayAct</span>
         </Link>
 
-        {/* desktop nav tabs (centered) */}
-        <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
+        {/* desktop nav tabs — only when there's room (xl+), otherwise the
+            scrollable second row below is shown. In-flow (not absolute) so it
+            never overlaps the actions. */}
+        <nav className="hidden xl:flex items-center gap-0.5 mx-2">
           {nav.map((item) => {
             const Icon = item.icon;
             const active = isActive(pathname, item.href);
@@ -68,7 +75,7 @@ export function TopNav({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative flex items-center gap-2 px-3.5 py-2 rounded-sm text-sm transition-colors ${
+                className={`relative flex items-center gap-1.5 px-3 py-2 rounded-sm text-sm whitespace-nowrap transition-colors ${
                   active ? "text-text" : "text-text-muted hover:text-text hover:bg-deep/50"
                 }`}
               >
@@ -86,38 +93,58 @@ export function TopNav({
         </nav>
 
         {/* right actions */}
-        <div className="flex items-center gap-2">
-          <div className="hidden lg:flex items-center gap-2 px-3 py-2 rounded-sm border border-border bg-deep text-sm">
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="hidden 2xl:flex items-center gap-2 px-3 py-2 rounded-sm border border-border bg-deep text-sm">
             <BoltIcon size={15} className="text-energy-amber" />
             <span className="text-text font-medium">{state.settings.energy}%</span>
           </div>
 
-          <button
-            onClick={onSearch}
-            className="flex items-center justify-center w-9 h-9 rounded-sm border border-border text-text-muted hover:text-text hover:border-[#2a3441] transition-colors"
-            aria-label="Rechercher (Ctrl+K)"
-            title="Rechercher (Ctrl+K)"
-          >
-            <SearchIcon size={18} />
-          </button>
+          {/* icon tools group */}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={onSearch}
+              className="flex items-center justify-center w-9 h-9 rounded-sm border border-border text-text-muted hover:text-text hover:border-[#2a3441] transition-colors"
+              aria-label="Rechercher (Ctrl+K)"
+              title="Rechercher (Ctrl+K)"
+            >
+              <SearchIcon size={18} />
+            </button>
 
-          <button
-            onClick={onChat}
-            className="flex items-center justify-center w-9 h-9 rounded-sm border border-focus-violet/40 text-focus-violet hover:bg-focus-violet/10 transition-colors"
-            aria-label="Assistant IA"
-            title="Parler à l'assistant"
-          >
-            <SparkIcon size={18} />
-          </button>
+            <button
+              onClick={onNotifications}
+              className="relative flex items-center justify-center w-9 h-9 rounded-sm border border-border text-text-muted hover:text-text hover:border-[#2a3441] transition-colors"
+              aria-label="Notifications"
+              title="Notifications"
+            >
+              <BellIcon size={18} />
+              {unread > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-alert-red text-[#0a0a14] text-[10px] font-bold">
+                  {unread > 9 ? "9+" : unread}
+                </span>
+              )}
+            </button>
 
-          <button
-            onClick={onFocus}
-            className="flex items-center justify-center w-9 h-9 rounded-sm border border-border text-text-muted hover:text-act-cyan hover:border-[#2a3441] transition-colors"
-            aria-label="Minuteur Pomodoro"
-            title="Minuteur Pomodoro"
-          >
-            <ClockIcon size={18} />
-          </button>
+            <button
+              onClick={onChat}
+              className="flex items-center justify-center w-9 h-9 rounded-sm border border-focus-violet/40 text-focus-violet hover:bg-focus-violet/10 transition-colors"
+              aria-label="Assistant IA"
+              title="Parler à l'assistant"
+            >
+              <SparkIcon size={18} />
+            </button>
+
+            <button
+              onClick={onFocus}
+              className="flex items-center justify-center w-9 h-9 rounded-sm border border-border text-text-muted hover:text-act-cyan hover:border-[#2a3441] transition-colors"
+              aria-label="Minuteur Pomodoro"
+              title="Minuteur Pomodoro"
+            >
+              <ClockIcon size={18} />
+            </button>
+          </div>
+
+          {/* divider */}
+          <span className="hidden sm:block w-px h-6 bg-border" />
 
           <button
             onClick={onNewTask}
@@ -145,8 +172,8 @@ export function TopNav({
         </div>
       </div>
 
-      {/* mobile nav tabs (scrollable second row) */}
-      <nav className="md:hidden flex items-center gap-1 px-3 pb-2 overflow-x-auto">
+      {/* compact nav tabs (scrollable second row) — shown below xl */}
+      <nav className="xl:hidden flex items-center gap-1 px-3 pb-2 overflow-x-auto">
         {nav.map((item) => {
           const active = isActive(pathname, item.href);
           return (

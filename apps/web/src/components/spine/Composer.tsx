@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Modal } from "@/components/ui/Modal";
-import { TrashIcon } from "@/components/icons";
+import { TrashIcon, CheckIcon } from "@/components/icons";
 import { findOverlapping } from "@/lib/conflicts";
+import { formatDuration } from "@/lib/calendar";
 import {
   useStore,
   priorityMeta,
@@ -13,31 +14,77 @@ import {
   type Priority,
   type TaskCategory,
   type Recurrence,
+  type ReminderPref,
 } from "@/lib/store";
 
-const recurrenceOptions: { id: Recurrence; label: string }[] = [
+const reminderOptions: { id: ReminderPref; label: string }[] = [
+  { id: "auto", label: "Auto" },
+  { id: "10m", label: "10 min" },
+  { id: "30m", label: "30 min" },
+  { id: "1h", label: "1 h" },
+  { id: "3h", label: "3 h" },
+  { id: "1d", label: "1 jour" },
+  { id: "none", label: "Aucun" },
+];
+
+// "custom" is a UI-only mode: the user picks specific weekdays. Materialized
+// tasks are stored with a DB-safe recurrence value (see toRecurrence).
+type RecMode = Recurrence | "custom";
+
+const recurrenceOptions: { id: RecMode; label: string }[] = [
   { id: "none", label: "Aucune" },
   { id: "daily", label: "Chaque jour" },
   { id: "weekdays", label: "En semaine" },
   { id: "weekly", label: "Chaque semaine" },
+  { id: "custom", label: "Personnalisé" },
 ];
 
+// Weekday chips (Mon-first, matching the app convention).
+const WEEKDAY_LABELS = ["L", "M", "M", "J", "V", "S", "D"];
+const WEEKDAY_FULL = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+
+// Weekday index with Monday = 0 … Sunday = 6.
+function weekdayIndex(iso: string) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return (new Date(y, m - 1, d).getDay() + 6) % 7;
+}
+
+// Only "none" | "daily" | "weekdays" | "weekly" are valid DB values.
+function toRecurrence(mode: RecMode): Recurrence {
+  return mode === "custom" ? "none" : mode;
+}
+
 // Generate the dates a recurring task should occupy, starting at `start`.
-function occurrenceDates(start: string, rec: Recurrence): string[] {
-  if (rec === "none") return [start];
-  const out: string[] = [];
-  if (rec === "weekly") {
-    for (let i = 0; i < 12; i++) out.push(addDays(start, i * 7));
-    return out;
+function occurrenceDates(
+  start: string,
+  mode: RecMode,
+  customDays: number[],
+  repeatAlways: boolean
+): string[] {
+  if (mode === "none") return [start];
+
+  if (mode === "weekly") {
+    const weeks = repeatAlways ? 26 : 12;
+    return Array.from({ length: weeks }, (_, i) => addDays(start, i * 7));
   }
-  // daily / weekdays over the next 30 days
-  for (let i = 0; i < 30; i++) {
-    const d = addDays(start, i);
-    if (rec === "weekdays") {
-      const [y, m, day] = d.split("-").map(Number);
-      const wd = new Date(y, m - 1, day).getDay(); // 0 Sun … 6 Sat
-      if (wd === 0 || wd === 6) continue;
+
+  if (mode === "custom") {
+    if (customDays.length === 0) return [start];
+    const horizon = repeatAlways ? 84 : 21;
+    const out: string[] = [];
+    for (let i = 0; i < horizon; i++) {
+      const d = addDays(start, i);
+      if (customDays.includes(weekdayIndex(d))) out.push(d);
     }
+    return out.length ? out : [start];
+  }
+
+  // daily / weekdays
+  const horizon = repeatAlways ? 84 : 30;
+  const out: string[] = [];
+  for (let i = 0; i < horizon; i++) {
+    const d = addDays(start, i);
+    if (mode === "weekdays" && weekdayIndex(d) >= 5) continue; // skip Sat/Sun
     out.push(d);
   }
   return out;
@@ -70,15 +117,6 @@ function durationBetween(start: string, end: string) {
   return d;
 }
 
-function fmtDuration(mins: number) {
-  if (mins <= 0) return "—";
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
-  if (h === 0) return `${m} min`;
-  if (m === 0) return `${h} h`;
-  return `${h} h ${String(m).padStart(2, "0")}`;
-}
-
 export function Composer({
   composer,
   onClose,
@@ -96,7 +134,16 @@ export function Composer({
   const [priority, setPriority] = useState<Priority>("medium");
   const [category, setCategory] = useState<TaskCategory>("work");
   const [notes, setNotes] = useState("");
-  const [recurrence, setRecurrence] = useState<Recurrence>("none");
+  const [recMode, setRecMode] = useState<RecMode>("none");
+  const [customDays, setCustomDays] = useState<number[]>([]);
+  const [repeatAlways, setRepeatAlways] = useState(false);
+  const [reminder, setReminder] = useState<ReminderPref>("auto");
+
+  function toggleCustomDay(idx: number) {
+    setCustomDays((days) =>
+      days.includes(idx) ? days.filter((d) => d !== idx) : [...days, idx].sort((a, b) => a - b)
+    );
+  }
 
   const estimatedMin = durationBetween(startTime, endTime);
 
@@ -129,7 +176,10 @@ export function Composer({
       setPriority(editing.priority);
       setCategory(editing.category);
       setNotes(editing.notes ?? "");
-      setRecurrence(editing.recurrence ?? "none");
+      setRecMode(editing.recurrence ?? "none");
+      setCustomDays([]);
+      setRepeatAlways(false);
+      setReminder(editing.reminder ?? "auto");
     } else {
       setTitle("");
       setDate(composer.presetDate ?? state.selectedDate);
@@ -138,7 +188,10 @@ export function Composer({
       setEndTime(addMinutes(start, 30));
       setPriority("medium");
       setCategory("work");
-      setRecurrence("none");
+      setRecMode("none");
+      setCustomDays([]);
+      setRepeatAlways(false);
+      setReminder("auto");
       setNotes("");
     }
   }, [composer.open, composer.presetTime, composer.presetDate, editing, state.selectedDate]);
@@ -148,15 +201,16 @@ export function Composer({
   function save() {
     if (!canSave) return;
     const durationMin = estimatedMin;
+    const recurrence = toRecurrence(recMode);
     if (editing) {
       dispatch({
         type: "UPDATE_TASK",
         id: editing.id,
-        patch: { title: title.trim(), date, time: startTime, durationMin, priority, category, notes, recurrence },
+        patch: { title: title.trim(), date, time: startTime, durationMin, priority, category, notes, recurrence, reminder },
       });
     } else {
       // Materialize one task per occurrence date.
-      for (const occ of occurrenceDates(date, recurrence)) {
+      for (const occ of occurrenceDates(date, recMode, customDays, repeatAlways)) {
         dispatch({
           type: "ADD_TASK",
           task: {
@@ -168,6 +222,7 @@ export function Composer({
             category,
             notes,
             recurrence,
+            reminder,
           },
         });
       }
@@ -233,7 +288,7 @@ export function Composer({
             <p className="text-[11px] text-text-muted">
               Durée estimée :{" "}
               <span className={estimatedMin > 0 ? "text-act-cyan" : "text-alert-red"}>
-                {estimatedMin > 0 ? fmtDuration(estimatedMin) : "fin avant le début"}
+                {estimatedMin > 0 ? formatDuration(estimatedMin) : "fin avant le début"}
               </span>
             </p>
             {/* quick presets */}
@@ -261,7 +316,7 @@ export function Composer({
             <ul className="mt-1 space-y-0.5">
               {conflicts.slice(0, 3).map((c) => (
                 <li key={c.id} className="text-[11px] text-text-muted">
-                  {c.title} ({c.time} · {c.durationMin} min)
+                  {c.title} ({c.time} · {formatDuration(c.durationMin)})
                 </li>
               ))}
             </ul>
@@ -319,17 +374,18 @@ export function Composer({
         {!editing && (
           <div>
             <label className="block text-xs text-text-muted mb-1.5">Répétition</label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="flex flex-wrap gap-2">
               {recurrenceOptions.map((opt) => {
-                const active = recurrence === opt.id;
+                const active = recMode === opt.id;
                 return (
                   <button
                     key={opt.id}
-                    onClick={() => setRecurrence(opt.id)}
-                    className={`px-2 py-2 rounded-sm border text-xs transition-colors ${
+                    type="button"
+                    onClick={() => setRecMode(opt.id)}
+                    className={`px-3 py-2 rounded-sm border text-xs transition-colors ${
                       active
                         ? "border-transparent bg-act-cyan/15 text-act-cyan"
-                        : "border-border text-text-muted"
+                        : "border-border text-text-muted hover:text-text"
                     }`}
                   >
                     {opt.label}
@@ -337,17 +393,105 @@ export function Composer({
                 );
               })}
             </div>
-            {recurrence !== "none" && (
-              <p className="text-[11px] text-text-muted mt-1.5">
-                {recurrence === "weekly"
-                  ? "Crée la tâche pour les 12 prochaines semaines."
-                  : recurrence === "weekdays"
-                  ? "Crée la tâche du lundi au vendredi, sur 30 jours."
-                  : "Crée la tâche chaque jour, sur 30 jours."}
+
+            {/* Custom weekday picker */}
+            {recMode === "custom" && (
+              <div className="mt-3 rounded-sm border border-border bg-[#0a0a14] p-3">
+                <p className="text-[11px] text-text-muted mb-2">
+                  Choisis les jours de la semaine :
+                </p>
+                <div className="flex items-center gap-1.5">
+                  {WEEKDAY_LABELS.map((lbl, idx) => {
+                    const on = customDays.includes(idx);
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => toggleCustomDay(idx)}
+                        title={WEEKDAY_FULL[idx]}
+                        className={`flex-1 h-9 rounded-sm border text-xs font-medium transition-colors ${
+                          on
+                            ? "border-transparent bg-act-cyan text-[#0a0a14]"
+                            : "border-border text-text-muted hover:text-text hover:border-act-cyan/50"
+                        }`}
+                      >
+                        {lbl}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Repeat-always checkbox */}
+            {recMode !== "none" && (
+              <button
+                type="button"
+                onClick={() => setRepeatAlways((v) => !v)}
+                className="mt-3 flex items-center gap-2.5 select-none"
+              >
+                <span
+                  className={`flex items-center justify-center w-5 h-5 rounded-[5px] border transition-colors ${
+                    repeatAlways
+                      ? "bg-act-cyan border-act-cyan text-[#0a0a14]"
+                      : "border-border text-transparent"
+                  }`}
+                >
+                  <CheckIcon size={13} />
+                </span>
+                <span className="text-xs text-text">
+                  Répéter toujours ces jours
+                  <span className="text-text-muted"> (sur ~3 mois)</span>
+                </span>
+              </button>
+            )}
+
+            {/* Info line */}
+            {recMode !== "none" && (
+              <p className="text-[11px] text-text-muted mt-2">
+                {recMode === "weekly"
+                  ? `Chaque semaine, sur ${repeatAlways ? "26" : "12"} semaines.`
+                  : recMode === "weekdays"
+                  ? `Du lundi au vendredi, sur ${repeatAlways ? "~3 mois" : "30 jours"}.`
+                  : recMode === "daily"
+                  ? `Chaque jour, sur ${repeatAlways ? "~3 mois" : "30 jours"}.`
+                  : customDays.length
+                  ? `Répété : ${customDays.map((d) => WEEKDAY_FULL[d]).join(", ")}.`
+                  : "Sélectionne au moins un jour."}
               </p>
             )}
           </div>
         )}
+
+        {/* Reminder */}
+        <div>
+          <label className="block text-xs text-text-muted mb-1.5">Rappel avant la tâche</label>
+          <div className="flex flex-wrap gap-2">
+            {reminderOptions.map((opt) => {
+              const active = reminder === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => setReminder(opt.id)}
+                  className={`px-2.5 py-1.5 rounded-sm border text-xs transition-colors ${
+                    active
+                      ? "border-transparent bg-act-cyan/15 text-act-cyan"
+                      : "border-border text-text-muted hover:text-text"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-[11px] text-text-muted mt-1.5">
+            {reminder === "auto"
+              ? "Auto : rappel 1 jour avant ET 3 h avant (avec sonnerie)."
+              : reminder === "none"
+              ? "Aucun rappel anticipé."
+              : `Rappel ${reminderOptions.find((o) => o.id === reminder)?.label} avant (avec sonnerie).`}
+          </p>
+        </div>
 
         {/* Notes */}
         <div>

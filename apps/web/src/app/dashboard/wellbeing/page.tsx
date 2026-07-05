@@ -3,6 +3,7 @@
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { MoodLogger } from "@/components/spine/MoodLogger";
 import { Assistant } from "@/components/spine/Assistant";
+import { HealthCoach } from "@/components/dashboard/HealthCoach";
 import { useStore, moodForDate } from "@/lib/store";
 
 const accentVar: Record<string, string> = {
@@ -59,24 +60,62 @@ function Gauge({
 }
 
 export default function WellbeingPage() {
-  const { state } = useStore();
+  const { state, dispatch } = useStore();
   const mood = moodForDate(state, state.selectedDate) ?? 0;
   const energy = state.settings.energy;
 
-  // Sommeil & stress : illustratifs (dérivés simplement de l'énergie pour rester cohérents)
-  const sleep = Math.min(100, Math.round(energy * 1.15));
-  const stress = Math.max(0, 100 - energy - 5);
+  // Neutral baseline (60) when mood not yet logged, for coherent estimates.
+  const moodBase = mood > 0 ? mood : 60;
+  // Sleep & stress are estimated from your energy + mood (clearly labelled below).
+  const sleep = Math.min(100, Math.round(energy * 0.7 + moodBase * 0.45));
+  const stress = Math.max(0, Math.min(100, Math.round(100 - (energy + moodBase) / 2)));
 
   return (
     <>
       <PageHeader title="Bien-être" subtitle="Ton équilibre du jour, suivi en continu" />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        <Gauge value={mood} color={accentVar.violet} label="Humeur" unit="/100" note={mood === 0 ? "non renseignée" : undefined} />
+        <Gauge
+          value={mood}
+          color={accentVar.violet}
+          label="Humeur"
+          unit="/100"
+          note={mood === 0 ? "à renseigner" : "enregistrée"}
+        />
         <Gauge value={energy} color={accentVar.amber} label="Énergie" unit="/100" note="réglable" />
-        <Gauge value={sleep} color={accentVar.cyan} label="Sommeil" unit="/100" />
-        <Gauge value={stress} color={accentVar.green} label="Stress" unit="/100" />
+        <Gauge value={sleep} color={accentVar.cyan} label="Sommeil" unit="/100" note="estimé" />
+        <Gauge value={stress} color={accentVar.green} label="Stress" unit="/100" note="estimé" />
       </div>
+
+      {/* Interactive energy control */}
+      <div className="rounded-md border border-border bg-deep p-5 mb-6 max-w-3xl">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h2 className="text-sm font-medium text-text">Ton niveau d'énergie</h2>
+            <p className="text-[11px] text-text-muted">
+              Ajuste-le : ton sommeil et ton stress estimés s'adaptent en direct.
+            </p>
+          </div>
+          <span className="text-lg font-light text-energy-amber">{energy}%</span>
+        </div>
+        <input
+          type="range"
+          min={0}
+          max={100}
+          step={5}
+          value={energy}
+          onChange={(e) =>
+            dispatch({ type: "SET_SETTING", key: "energy", value: Number(e.target.value) })
+          }
+          className="w-full accent-[var(--energy-amber)] cursor-pointer"
+        />
+        <div className="flex justify-between text-[10px] text-text-muted mt-1">
+          <span>Épuisé</span>
+          <span>En forme</span>
+        </div>
+      </div>
+
+      <HealthCoach />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
@@ -95,7 +134,11 @@ export default function WellbeingPage() {
             energy >= 60
               ? "Bonne énergie : profite de ta fenêtre de focus du matin."
               : "Énergie basse : commence par une tâche simple pour relancer la dynamique.",
-            "Pense à une pause de 5 min toutes les 90 min pour préserver ton énergie.",
+            mood === 0
+              ? "Enregistre ton humeur ci-dessus pour des conseils plus précis."
+              : mood >= 60
+              ? "Belle humeur aujourd'hui — capitalise dessus pour avancer sur l'important."
+              : "Humeur en berne : accorde-toi une pause bien-être avant de reprendre.",
           ].map((tip, i) => (
             <li key={i} className="flex items-start gap-3 text-sm text-text-muted">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-done-green shrink-0" />

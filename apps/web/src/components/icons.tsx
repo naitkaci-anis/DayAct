@@ -25,9 +25,49 @@ function base({ size = 18, strokeWidth = 1.6, ...props }: IconProps) {
 export function LogoMark({ size = 24, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
-      <path d="M8 24 L16 8 L24 24" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M11 19 H21" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="16" cy="16" r="1.5" fill="#a78bfa" />
+      <defs>
+        <linearGradient
+          id="dayact-logo"
+          x1="4"
+          y1="5"
+          x2="27"
+          y2="27"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#22d3ee" />
+          <stop offset="0.55" stopColor="#6366f1" />
+          <stop offset="1" stopColor="#c026ff" />
+        </linearGradient>
+      </defs>
+      {/* ring */}
+      <circle cx="16" cy="16" r="12.5" stroke="url(#dayact-logo)" strokeWidth="2.1" fill="none" />
+      {/* sun rays */}
+      <g stroke="url(#dayact-logo)" strokeWidth="1.3" strokeLinecap="round">
+        <path d="M12.8 8.2v1.5" />
+        <path d="M8.3 13.2h1.5" />
+        <path d="M9.6 10l1 1" />
+        <path d="M16 10l-1 1" />
+      </g>
+      {/* sun */}
+      <circle cx="12.8" cy="13.4" r="2.5" fill="url(#dayact-logo)" />
+      {/* hills / river */}
+      <path
+        d="M7 19.5c2.2-2 4-0.2 6-0.2s3.8-2 6 0"
+        stroke="url(#dayact-logo)"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        fill="none"
+        opacity="0.75"
+      />
+      {/* checkmark */}
+      <path
+        d="M12 17.6l3 3L23.2 12"
+        stroke="url(#dayact-logo)"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
     </svg>
   );
 }
@@ -173,5 +213,12 @@ export const AlertIcon = (p: IconProps) => (
   <svg {...base(p)}>
     <path d="M12 9v4M12 17h.01" />
     <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+  </svg>
+);
+
+export const BellIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
   </svg>
 );

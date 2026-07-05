@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { CheckIcon } from "@/components/icons";
 import { useStore, categoryMeta, priorityMeta, todayISO, type Task } from "@/lib/store";
 import { useUI } from "@/components/dashboard/UIShell";
-import { frDayLong, toMinutes, minutesToTime } from "@/lib/calendar";
+import { frDayLong, toMinutes, minutesToTime, formatDuration } from "@/lib/calendar";
 import { conflictIdSet } from "@/lib/conflicts";
 
 const DAY_START = 6 * 60;
@@ -180,7 +180,7 @@ export function DayView({ date }: { date: string }) {
                       {t.title}
                     </p>
                     <p className="text-[10px] leading-tight text-text-muted">
-                      {minutesToTime(startM, 0, 1440)} · {dur}min
+                      {minutesToTime(startM, 0, 1440)} · {formatDuration(dur)}
                     </p>
 
                     {/* resize handle */}

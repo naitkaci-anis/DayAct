@@ -1,5 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Task, MoodEntry, Settings, Recurrence, Habit, HabitLog } from "@/lib/store";
+import type {
+  Task,
+  MoodEntry,
+  Settings,
+  Recurrence,
+  ReminderPref,
+  Habit,
+  HabitLog,
+} from "@/lib/store";
 
 // Maps between the in-memory State shape and the Supabase table rows.
 
@@ -16,6 +24,7 @@ interface TaskRow {
   notes: string | null;
   time_spent_min: number;
   recurrence: Recurrence;
+  reminder: ReminderPref;
 }
 
 function rowToTask(r: TaskRow): Task {
@@ -31,6 +40,7 @@ function rowToTask(r: TaskRow): Task {
     notes: r.notes ?? undefined,
     timeSpentMin: r.time_spent_min ?? 0,
     recurrence: r.recurrence ?? "none",
+    reminder: r.reminder ?? "auto",
   };
 }
 
@@ -48,6 +58,7 @@ function taskToRow(t: Task, userId: string): TaskRow {
     notes: t.notes ?? null,
     time_spent_min: t.timeSpentMin,
     recurrence: t.recurrence,
+    reminder: t.reminder,
   };
 }
 

@@ -23,6 +23,17 @@ export function MonthView({
     tasksByDate.set(t.date, arr);
   }
 
+  // Completed-habit colors per date (surfaces habit chains on the calendar).
+  const habitById = new Map(state.habits.map((h) => [h.id, h]));
+  const habitColorsByDate = new Map<string, string[]>();
+  for (const l of state.habitLogs) {
+    const h = habitById.get(l.habitId);
+    if (!h) continue;
+    const arr = habitColorsByDate.get(l.date) ?? [];
+    arr.push(h.color);
+    habitColorsByDate.set(l.date, arr);
+  }
+
   return (
     <div className="rounded-md border border-border bg-deep overflow-hidden">
       {/* weekday header */}
@@ -123,6 +134,37 @@ export function MonthView({
                       </button>
                     )}
                   </div>
+
+                  {/* habit pastilles */}
+                  {(() => {
+                    const done = habitColorsByDate.get(date) ?? [];
+                    const remaining = isToday
+                      ? Math.max(0, state.habits.length - done.length)
+                      : 0;
+                    if (done.length === 0 && remaining === 0) return null;
+                    return (
+                      <div
+                        className="flex items-center gap-0.5 flex-wrap mt-1 px-1"
+                        title="Habitudes"
+                      >
+                        {done.slice(0, 6).map((c, i) => (
+                          <span
+                            key={`d${i}`}
+                            className="w-1.5 h-1.5 rounded-full"
+                            style={{ background: c }}
+                          />
+                        ))}
+                        {Array.from({ length: Math.min(remaining, 6 - Math.min(done.length, 6)) }).map(
+                          (_, i) => (
+                            <span
+                              key={`r${i}`}
+                              className="w-1.5 h-1.5 rounded-full border border-text-muted/40"
+                            />
+                          )
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               );
             })}
