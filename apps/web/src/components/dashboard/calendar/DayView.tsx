@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CheckIcon } from "@/components/icons";
 import { useStore, categoryMeta, priorityMeta, todayISO, type Task } from "@/lib/store";
 import { useUI } from "@/components/dashboard/UIShell";
 import { frDayLong, toMinutes, minutesToTime, formatDuration } from "@/lib/calendar";
 import { conflictIdSet } from "@/lib/conflicts";
 
-const DAY_START = 6 * 60;
-const DAY_END = 23 * 60;
-const SPAN = DAY_END - DAY_START;
-const HEIGHT = 1020; // 1px = 1 min
-const HOURS = Array.from({ length: 18 }, (_, i) => 6 + i);
+const DAY_START = 0;
+const DAY_END = 24 * 60;
+const SPAN = DAY_END - DAY_START; // journée complète 0h → 24h
+const HEIGHT = 1440; // 1px = 1 min
+const HOURS = Array.from({ length: 24 }, (_, i) => i); // 0h → 23h
 
 type Drag = {
   id: string;
@@ -89,6 +89,12 @@ export function DayView({ date }: { date: string }) {
 
   const nowTop = nowMin != null ? ((nowMin - DAY_START) / SPAN) * HEIGHT : 0;
 
+  // Ouvre la journée autour de 7h (la nuit reste accessible en scrollant).
+  const bodyRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (bodyRef.current) bodyRef.current.scrollTop = ((7 * 60) / SPAN) * HEIGHT;
+  }, [date]);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
       <div className="rounded-md border border-border bg-deep overflow-hidden">
@@ -99,7 +105,7 @@ export function DayView({ date }: { date: string }) {
           </span>
         </div>
 
-        <div className="overflow-y-auto" style={{ maxHeight: 600 }}>
+        <div ref={bodyRef} className="overflow-y-auto" style={{ maxHeight: 600 }}>
           <div className="grid grid-cols-[56px_1fr]">
             <div className="relative border-r border-border" style={{ height: HEIGHT }}>
               {HOURS.map((h) => (

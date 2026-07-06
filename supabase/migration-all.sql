@@ -16,6 +16,9 @@ alter table public.tasks
   add column if not exists reminder text not null default 'auto'
   check (reminder in ('auto', 'none', '10m', '30m', '1h', '3h', '1d'));
 
+alter table public.tasks
+  add column if not exists ring_at_start boolean not null default false;
+
 -- ── HABITUDES ───────────────────────────────────────────────────────────────
 create table if not exists public.habits (
   id         uuid primary key default gen_random_uuid(),

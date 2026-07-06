@@ -25,6 +25,7 @@ interface TaskRow {
   time_spent_min: number;
   recurrence: Recurrence;
   reminder: ReminderPref;
+  ring_at_start: boolean;
 }
 
 function rowToTask(r: TaskRow): Task {
@@ -41,6 +42,7 @@ function rowToTask(r: TaskRow): Task {
     timeSpentMin: r.time_spent_min ?? 0,
     recurrence: r.recurrence ?? "none",
     reminder: r.reminder ?? "auto",
+    ringAtStart: r.ring_at_start ?? false,
   };
 }
 
@@ -59,6 +61,7 @@ function taskToRow(t: Task, userId: string): TaskRow {
     time_spent_min: t.timeSpentMin,
     recurrence: t.recurrence,
     reminder: t.reminder,
+    ring_at_start: t.ringAtStart,
   };
 }
 

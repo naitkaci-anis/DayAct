@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useStore, todayISO, addDays, reminderLeads } from "@/lib/store";
 import { useNotifications } from "@/lib/notifications";
-import { playReminderSound } from "@/lib/sound";
+import { playReminderSound, unlockAudio } from "@/lib/sound";
 import { formatDuration } from "@/lib/calendar";
 
 const SENT_KEY = "dayact-reminded-v2";
@@ -40,6 +40,26 @@ export function ReminderScheduler() {
     }
   }, []);
 
+  // Ask for browser notification permission + unlock audio on the first user
+  // gesture (both require a user interaction to be allowed).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onFirst = () => {
+      unlockAudio();
+      if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission().catch(() => {});
+      }
+      window.removeEventListener("pointerdown", onFirst);
+      window.removeEventListener("keydown", onFirst);
+    };
+    window.addEventListener("pointerdown", onFirst);
+    window.addEventListener("keydown", onFirst);
+    return () => {
+      window.removeEventListener("pointerdown", onFirst);
+      window.removeEventListener("keydown", onFirst);
+    };
+  }, []);
+
   useEffect(() => {
     const persist = () => {
       try {
@@ -67,7 +87,13 @@ export function ReminderScheduler() {
       if (sent.current.has(key)) return;
       notify.add({ type, title, body, taskId });
       if (ring) playReminderSound();
-      if (browserAllowed()) new Notification(title, { body });
+      if (browserAllowed()) {
+        try {
+          new Notification(title, { body, icon: "/icon.svg" });
+        } catch {
+          /* some mobile browsers don't support the Notification constructor */
+        }
+      }
       sent.current.add(key);
       persist();
     };
@@ -89,7 +115,8 @@ export function ReminderScheduler() {
         // "before" reminders, per task preference
         for (const lead of reminderLeads[t.reminder] ?? []) {
           const target = start - lead * 60_000;
-          if (now >= target && now < target + 60_000) {
+          // 90 s window so background-throttled timers still catch it.
+          if (now >= target && now < target + 90_000) {
             fire(
               `${t.id}|lead${lead}`,
               `🔔 ${leadLabel(lead)} : ${t.title}`,
@@ -101,8 +128,8 @@ export function ReminderScheduler() {
           }
         }
 
-        // at start time
-        if (now >= start && now < start + 60_000) {
+        // at start time — only when the task opted in ("Sonner à l'heure")
+        if (t.ringAtStart && now >= start && now < start + 90_000) {
           fire(
             `${t.id}|now`,
             `⏰ ${t.title}`,

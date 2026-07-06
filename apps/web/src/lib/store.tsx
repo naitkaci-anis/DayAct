@@ -54,6 +54,7 @@ export interface Task {
   timeSpentMin: number; // actual time tracked (Pomodoro / chrono)
   recurrence: Recurrence;
   reminder: ReminderPref;
+  ringAtStart: boolean; // sonnerie + notif PILE à l'heure de début
 }
 
 export interface MoodEntry {
@@ -78,7 +79,10 @@ export interface Suggestion {
   headline: string;
   body: string;
   // optional task this suggestion can create on "apply"
-  task?: Omit<Task, "id" | "done" | "date" | "timeSpentMin" | "recurrence" | "reminder">;
+  task?: Omit<
+    Task,
+    "id" | "done" | "date" | "timeSpentMin" | "recurrence" | "reminder" | "ringAtStart"
+  >;
 }
 
 export interface Settings {
@@ -215,6 +219,7 @@ function mk(
     timeSpentMin: 0,
     recurrence: "none",
     reminder: "auto",
+    ringAtStart: false,
   };
 }
 
@@ -224,11 +229,15 @@ export type Action =
   | { type: "SET_DATE"; date: string }
   | {
       type: "ADD_TASK";
-      task: Omit<Task, "id" | "done" | "timeSpentMin" | "recurrence" | "reminder"> & {
+      task: Omit<
+        Task,
+        "id" | "done" | "timeSpentMin" | "recurrence" | "reminder" | "ringAtStart"
+      > & {
         done?: boolean;
         timeSpentMin?: number;
         recurrence?: Recurrence;
         reminder?: ReminderPref;
+        ringAtStart?: boolean;
       };
     }
   | { type: "UPDATE_TASK"; id: string; patch: Partial<Task> }
@@ -263,6 +272,7 @@ function reducer(state: State, action: Action): State {
             timeSpentMin: 0,
             recurrence: "none",
             reminder: "auto",
+            ringAtStart: false,
             ...action.task,
           },
         ],
@@ -344,6 +354,7 @@ function reducer(state: State, action: Action): State {
         timeSpentMin: 0,
         recurrence: "none",
         reminder: "auto",
+        ringAtStart: false,
         ...sug.task,
       };
       return { ...state, dismissed, tasks: [...state.tasks, task] };

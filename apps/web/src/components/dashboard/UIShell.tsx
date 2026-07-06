@@ -51,7 +51,7 @@ export function UIShell({ children }: { children: ReactNode }) {
 
   return (
     <UIContext.Provider value={value}>
-      <div className="flex flex-col h-screen text-text overflow-hidden">
+      <div className="flex flex-col h-[100dvh] text-text overflow-hidden">
         <TopNav
           onNewTask={() => value.openNew()}
           onFocus={() => setPomodoroOpen(true)}

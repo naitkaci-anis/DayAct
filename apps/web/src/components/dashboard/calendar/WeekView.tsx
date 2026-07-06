@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStore, categoryMeta, todayISO } from "@/lib/store";
 import { useUI } from "@/components/dashboard/UIShell";
 import { WEEKDAYS, weekDates, toMinutes, minutesToTime } from "@/lib/calendar";
 import { conflictIdSet } from "@/lib/conflicts";
 
-const DAY_START = 7 * 60;
-const DAY_END = 22 * 60;
-const SPAN = DAY_END - DAY_START;
-const HEIGHT = 660;
+const DAY_START = 0;
+const DAY_END = 24 * 60;
+const SPAN = DAY_END - DAY_START; // journée complète 0h → 24h
+const HEIGHT = 1152; // 48px / heure
 const PX_PER_MIN = HEIGHT / SPAN;
-const HOURS = Array.from({ length: 16 }, (_, i) => 7 + i); // 7h → 22h
+const HOURS = Array.from({ length: 24 }, (_, i) => i); // 0h → 23h
 
 type Drag = {
   id: string;
@@ -94,8 +94,16 @@ export function WeekView({
   const showNow = dates.includes(today) && nowMin != null;
   const nowTop = nowMin != null ? ((nowMin - DAY_START) / SPAN) * HEIGHT : 0;
 
+  // Ouvre le planning autour de 7h (la nuit reste accessible en scrollant).
+  const bodyRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (bodyRef.current) bodyRef.current.scrollTop = ((7 * 60) / SPAN) * HEIGHT;
+  }, [anchor]);
+
   return (
     <div className="rounded-md border border-border bg-deep overflow-hidden">
+      <div className="overflow-x-auto">
+        <div className="min-w-[640px]">
       {/* headers */}
       <div className="grid grid-cols-[48px_repeat(7,1fr)] border-b border-border">
         <div className="border-r border-border" />
@@ -122,7 +130,7 @@ export function WeekView({
       </div>
 
       {/* body */}
-      <div className="grid grid-cols-[48px_repeat(7,1fr)] overflow-y-auto" style={{ maxHeight: 560 }}>
+      <div ref={bodyRef} className="grid grid-cols-[48px_repeat(7,1fr)] overflow-y-auto" style={{ maxHeight: 560 }}>
         <div className="relative border-r border-border" style={{ height: HEIGHT }}>
           {HOURS.map((h) => (
             <div
@@ -239,6 +247,8 @@ export function WeekView({
             </div>
           );
         })}
+      </div>
+        </div>
       </div>
     </div>
   );

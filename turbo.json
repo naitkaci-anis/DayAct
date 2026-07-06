@@ -4,6 +4,15 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": [
+        "AI_PROVIDER",
+        "ANTHROPIC_API_KEY",
+        "ANTHROPIC_MODEL",
+        "OLLAMA_BASE_URL",
+        "OLLAMA_MODEL",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+      ],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },

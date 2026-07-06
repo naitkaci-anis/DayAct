@@ -42,7 +42,7 @@ export function Modal({
       />
 
       {/* panel */}
-      <div className="relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col rounded-md border border-border bg-deep shadow-2xl animate-[popIn_0.18s_ease]">
+      <div className="relative z-10 flex max-h-[90dvh] w-full max-w-lg flex-col rounded-md border border-border bg-deep shadow-2xl animate-[popIn_0.18s_ease]">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
           <h3 className="text-sm font-medium text-text">{title}</h3>
           <button

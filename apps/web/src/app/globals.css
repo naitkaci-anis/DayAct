@@ -26,6 +26,7 @@
 
   html {
     color-scheme: dark;
+    overflow-x: hidden;
   }
 
   body {
@@ -35,6 +36,9 @@
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Never let a wide element push the page sideways on mobile. */
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   ::selection {

@@ -138,6 +138,7 @@ export function Composer({
   const [customDays, setCustomDays] = useState<number[]>([]);
   const [repeatAlways, setRepeatAlways] = useState(false);
   const [reminder, setReminder] = useState<ReminderPref>("auto");
+  const [ringAtStart, setRingAtStart] = useState(false);
 
   function toggleCustomDay(idx: number) {
     setCustomDays((days) =>
@@ -180,6 +181,7 @@ export function Composer({
       setCustomDays([]);
       setRepeatAlways(false);
       setReminder(editing.reminder ?? "auto");
+      setRingAtStart(editing.ringAtStart ?? false);
     } else {
       setTitle("");
       setDate(composer.presetDate ?? state.selectedDate);
@@ -192,6 +194,7 @@ export function Composer({
       setCustomDays([]);
       setRepeatAlways(false);
       setReminder("auto");
+      setRingAtStart(false);
       setNotes("");
     }
   }, [composer.open, composer.presetTime, composer.presetDate, editing, state.selectedDate]);
@@ -206,7 +209,7 @@ export function Composer({
       dispatch({
         type: "UPDATE_TASK",
         id: editing.id,
-        patch: { title: title.trim(), date, time: startTime, durationMin, priority, category, notes, recurrence, reminder },
+        patch: { title: title.trim(), date, time: startTime, durationMin, priority, category, notes, recurrence, reminder, ringAtStart },
       });
     } else {
       // Materialize one task per occurrence date.
@@ -223,6 +226,7 @@ export function Composer({
             notes,
             recurrence,
             reminder,
+            ringAtStart,
           },
         });
       }
@@ -490,6 +494,31 @@ export function Composer({
               : reminder === "none"
               ? "Aucun rappel anticipé."
               : `Rappel ${reminderOptions.find((o) => o.id === reminder)?.label} avant (avec sonnerie).`}
+          </p>
+        </div>
+
+        {/* Ring exactly at start time (independent of the "before" reminder) */}
+        <div>
+          <button
+            type="button"
+            onClick={() => setRingAtStart((v) => !v)}
+            className="flex items-center gap-2.5 select-none"
+          >
+            <span
+              className={`flex items-center justify-center w-5 h-5 rounded-[5px] border transition-colors ${
+                ringAtStart
+                  ? "bg-act-cyan border-act-cyan text-[#0a0a14]"
+                  : "border-border text-transparent"
+              }`}
+            >
+              <CheckIcon size={13} />
+            </span>
+            <span className="text-xs text-text">🔔 Sonner à l'heure de la tâche</span>
+          </button>
+          <p className="text-[11px] text-text-muted mt-1.5">
+            {ringAtStart
+              ? "Une alerte (son + notification) se déclenchera PILE à l'heure de début."
+              : "Coche pour recevoir une alerte sonore exactement à l'heure de début."}
           </p>
         </div>
 

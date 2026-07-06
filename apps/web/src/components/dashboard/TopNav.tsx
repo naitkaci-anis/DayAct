@@ -61,7 +61,9 @@ export function TopNav({
           <div className="flex items-center justify-center w-9 h-9 rounded-md border border-border bg-deep glow-cyan">
             <LogoMark size={20} />
           </div>
-          <span className="text-lg font-light text-gradient-cyan tracking-tight">DayAct</span>
+          <span className="hidden sm:inline text-lg font-light text-gradient-cyan tracking-tight">
+            DayAct
+          </span>
         </Link>
 
         {/* desktop nav tabs — only when there's room (xl+), otherwise the
@@ -93,7 +95,7 @@ export function TopNav({
         </nav>
 
         {/* right actions */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <div className="hidden 2xl:flex items-center gap-2 px-3 py-2 rounded-sm border border-border bg-deep text-sm">
             <BoltIcon size={15} className="text-energy-amber" />
             <span className="text-text font-medium">{state.settings.energy}%</span>
@@ -135,7 +137,7 @@ export function TopNav({
 
             <button
               onClick={onFocus}
-              className="flex items-center justify-center w-9 h-9 rounded-sm border border-border text-text-muted hover:text-act-cyan hover:border-[#2a3441] transition-colors"
+              className="hidden sm:flex items-center justify-center w-9 h-9 rounded-sm border border-border text-text-muted hover:text-act-cyan hover:border-[#2a3441] transition-colors"
               aria-label="Minuteur Pomodoro"
               title="Minuteur Pomodoro"
             >
