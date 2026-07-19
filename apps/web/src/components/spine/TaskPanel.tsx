@@ -61,7 +61,7 @@ export function TaskPanel({
                 }`}
                 aria-label={task.done ? "Marquer non faite" : "Marquer faite"}
               >
-                {task.done && <CheckIcon size={11} />}
+                {task.done && <CheckIcon size={11} className="animate-[checkPop_0.3s_ease]" />}
               </button>
 
               <div className="flex-1 min-w-0">

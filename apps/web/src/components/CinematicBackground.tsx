@@ -24,10 +24,12 @@ export function CinematicBackground() {
         }}
       />
 
-      {/* floating blobs */}
+      {/* floating blobs — min sizes so phones still get a living background */}
       <div
-        className="absolute w-[42vw] h-[42vw] rounded-full blur-[90px]"
+        className="absolute rounded-full blur-[90px]"
         style={{
+          width: "max(42vw, 380px)",
+          height: "max(42vw, 380px)",
           top: "-8%",
           left: "-6%",
           background: "radial-gradient(circle, rgba(91,231,255,0.22), transparent 65%)",
@@ -35,8 +37,10 @@ export function CinematicBackground() {
         }}
       />
       <div
-        className="absolute w-[46vw] h-[46vw] rounded-full blur-[100px]"
+        className="absolute rounded-full blur-[100px]"
         style={{
+          width: "max(46vw, 420px)",
+          height: "max(46vw, 420px)",
           bottom: "-12%",
           right: "-8%",
           background: "radial-gradient(circle, rgba(192,38,255,0.20), transparent 65%)",
@@ -44,8 +48,10 @@ export function CinematicBackground() {
         }}
       />
       <div
-        className="absolute w-[32vw] h-[32vw] rounded-full blur-[90px]"
+        className="absolute rounded-full blur-[90px]"
         style={{
+          width: "max(32vw, 300px)",
+          height: "max(32vw, 300px)",
           top: "35%",
           left: "40%",
           background: "radial-gradient(circle, rgba(139,92,246,0.16), transparent 65%)",

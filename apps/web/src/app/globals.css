@@ -221,6 +221,18 @@ button {
   transition-timing-function: ease;
 }
 
+/* Card tap feedback on touch devices (no hover on mobile) */
+.lift:active {
+  transform: scale(0.985);
+}
+
+/* Checkbox validation pop */
+@keyframes checkPop {
+  0% { transform: scale(0.4); }
+  55% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
 /* Soft breathing glow (for accent elements) */
 @keyframes breathe {
   0%, 100% { opacity: 0.55; }

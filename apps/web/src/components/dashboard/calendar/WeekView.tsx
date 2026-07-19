@@ -83,11 +83,18 @@ export function WeekView({
       setDrag(null);
       setDraft(null);
     }
+    // Browser-cancelled gesture (e.g. scroll takeover) → drop the draft cleanly.
+    function onCancel() {
+      setDrag(null);
+      setDraft(null);
+    }
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", onUp, { once: true });
+    window.addEventListener("pointercancel", onCancel);
     return () => {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onCancel);
     };
   }, [drag, draft, dispatch]);
 
@@ -211,6 +218,8 @@ export function WeekView({
                       background: `color-mix(in srgb, ${color} 20%, transparent)`,
                       borderLeft: `2px solid ${color}`,
                       opacity: t.done ? 0.5 : 1,
+                      // Without this, mobile browsers hijack the drag to scroll.
+                      touchAction: "none",
                     }}
                   >
                     <p className="text-[10px] leading-tight text-text truncate">{t.title}</p>

@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { BoltIcon } from "@/components/icons";
+import { BoltIcon, BellIcon } from "@/components/icons";
 import { useStore, user } from "@/lib/store";
 import { InstallApp } from "@/components/InstallApp";
+import { playReminderSound } from "@/lib/sound";
 
 function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
   return (
@@ -43,6 +45,42 @@ function Row({
 export default function SettingsPage() {
   const { state, dispatch, backend, userEmail } = useStore();
   const { settings } = state;
+  const [testMsg, setTestMsg] = useState<string | null>(null);
+
+  async function testReminder() {
+    playReminderSound();
+    setTestMsg("🔊 Sonnerie jouée…");
+    try {
+      if (!("Notification" in window)) {
+        setTestMsg("🔊 Sonnerie OK. Ce navigateur ne gère pas les notifications.");
+        return;
+      }
+      let perm = Notification.permission;
+      if (perm === "default") perm = await Notification.requestPermission();
+      if (perm !== "granted") {
+        setTestMsg(
+          "🔊 Sonnerie OK, mais notifications BLOQUÉES. Autorise-les : icône 🔒 à côté de l'adresse → Notifications → Autoriser."
+        );
+        return;
+      }
+      const reg = await navigator.serviceWorker?.getRegistration();
+      if (reg?.showNotification) {
+        await reg.showNotification("🔔 Test DayAct", {
+          body: "Parfait ! Les rappels fonctionnent sur cet appareil.",
+          icon: "/icon.svg",
+          badge: "/icon.svg",
+        });
+      } else {
+        new Notification("🔔 Test DayAct", {
+          body: "Parfait ! Les rappels fonctionnent sur cet appareil.",
+          icon: "/icon.svg",
+        });
+      }
+      setTestMsg("✅ Sonnerie + notification envoyées — tu devrais les voir/entendre !");
+    } catch {
+      setTestMsg("🔊 Sonnerie OK, mais la notification a échoué sur cet appareil.");
+    }
+  }
 
   function resetData() {
     if (typeof window === "undefined") return;
@@ -157,6 +195,30 @@ export default function SettingsPage() {
               />
             }
           />
+        </section>
+
+        {/* Reminder test */}
+        <section className="rounded-md border border-border bg-deep p-5">
+          <h2 className="flex items-center gap-2 text-sm font-medium text-text mb-2">
+            <BellIcon size={15} className="text-act-cyan" />
+            Tester les rappels sur cet appareil
+          </h2>
+          <p className="text-xs text-text-muted mb-4">
+            Vérifie en 2 secondes que la sonnerie et la notification fonctionnent ici
+            (téléphone ou PC).
+          </p>
+          <button
+            onClick={testReminder}
+            className="px-4 py-2.5 rounded-sm bg-act-cyan text-[#0a0a14] text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            🔔 Tester sonnerie + notification
+          </button>
+          {testMsg && <p className="text-xs text-text-muted mt-3">{testMsg}</p>}
+          <p className="text-[11px] text-text-muted/70 mt-3">
+            ℹ️ Les rappels sonnent quand DayAct est ouvert (onglet ou app installée). Sur
+            iPhone, installe d&apos;abord l&apos;app sur l&apos;écran d&apos;accueil pour recevoir
+            des notifications.
+          </p>
         </section>
 
         {/* Install as app */}
