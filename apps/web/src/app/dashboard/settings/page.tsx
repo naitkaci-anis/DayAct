@@ -3,6 +3,7 @@
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { BoltIcon } from "@/components/icons";
 import { useStore, user } from "@/lib/store";
+import { InstallApp } from "@/components/InstallApp";
 
 function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
   return (
@@ -156,6 +157,16 @@ export default function SettingsPage() {
               />
             }
           />
+        </section>
+
+        {/* Install as app */}
+        <section className="rounded-md border border-border bg-deep p-5">
+          <h2 className="text-sm font-medium text-text mb-2">📲 Application</h2>
+          <p className="text-xs text-text-muted mb-4">
+            Installe DayAct sur ton téléphone ou ton PC : icône sur l&apos;écran d&apos;accueil,
+            plein écran, lancement instantané. Gratuit, sans app store.
+          </p>
+          <InstallApp />
         </section>
 
         {/* Data */}

@@ -10,6 +10,7 @@ import {
   WellbeingIcon,
   CheckIcon,
 } from "@/components/icons";
+import { InstallApp } from "@/components/InstallApp";
 
 const features = [
   {
@@ -190,10 +191,11 @@ export default function Landing() {
               >
                 J'ai déjà un compte
               </Link>
+              <InstallApp variant="hero" />
             </div>
 
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-7">
-              {["100% gratuit", "Données privées", "Assistant vocal"].map((t) => (
+              {["100% gratuit", "Données privées", "S'installe comme une app"].map((t) => (
                 <span key={t} className="flex items-center gap-1.5 text-xs text-text-muted">
                   <CheckIcon size={13} className="text-done-green" />
                   {t}
