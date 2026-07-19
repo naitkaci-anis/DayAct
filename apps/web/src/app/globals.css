@@ -182,3 +182,66 @@
 .rise {
   animation: riseIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
+
+/* ── Micro-interactions (dynamisme global) ───────────────────────────────── */
+
+/* Waving hand */
+@keyframes wave {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  10% { transform: rotate(16deg); }
+  20% { transform: rotate(-8deg); }
+  30% { transform: rotate(14deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(8deg); }
+}
+.wave {
+  display: inline-block;
+  animation: wave 2.4s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+
+/* Flowing gradient on hero titles (combine with .text-gradient-cyan) */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.gradient-flow {
+  background-size: 220% 100%;
+  animation: gradientFlow 6s ease-in-out infinite;
+}
+
+/* Tactile press feedback on every button */
+button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+button {
+  transition-property: transform, color, background-color, border-color, opacity, box-shadow;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+}
+
+/* Soft breathing glow (for accent elements) */
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+.breathe {
+  animation: breathe 3.2s ease-in-out infinite;
+}
+
+/* Slow float for decorative blobs inside cards */
+@keyframes floatSoft {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-6px, 6px); }
+}
+.float-soft {
+  animation: floatSoft 7s ease-in-out infinite;
+}
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  .wave, .gradient-flow, .breathe, .float-soft {
+    animation: none;
+  }
+}

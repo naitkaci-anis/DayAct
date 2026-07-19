@@ -61,14 +61,38 @@ export default function SettingsPage() {
           <h2 className="text-sm font-medium text-text mb-4">Profil</h2>
           <div className="flex items-center gap-4">
             <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-act-cyan to-focus-violet text-[#0a0a14] text-xl font-medium">
-              {user.initials}
+              {settings.displayName.trim()
+                ? settings.displayName.trim().charAt(0).toUpperCase()
+                : user.initials}
             </div>
             <div>
-              <p className="text-text">{userEmail ? userEmail.split("@")[0] : user.name}</p>
+              <p className="text-text">
+                {settings.displayName.trim() ||
+                  (userEmail ? userEmail.split("@")[0] : user.name)}
+              </p>
               <p className="text-sm text-text-muted">
                 {backend === "supabase" ? userEmail : "Mode démo · données locales"}
               </p>
             </div>
+          </div>
+
+          <div className="mt-4">
+            <label className="block text-xs text-text-muted mb-1.5">
+              Prénom (affiché dans l&apos;app)
+            </label>
+            <input
+              type="text"
+              value={settings.displayName}
+              maxLength={30}
+              onChange={(e) =>
+                dispatch({ type: "SET_SETTING", key: "displayName", value: e.target.value })
+              }
+              placeholder="Ex. Anis"
+              className="w-full max-w-xs px-3 py-2 rounded-sm bg-[#0a0a14] border border-border text-sm text-text placeholder:text-text-muted/60 focus:border-act-cyan outline-none transition-colors"
+            />
+            <p className="text-[11px] text-text-muted mt-1.5">
+              Utilisé pour te saluer sur la page Aujourd&apos;hui. Enregistré automatiquement.
+            </p>
           </div>
         </section>
 

@@ -9,7 +9,7 @@ import {
   habitStreak,
   formatLongDate,
   todayISO,
-  user,
+  prettyName,
 } from "@/lib/store";
 import { useUI } from "@/components/dashboard/UIShell";
 import { Timeline } from "@/components/dashboard/Timeline";
@@ -50,7 +50,7 @@ function StatTile({
     >
       <div
         aria-hidden
-        className="absolute -top-8 -right-8 w-24 h-24 rounded-full blur-2xl opacity-15 pointer-events-none"
+        className="absolute -top-8 -right-8 w-24 h-24 rounded-full blur-2xl opacity-15 pointer-events-none float-soft"
         style={{ background: color }}
       />
       <span
@@ -159,8 +159,7 @@ export default function TodayPage() {
     .reduce((s, t) => s + t.durationMin, 0);
   const mood = moodForDate(state, state.selectedDate);
 
-  const rawName = userEmail ? userEmail.split("@")[0] : user.name;
-  const name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+  const name = prettyName(state, userEmail);
 
   // progress ring geometry
   const r = 40;
@@ -192,8 +191,26 @@ export default function TodayPage() {
                 className="text-2xl lg:text-3xl font-light text-text tracking-tight"
                 style={{ letterSpacing: "-0.02em" }}
               >
-                {greeting}, <span className="text-gradient-cyan">{name}</span> 👋
+                {name ? (
+                  <>
+                    {greeting},{" "}
+                    <span className="text-gradient-cyan gradient-flow">{name}</span>
+                  </>
+                ) : (
+                  <>
+                    {greeting} <span className="text-gradient-cyan gradient-flow">toi</span>
+                  </>
+                )}{" "}
+                <span className="wave">👋</span>
               </h1>
+              {!name && (
+                <p className="text-[11px] text-text-muted mt-1">
+                  <Link href="/dashboard/settings" className="text-act-cyan hover:underline">
+                    Ajoute ton prénom dans les paramètres
+                  </Link>{" "}
+                  pour une salutation personnalisée.
+                </p>
+              )}
               <p className="text-sm text-text-muted mt-1.5">
                 {formatLongDate(state.selectedDate)}
               </p>

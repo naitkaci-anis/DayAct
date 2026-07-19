@@ -89,6 +89,7 @@ export interface Settings {
   notifications: boolean;
   aiSuggestions: boolean;
   energy: number; // 0-100
+  displayName: string; // prénom choisi par l'utilisateur ("" = non renseigné)
 }
 
 export interface State {
@@ -164,7 +165,7 @@ function seed(): State {
       { id: newId(), name: "Lecture", emoji: "📚", color: "#fbbf24" },
     ],
     habitLogs: [],
-    settings: { notifications: true, aiSuggestions: true, energy: 72 },
+    settings: { notifications: true, aiSuggestions: true, energy: 72, displayName: "" },
     suggestions: [
       {
         id: "s1",
@@ -248,7 +249,7 @@ export type Action =
   | { type: "ADD_HABIT"; habit: Omit<Habit, "id"> }
   | { type: "DELETE_HABIT"; id: string }
   | { type: "TOGGLE_HABIT"; habitId: string; date: string }
-  | { type: "SET_SETTING"; key: keyof Settings; value: boolean | number }
+  | { type: "SET_SETTING"; key: keyof Settings; value: boolean | number | string }
   | { type: "DISMISS_SUGGESTION"; id: string }
   | { type: "APPLY_SUGGESTION"; id: string }
   | { type: "HYDRATE"; state: State };
@@ -606,4 +607,20 @@ export function habitsCompletedOn(state: State, date: string): Habit[] {
   return state.habits.filter((h) =>
     state.habitLogs.some((l) => l.habitId === h.id && l.date === date)
   );
+}
+
+// Best displayable first name, or null when we only have an ugly email prefix
+// (digits/dots) — callers then greet without a name instead of "Naitkaci04anis".
+export function prettyName(state: State, userEmail: string | null): string | null {
+  const clean = (s: string) => s.trim();
+  const looksHuman = (s: string) => s.length > 0 && s.length <= 30 && !/[\d._@]/.test(s);
+
+  const chosen = clean(state.settings.displayName ?? "");
+  if (chosen && looksHuman(chosen)) {
+    return chosen.charAt(0).toUpperCase() + chosen.slice(1);
+  }
+  if (!userEmail) return user.name; // mode démo local
+  const prefix = clean(userEmail.split("@")[0]);
+  if (looksHuman(prefix)) return prefix.charAt(0).toUpperCase() + prefix.slice(1);
+  return null;
 }

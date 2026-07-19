@@ -69,6 +69,7 @@ const DEFAULT_SETTINGS: Settings = {
   notifications: true,
   aiSuggestions: true,
   energy: 72,
+  displayName: "",
 };
 
 export interface LoadedData {
@@ -103,10 +104,15 @@ export async function loadFromSupabase(
   );
 
   const p = profileRes.data as
-    | { notifications: boolean; ai_suggestions: boolean; energy: number }
+    | { notifications: boolean; ai_suggestions: boolean; energy: number; full_name: string | null }
     | null;
   const settings: Settings = p
-    ? { notifications: p.notifications, aiSuggestions: p.ai_suggestions, energy: p.energy }
+    ? {
+        notifications: p.notifications,
+        aiSuggestions: p.ai_suggestions,
+        energy: p.energy,
+        displayName: p.full_name ?? "",
+      }
     : DEFAULT_SETTINGS;
 
   return { tasks, moods, habits, habitLogs, settings };
@@ -125,6 +131,10 @@ export async function saveToSupabase(
       notifications: data.settings.notifications,
       ai_suggestions: data.settings.aiSuggestions,
       energy: data.settings.energy,
+      // Only overwrite the name when the user actually typed one.
+      ...(data.settings.displayName.trim()
+        ? { full_name: data.settings.displayName.trim() }
+        : {}),
     })
     .eq("id", userId);
 

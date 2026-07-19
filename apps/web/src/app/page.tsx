@@ -167,7 +167,7 @@ export default function Landing() {
             <h1 className="text-4xl lg:text-6xl font-light leading-[1.05] tracking-tight">
               Agis sur ta journée,
               <br />
-              <span className="text-gradient-cyan">pas juste la planifier.</span>
+              <span className="text-gradient-cyan gradient-flow">pas juste la planifier.</span>
             </h1>
             <p className="mt-6 text-lg text-text-muted leading-relaxed max-w-xl">
               DayAct réunit tes <strong className="text-text">tâches</strong>, ton{" "}
