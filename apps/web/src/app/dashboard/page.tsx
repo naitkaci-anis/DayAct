@@ -1,34 +1,310 @@
 "use client";
 
-import { useStore, formatLongDate } from "@/lib/store";
+import Link from "next/link";
+import {
+  useStore,
+  tasksForDate,
+  moodForDate,
+  isHabitDone,
+  habitStreak,
+  formatLongDate,
+  todayISO,
+  user,
+} from "@/lib/store";
 import { useUI } from "@/components/dashboard/UIShell";
-import { StatCards } from "@/components/dashboard/StatCards";
 import { Timeline } from "@/components/dashboard/Timeline";
 import { TaskPanel } from "@/components/spine/TaskPanel";
 import { MoodLogger } from "@/components/spine/MoodLogger";
 import { Assistant } from "@/components/spine/Assistant";
+import {
+  PlusIcon,
+  BoltIcon,
+  ClockIcon,
+  TargetIcon,
+  FlameIcon,
+  CheckIcon,
+  WellbeingIcon,
+  ChevronRightIcon,
+} from "@/components/icons";
+
+// Small bento stat tile.
+function StatTile({
+  icon,
+  label,
+  value,
+  hint,
+  color,
+  delay,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  hint: string;
+  color: string;
+  delay: number;
+}) {
+  return (
+    <div
+      className="glass lift rounded-[18px] p-4 relative overflow-hidden rise"
+      style={{ animationDelay: `${delay}s` }}
+    >
+      <div
+        aria-hidden
+        className="absolute -top-8 -right-8 w-24 h-24 rounded-full blur-2xl opacity-15 pointer-events-none"
+        style={{ background: color }}
+      />
+      <span
+        className="flex items-center justify-center w-8 h-8 rounded-[10px] mb-3"
+        style={{ color, background: `color-mix(in srgb, ${color} 15%, transparent)` }}
+      >
+        {icon}
+      </span>
+      <p className="text-xl font-light text-text" style={{ letterSpacing: "-0.02em" }}>
+        {value}
+      </p>
+      <p className="text-[11px] text-text-muted mt-0.5">
+        {label} · <span className="text-text-muted/70">{hint}</span>
+      </p>
+    </div>
+  );
+}
+
+// One-tap habit validation card.
+function HabitsQuickCard({ delay }: { delay: number }) {
+  const { state, dispatch } = useStore();
+  const today = todayISO();
+  const habits = state.habits.slice(0, 5);
+  const done = state.habits.filter((h) => isHabitDone(state, h.id, today)).length;
+
+  return (
+    <div
+      className="glass lift rounded-[20px] p-5 rise flex flex-col"
+      style={{ animationDelay: `${delay}s` }}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <FlameIcon size={15} className="text-energy-amber" />
+          <h2 className="text-sm font-medium text-text">Habitudes</h2>
+        </div>
+        <span className="text-xs text-text-muted">
+          {done}/{state.habits.length}
+        </span>
+      </div>
+
+      {habits.length === 0 ? (
+        <Link
+          href="/dashboard/habits"
+          className="flex-1 flex items-center justify-center text-xs text-act-cyan hover:underline py-6"
+        >
+          + Créer ta première habitude
+        </Link>
+      ) : (
+        <ul className="space-y-1.5 flex-1">
+          {habits.map((h) => {
+            const checked = isHabitDone(state, h.id, today);
+            const streak = habitStreak(state, h.id);
+            return (
+              <li key={h.id}>
+                <button
+                  onClick={() => dispatch({ type: "TOGGLE_HABIT", habitId: h.id, date: today })}
+                  className="w-full flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 hover:bg-white/[0.04] transition-colors text-left"
+                >
+                  <span
+                    className={`flex items-center justify-center w-[18px] h-[18px] shrink-0 rounded-[6px] border transition-colors ${
+                      checked ? "text-[#0a0a14]" : "border-[#374151]"
+                    }`}
+                    style={checked ? { background: h.color, borderColor: h.color } : { color: h.color }}
+                  >
+                    {checked && <CheckIcon size={12} />}
+                  </span>
+                  <span className="text-base leading-none">{h.emoji}</span>
+                  <span
+                    className={`flex-1 text-[13px] truncate ${
+                      checked ? "text-text-muted line-through" : "text-text"
+                    }`}
+                  >
+                    {h.name}
+                  </span>
+                  {streak > 0 && (
+                    <span className="text-[10px] text-energy-amber shrink-0">🔥{streak}</span>
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      <Link
+        href="/dashboard/habits"
+        className="mt-2 flex items-center justify-center gap-1 text-[11px] text-text-muted hover:text-act-cyan transition-colors"
+      >
+        Tout voir <ChevronRightIcon size={12} />
+      </Link>
+    </div>
+  );
+}
 
 export default function TodayPage() {
-  const { state } = useStore();
+  const { state, userEmail } = useStore();
   const { openNew, openEdit } = useUI();
+
+  const tasks = tasksForDate(state, state.selectedDate);
+  const done = tasks.filter((t) => t.done).length;
+  const pct = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
+  const remaining = tasks.length - done;
+
+  const focusMin = tasks
+    .filter((t) => t.done && (t.category === "work" || t.category === "learning"))
+    .reduce((s, t) => s + t.durationMin, 0);
+  const mood = moodForDate(state, state.selectedDate);
+
+  const rawName = userEmail ? userEmail.split("@")[0] : user.name;
+  const name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+
+  // progress ring geometry
+  const r = 40;
+  const circ = 2 * Math.PI * r;
+
+  const hour = new Date().getHours();
+  const greeting = hour < 5 ? "Bonne nuit" : hour < 12 ? "Bonjour" : hour < 18 ? "Bon après-midi" : "Bonsoir";
 
   return (
     <>
-      <div className="mb-6">
-        <h1 className="text-xl font-light text-text" style={{ letterSpacing: "-0.02em" }}>
-          Bonjour, <span className="text-gradient-cyan">Anis</span>
-        </h1>
-        <p className="text-sm text-text-muted mt-1">{formatLongDate(state.selectedDate)}</p>
+      {/* ── Bento top ─────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        {/* Hero */}
+        <div
+          className="col-span-2 lg:col-span-3 glass border-glow rounded-[24px] p-6 lg:p-8 relative overflow-hidden rise"
+          style={{ animationDelay: "0s" }}
+        >
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse 70% 60% at 85% 20%, rgba(139,92,246,0.14), transparent 65%)",
+            }}
+          />
+          <div className="relative flex items-center gap-6">
+            <div className="min-w-0 flex-1">
+              <h1
+                className="text-2xl lg:text-3xl font-light text-text tracking-tight"
+                style={{ letterSpacing: "-0.02em" }}
+              >
+                {greeting}, <span className="text-gradient-cyan">{name}</span> 👋
+              </h1>
+              <p className="text-sm text-text-muted mt-1.5">
+                {formatLongDate(state.selectedDate)}
+              </p>
+              <p className="text-sm text-text-muted mt-4">
+                {tasks.length === 0
+                  ? "Journée libre — planifie ta première tâche."
+                  : remaining === 0
+                  ? "Tout est fait. Chapeau ! 🎉"
+                  : `${remaining} tâche${remaining > 1 ? "s" : ""} restante${remaining > 1 ? "s" : ""} aujourd'hui.`}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-2.5 mt-5">
+                <button
+                  onClick={() => openNew()}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-[12px] bg-act-cyan text-[#050816] text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  <PlusIcon size={15} />
+                  Nouvelle tâche
+                </button>
+                <Link
+                  href="/dashboard/calendar"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-[12px] glass text-sm text-text-muted hover:text-text transition-colors"
+                >
+                  Voir le calendrier
+                </Link>
+              </div>
+            </div>
+
+            {/* progress ring */}
+            <div className="hidden sm:flex flex-col items-center shrink-0">
+              <div className="relative w-[104px] h-[104px]">
+                <svg width="104" height="104" viewBox="0 0 104 104" className="-rotate-90">
+                  <circle cx="52" cy="52" r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="8" />
+                  <circle
+                    cx="52"
+                    cy="52"
+                    r={r}
+                    fill="none"
+                    stroke="url(#heroRing)"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeDasharray={circ}
+                    strokeDashoffset={circ * (1 - pct / 100)}
+                    style={{ transition: "stroke-dashoffset 0.6s ease" }}
+                  />
+                  <defs>
+                    <linearGradient id="heroRing" x1="0" y1="0" x2="104" y2="104">
+                      <stop stopColor="#5be7ff" />
+                      <stop offset="1" stopColor="#8b5cf6" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-xl font-light text-text">{pct}%</span>
+                  <span className="text-[9px] text-text-muted">du jour</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Habits quick card */}
+        <div className="col-span-2 lg:col-span-1">
+          <HabitsQuickCard delay={0.05} />
+        </div>
+
+        {/* Stat tiles */}
+        <StatTile
+          icon={<TargetIcon size={16} />}
+          label="Tâches"
+          value={`${done}/${tasks.length}`}
+          hint={remaining > 0 ? `${remaining} restantes` : "terminé 🎉"}
+          color="#5be7ff"
+          delay={0.1}
+        />
+        <StatTile
+          icon={<ClockIcon size={16} />}
+          label="Focus"
+          value={`${Math.floor(focusMin / 60)}h${String(focusMin % 60).padStart(2, "0")}`}
+          hint="objectif 4h"
+          color="#8b5cf6"
+          delay={0.15}
+        />
+        <StatTile
+          icon={<BoltIcon size={16} />}
+          label="Énergie"
+          value={`${state.settings.energy}%`}
+          hint={state.settings.energy >= 60 ? "en forme" : "à recharger"}
+          color="#f59e0b"
+          delay={0.2}
+        />
+        <StatTile
+          icon={<WellbeingIcon size={16} />}
+          label="Humeur"
+          value={mood != null ? `${mood}` : "—"}
+          hint={mood != null ? "/100" : "à renseigner"}
+          color="#22c55e"
+          delay={0.25}
+        />
       </div>
 
-      <StatCards />
+      {/* ── Planning + panels ─────────────────────────────────────── */}
+      <div className="rise" style={{ animationDelay: "0.3s" }}>
+        <Timeline />
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <Timeline />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <div className="lg:col-span-2 rise" style={{ animationDelay: "0.35s" }}>
           <TaskPanel onAdd={() => openNew()} onEdit={openEdit} />
         </div>
-        <div className="space-y-6">
+        <div className="space-y-6 rise" style={{ animationDelay: "0.4s" }}>
           <Assistant />
           <MoodLogger />
         </div>

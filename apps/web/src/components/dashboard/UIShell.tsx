@@ -7,6 +7,7 @@ import { ReminderScheduler } from "./ReminderScheduler";
 import { AssistantChat } from "./AssistantChat";
 import { SearchOverlay } from "./SearchOverlay";
 import { NotificationsPanel } from "./NotificationsPanel";
+import { Onboarding } from "./Onboarding";
 import { Composer, type ComposerState } from "@/components/spine/Composer";
 import { useStore, type Task } from "@/lib/store";
 
@@ -86,6 +87,7 @@ export function UIShell({ children }: { children: ReactNode }) {
       />
       <NotificationsPanel open={notifOpen} onClose={() => setNotifOpen(false)} />
       <ReminderScheduler />
+      {hydrated && <Onboarding />}
     </UIContext.Provider>
   );
 }

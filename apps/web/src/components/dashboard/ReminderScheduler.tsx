@@ -88,11 +88,29 @@ export function ReminderScheduler() {
       notify.add({ type, title, body, taskId });
       if (ring) playReminderSound();
       if (browserAllowed()) {
-        try {
-          new Notification(title, { body, icon: "/icon.svg" });
-        } catch {
-          /* some mobile browsers don't support the Notification constructor */
-        }
+        // Android/mobile requires going through the service worker; desktop
+        // falls back to the classic Notification constructor.
+        void (async () => {
+          try {
+            const reg = await navigator.serviceWorker?.getRegistration();
+            if (reg?.showNotification) {
+              await reg.showNotification(title, {
+                body,
+                icon: "/icon.svg",
+                badge: "/icon.svg",
+                tag: key,
+              });
+              return;
+            }
+          } catch {
+            /* fall through to the constructor */
+          }
+          try {
+            new Notification(title, { body, icon: "/icon.svg" });
+          } catch {
+            /* notification display unavailable */
+          }
+        })();
       }
       sent.current.add(key);
       persist();
