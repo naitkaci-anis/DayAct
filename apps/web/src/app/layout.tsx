@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { CinematicBackground } from "@/components/CinematicBackground";
 import { PWARegister } from "@/components/PWARegister";
 
@@ -42,6 +43,7 @@ export default function RootLayout({
         <CinematicBackground />
         <PWARegister />
         {children}
+        <Analytics />
       </body>
     </html>
   );
