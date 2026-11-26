@@ -26,7 +26,7 @@ const priorityOrder: Priority[] = ["high", "medium", "low"];
 
 export default function TasksPage() {
   const { state, dispatch } = useStore();
-  const { openNew, openEdit } = useUI();
+  const { openNew, openEdit, openActions, toast } = useUI();
   const [filter, setFilter] = useState<Filter>("all");
 
   const tasks = tasksForDate(state, state.selectedDate);
@@ -117,19 +117,19 @@ export default function TasksPage() {
                     >
                       <button
                         onClick={() => dispatch({ type: "TOGGLE_TASK", id: task.id })}
-                        className={`flex items-center justify-center w-[18px] h-[18px] shrink-0 rounded-[5px] border transition-colors ${
+                        className={`flex items-center justify-center w-6 h-6 shrink-0 rounded-[7px] border-2 transition-colors before:absolute before:-inset-2.5 relative ${
                           task.done
                             ? "bg-primary border-primary text-on-fill"
                             : "border-line-strong hover:border-primary"
                         }`}
                         aria-label={task.done ? "Marquer non faite" : "Marquer faite"}
                       >
-                        {task.done && <CheckIcon size={12} />}
+                        {task.done && <CheckIcon size={14} />}
                       </button>
 
                       <button
-                        onClick={() => openEdit(task)}
-                        className="flex-1 min-w-0 text-left"
+                        onClick={() => openActions(task)}
+                        className="flex-1 min-w-0 text-left min-h-[44px]"
                       >
                         <span
                           className={`block text-sm truncate ${
@@ -172,7 +172,11 @@ export default function TasksPage() {
                           <EditIcon size={15} />
                         </button>
                         <button
-                          onClick={() => dispatch({ type: "DELETE_TASK", id: task.id })}
+                          onClick={() => {
+                            const snapshot = { ...task };
+                            dispatch({ type: "DELETE_TASK", id: task.id });
+                            toast("Tâche annulée", () => dispatch({ type: "RESTORE_TASK", task: snapshot }));
+                          }}
                           className="p-1 text-ink-muted hover:text-danger transition-colors"
                           aria-label="Supprimer"
                         >

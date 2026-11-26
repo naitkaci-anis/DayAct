@@ -6,6 +6,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { AmbientBackground } from "@/components/AmbientBackground";
 import { PWARegister } from "@/components/PWARegister";
+import { SITE_URL } from "@/lib/site";
 
 // Display serif for big titles (self-hosted: no network call at build time).
 const fraunces = localFont({
@@ -16,9 +17,19 @@ const fraunces = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "DayAct — Act on your day",
-  description: "AI-powered productivity & wellbeing app",
+  metadataBase: new URL(SITE_URL),
+  title: { default: "DayAct — Agis sur ta journée", template: "%s · DayAct" },
+  description:
+    "Appli gratuite de productivité et de bien-être : tâches, agenda, habitudes et assistant IA. S'installe sur ton téléphone.",
   applicationName: "DayAct",
+  keywords: ["planning", "to-do", "agenda", "habitudes", "productivité", "bien-être", "assistant IA"],
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    siteName: "DayAct",
+    title: "DayAct — Agis sur ta journée",
+    description: "Planifie ta journée, reste concentré et suis tes progrès. Gratuit, sur téléphone et ordinateur.",
+  },
   appleWebApp: {
     capable: true,
     title: "DayAct",

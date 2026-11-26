@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { signOut } from "@/lib/auth/actions";
 
-export function UserMenu() {
+export function UserMenu({ placement = "down" }: { placement?: "down" | "up" }) {
   const { backend, userEmail } = useStore();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -25,14 +25,14 @@ export function UserMenu() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary text-on-fill text-sm font-medium"
+        className="flex items-center justify-center w-10 h-10 rounded-full bg-cream text-primary text-sm font-semibold border border-line"
         aria-label="Menu utilisateur"
       >
         {initial}
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-56 rounded-md border border-line bg-surface shadow-2xl overflow-hidden z-40">
+        <div className={`absolute w-56 rounded-md border border-line bg-panel shadow-2xl overflow-hidden z-40 ${placement === "up" ? "left-0 bottom-full mb-2" : "right-0 mt-2"}`}>
           <div className="px-4 py-3 border-b border-line">
             {signedIn ? (
               <>

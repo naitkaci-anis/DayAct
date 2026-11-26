@@ -1,297 +1,246 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  LogoMark,
-  SparkIcon,
-  CalendarIcon,
-  TasksIcon,
-  ClockIcon,
-  FlameIcon,
-  InsightsIcon,
-  WellbeingIcon,
-  CheckIcon,
-} from "@/components/icons";
+import { LogoMark } from "@/components/icons";
 import { InstallApp } from "@/components/InstallApp";
 
-const features = [
-  {
-    icon: SparkIcon,
-    title: "Assistant IA",
-    desc: "Parle ou écris « réunion lundi 9h » — l'IA crée, déplace et planifie tes tâches.",
-    color: "#8E2C1F",
-  },
-  {
-    icon: CalendarIcon,
-    title: "Calendrier intelligent",
-    desc: "Vues mois / semaine / jour, glisser-déposer, détection des chevauchements.",
-    color: "#590907",
-  },
-  {
-    icon: TasksIcon,
-    title: "Tâches & priorités",
-    desc: "Créneaux, durées, récurrence, rappels — tout ce qu'il faut pour avancer.",
-    color: "#5F6556",
-  },
-  {
-    icon: ClockIcon,
-    title: "Focus & Pomodoro",
-    desc: "Minuteur intégré qui mesure ton temps de concentration réel.",
-    color: "#590907",
-  },
-  {
-    icon: FlameIcon,
-    title: "Habitudes & séries",
-    desc: "Suis tes habitudes au quotidien et garde tes séries 🔥 vivantes.",
-    color: "#A0661A",
-  },
-  {
-    icon: InsightsIcon,
-    title: "Analyses & bien-être",
-    desc: "Heatmap d'activité, objectifs, humeur et énergie — vois tes progrès.",
-    color: "#4E6B35",
-  },
-];
+export const metadata: Metadata = {
+  title: "DayAct — Agis sur ta journée",
+  description:
+    "Planifie ta journée en parlant, reste concentré et suis tes progrès : tâches, agenda, habitudes et assistant IA dans une appli gratuite qui s'installe sur ton téléphone.",
+};
 
-function GlassPreview() {
-  // Stylized in-CSS mock of the app — gives the marketing "screenshot" feel.
+// ── Static phone preview (mirrors the real "Journée" screen) ──────────────
+
+function PhonePreview() {
+  const tasks = [
+    { time: "09:00", title: "Revue du sprint", meta: "Travail · 45 min", color: "var(--cat-work)", done: true },
+    { time: "10:30", title: "Séance de sport", meta: "Santé · 1 h", color: "var(--cat-health)", done: true },
+    { time: "18:00", title: "Méditation guidée", meta: "Santé · 15 min", color: "var(--cat-health)", done: false },
+  ];
   return (
-    <div className="glass rounded-[24px] p-3 lift">
-      {/* window chrome */}
-      <div className="flex items-center gap-1.5 px-2 py-2">
-        <span className="w-2.5 h-2.5 rounded-full bg-danger/70" />
-        <span className="w-2.5 h-2.5 rounded-full bg-warning/70" />
-        <span className="w-2.5 h-2.5 rounded-full bg-success/70" />
-        <span className="ml-3 text-[10px] text-ink-muted">dayact.app · Aujourd'hui</span>
-      </div>
-
-      <div className="grid grid-cols-3 gap-2.5 p-1">
-        {/* left: greeting + stats */}
-        <div className="col-span-1 space-y-2.5">
-          <div className="rounded-[14px] bg-surface border border-line p-3">
-            <p className="text-xs text-ink-muted">Bonjour</p>
-            <p className="font-display text-lg text-primary">Anis 👋</p>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { v: "4/7", l: "Tâches" },
-              { v: "2h45", l: "Focus" },
-              { v: "72%", l: "Énergie" },
-              { v: "12 j", l: "Série" },
-            ].map((s) => (
-              <div key={s.l} className="rounded-[12px] bg-surface border border-line p-2">
-                <p className="text-sm text-ink">{s.v}</p>
-                <p className="text-[9px] text-ink-muted">{s.l}</p>
-              </div>
-            ))}
+    <div className="relative mx-auto w-[300px] rounded-[44px] bg-ink p-3 shadow-2xl">
+      <div className="rounded-[34px] bg-canvas px-4 pt-6 pb-5 flex flex-col gap-3">
+        <div>
+          <p className="text-xs text-ink-muted">Jeudi 26 novembre</p>
+          <p className="font-display text-2xl text-ink mt-0.5">
+            Bonjour <em className="text-primary">Anis</em>
+          </p>
+        </div>
+        <div className="relative">
+          <svg viewBox="0 0 350 150" className="w-full h-auto" aria-hidden="true">
+            <path d="M27 118 A148 92 0 0 1 323 118" fill="none" stroke="rgb(var(--line-strong-rgb))" strokeWidth="4" strokeDasharray="2 8" strokeLinecap="round" />
+            <path d="M27 118 A148 92 0 0 1 209.5 28.5" fill="none" stroke="var(--primary)" strokeWidth="4" strokeLinecap="round" />
+            <circle cx="38.3" cy="82.8" r="8" fill="var(--cat-work)" />
+            <circle cx="60.6" cy="59.6" r="8" fill="var(--cat-health)" />
+            <circle cx="132" cy="30" r="8" fill="var(--cat-work)" />
+            <circle cx="257.2" cy="41.5" r="8" fill="rgb(var(--canvas-rgb))" stroke="var(--cat-health)" strokeWidth="3" />
+            <circle cx="298.1" cy="66.9" r="8" fill="rgb(var(--canvas-rgb))" stroke="var(--cat-personal)" strokeWidth="3" />
+            <circle cx="209.5" cy="28.5" r="20" fill="var(--cream)" />
+            <circle cx="209.5" cy="28.5" r="13" fill="var(--cat-learning)" />
+          </svg>
+          <p className="absolute inset-x-0 top-[42%] text-center font-display text-2xl text-ink">16 h 12</p>
+        </div>
+        <div className="rounded-[18px] bg-primary text-on-fill p-3.5">
+          <p className="text-[10px] tracking-[0.06em] text-cream">ENSUITE · DANS 18 MIN</p>
+          <p className="font-display text-lg leading-tight mt-0.5">Appeler le consulat</p>
+          <div className="grid grid-cols-2 gap-1.5 mt-2.5">
+            <span className="rounded-full bg-canvas text-primary text-xs font-semibold text-center py-2">C&apos;est fait</span>
+            <span className="rounded-full border border-cream/40 text-xs text-center py-2">Plus tard</span>
           </div>
         </div>
-
-        {/* center: timeline */}
-        <div className="col-span-1 rounded-[14px] bg-surface border border-line p-3 space-y-2">
-          <p className="text-[10px] text-ink-muted mb-1">Planning</p>
-          {[
-            { t: "Sprint", c: "#590907" },
-            { t: "Sport", c: "#4E6B35" },
-            { t: "Doc API", c: "#5F6556" },
-            { t: "Consulat", c: "#A0661A" },
-          ].map((r) => (
-            <div key={r.t} className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: r.c }} />
-              <span className="flex-1 h-2 rounded-full bg-ink/[0.07]" />
-            </div>
-          ))}
-        </div>
-
-        {/* right: focus ring + assistant */}
-        <div className="col-span-1 space-y-2.5">
-          <div className="rounded-[14px] bg-surface border border-line p-3 flex flex-col items-center">
-            <div
-              className="w-14 h-14 rounded-full"
-              style={{
-                background:
-                  "conic-gradient(#590907, #5F6556 60%, rgba(89,9,7,0.10) 60%)",
-                mask: "radial-gradient(circle 18px at center, transparent 97%, #000 0)",
-                WebkitMask: "radial-gradient(circle 18px at center, transparent 97%, #000 0)",
-              }}
-            />
-            <p className="text-[9px] text-ink-muted mt-1.5">Focus du jour</p>
+        {tasks.map((t) => (
+          <div key={t.title} className="flex items-center gap-2.5 rounded-[14px] border border-line bg-surface px-3 py-2">
+            <span className="text-[11px] text-ink-muted w-9">{t.time}</span>
+            <span className="w-1 self-stretch rounded-full" style={{ background: t.color }} />
+            <span className="flex-1 min-w-0">
+              <span className={`block text-[13px] ${t.done ? "line-through text-ink-muted" : "text-ink"}`}>{t.title}</span>
+              <span className="block text-[10px] text-ink-muted">{t.meta}</span>
+            </span>
           </div>
-          <div className="rounded-[14px] border border-secondary/30 bg-secondary/10 p-3 glow-secondary">
-            <p className="text-[10px] text-secondary font-medium">✨ Assistant IA</p>
-            <span className="block mt-1.5 h-1.5 w-3/4 rounded-full bg-ink/10" />
-            <span className="block mt-1 h-1.5 w-1/2 rounded-full bg-ink/10" />
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
 }
 
+// ── Page ──────────────────────────────────────────────────────────────────
+
+const moments = [
+  {
+    when: "Matin",
+    color: "var(--primary)",
+    title: "Tu planifies en deux minutes",
+    text: "DayAct te montre ta journée, te prévient si tu en prévois trop et te propose quoi reporter. Tu valides, c'est parti.",
+  },
+  {
+    when: "Journée",
+    color: "var(--secondary)",
+    title: "Tu suis la course du soleil",
+    text: "Ta journée est un arc du réveil au coucher. Tu vois d'un coup d'œil où tu en es et ce qui vient ensuite.",
+  },
+  {
+    when: "Soir",
+    color: "var(--cat-learning)",
+    title: "Tu fais le bilan",
+    text: "Ce qui est fait, ce qui reste, que tu reportes en un geste. Tu notes ton humeur et tu fermes la journée l'esprit léger.",
+  },
+];
+
 export default function Landing() {
   return (
     <main className="min-h-screen text-ink">
-      {/* Nav */}
-      <header className="sticky top-0 z-30">
-        <div className="mx-auto max-w-6xl px-4 sm:px-5 lg:px-8 pt-[max(env(safe-area-inset-top),16px)]">
-          <div className="glass rounded-[18px] flex items-center justify-between px-4 h-14">
-            <div className="flex items-center gap-2.5">
-              <span className="flex items-center justify-center w-9 h-9 rounded-md border border-line bg-surface glow-primary">
-                <LogoMark size={20} />
-              </span>
-              <span className="font-display text-xl font-medium text-primary tracking-tight">DayAct</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Link
-                href="/login"
-                className="px-2.5 sm:px-3.5 py-2 rounded-sm text-sm whitespace-nowrap text-ink-muted hover:text-ink transition-colors"
-              >
-                Se connecter
-              </Link>
-              <Link
-                href="/signup"
-                className="px-3.5 py-2 rounded-sm bg-primary text-on-fill text-sm font-medium whitespace-nowrap hover:bg-primary-hover transition-colors"
-              >
-                Commencer
-              </Link>
-            </div>
+      {/* Header */}
+      <header className="mx-auto max-w-6xl px-5 lg:px-8 pt-[max(env(safe-area-inset-top),20px)]">
+        <div className="flex items-center justify-between gap-2 py-2">
+          <Link href="/" className="flex items-center gap-2.5">
+            <LogoMark size={28} />
+            <span className="font-display text-[22px] sm:text-2xl font-medium text-primary tracking-tight">DayAct</span>
+          </Link>
+          <nav aria-label="Sections" className="hidden md:flex items-center gap-7 text-[15px] text-ink-muted">
+            <a href="#journee" className="hover:text-ink">Une journée</a>
+            <a href="#modules" className="hover:text-ink">Fonctionnalités</a>
+            <a href="#telephone" className="hover:text-ink">Sur téléphone</a>
+          </nav>
+          <div className="flex items-center gap-1.5">
+            <Link href="/login" className="px-2 sm:px-3 min-h-[44px] inline-flex items-center text-[15px] whitespace-nowrap text-ink hover:text-primary">
+              <span className="sm:hidden">Connexion</span>
+              <span className="hidden sm:inline">Se connecter</span>
+            </Link>
+            <Link href="/signup" className="px-4 sm:px-5 min-h-[44px] inline-flex items-center rounded-full bg-primary text-on-fill text-[15px] font-medium whitespace-nowrap hover:bg-primary-hover">
+              Commencer
+            </Link>
           </div>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="mx-auto max-w-6xl px-5 lg:px-8 pt-16 lg:pt-24 pb-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="rise">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-line bg-surface text-xs text-ink-muted mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-              Productivité & bien-être, propulsés par l'IA
-            </span>
-            <h1 className="font-display text-[2.6rem] lg:text-6xl font-normal leading-[1.05] tracking-tight">
-              Agis sur ta journée,
-              <br />
-              <span className="italic text-primary">pas juste la planifier.</span>
-            </h1>
-            <p className="mt-6 text-lg text-ink-muted leading-relaxed max-w-xl">
-              DayAct réunit tes <strong className="text-ink">tâches</strong>, ton{" "}
-              <strong className="text-ink">calendrier</strong>, tes{" "}
-              <strong className="text-ink">habitudes</strong> et un{" "}
-              <strong className="text-ink">assistant IA</strong> dans une seule app élégante.
-              Planifie en parlant, reste concentré, et suis tes progrès.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-3 mt-8">
-              <Link
-                href="/signup"
-                className="px-6 py-3 rounded-[14px] bg-primary text-on-fill text-sm font-semibold glow-primary hover:bg-primary-hover transition-colors"
-              >
-                Accéder gratuitement →
-              </Link>
-              <Link
-                href="/login"
-                className="px-6 py-3 rounded-[14px] glass text-sm font-medium hover:border-line-strong transition-colors"
-              >
-                J'ai déjà un compte
-              </Link>
-              <InstallApp variant="hero" />
-            </div>
-
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-7">
-              {["100% gratuit", "Données privées", "S'installe comme une app"].map((t) => (
-                <span key={t} className="flex items-center gap-1.5 text-xs text-ink-muted">
-                  <CheckIcon size={13} className="text-success" />
-                  {t}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="rise" style={{ animationDelay: "0.1s" }}>
-            <GlassPreview />
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="mx-auto max-w-6xl px-5 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h2 className="font-display text-3xl lg:text-4xl font-normal tracking-tight">
-            Tout pour <span className="italic text-primary">agir</span>, au même endroit
-          </h2>
-          <p className="mt-3 text-ink-muted">Six modules pensés pour ta journée.</p>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {features.map((f) => {
-            const Icon = f.icon;
-            return (
-              <div
-                key={f.title}
-                className="glass border-glow lift rounded-[22px] p-6 relative overflow-hidden"
-              >
-                <span
-                  className="flex items-center justify-center w-11 h-11 rounded-[12px] mb-4"
-                  style={{
-                    color: f.color,
-                    background: `color-mix(in srgb, ${f.color} 16%, transparent)`,
-                  }}
-                >
-                  <Icon size={20} />
-                </span>
-                <h3 className="text-base font-medium text-ink">{f.title}</h3>
-                <p className="mt-1.5 text-sm text-ink-muted leading-relaxed">{f.desc}</p>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="mx-auto max-w-4xl px-5 lg:px-8 py-16">
-        <div className="glass rounded-[28px] p-10 lg:p-14 text-center relative overflow-hidden">
-          <div
-            aria-hidden
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(142,44,31,0.16), transparent 70%)",
-            }}
-          />
-          <div className="relative">
-            <WellbeingIcon size={28} className="mx-auto text-accent mb-4" />
-            <h2 className="font-display text-3xl lg:text-4xl font-normal tracking-tight">
-              Prêt à reprendre ta journée en main ?
-            </h2>
-            <p className="mt-4 text-ink-muted max-w-lg mx-auto">
-              Crée ton compte gratuitement en 30 secondes. Aucune carte bancaire.
-            </p>
-            <Link
-              href="/signup"
-              className="inline-block mt-8 px-8 py-3.5 rounded-[14px] bg-primary text-on-fill text-sm font-semibold glow-primary hover:bg-primary-hover transition-colors"
-            >
-              Commencer gratuitement
+      <section className="mx-auto max-w-6xl px-5 lg:px-8 pt-10 lg:pt-16 pb-20 grid gap-14 lg:grid-cols-[1.15fr_1fr] items-center">
+        <div>
+          <p className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-line bg-surface text-sm text-secondary">
+            <span className="w-2 h-2 rounded-full bg-success" />
+            Productivité et bien-être, avec l&apos;IA
+          </p>
+          <h1 className="font-display font-normal text-[2.9rem] sm:text-6xl lg:text-[4.6rem] leading-[1.02] tracking-tight mt-6">
+            Agis sur ta journée, <em className="text-primary">pas juste la planifier.</em>
+          </h1>
+          <p className="mt-6 text-lg leading-relaxed text-ink-muted max-w-xl">
+            Tâches, agenda, habitudes et un assistant qui t&apos;écoute. Dis « réunion lundi 9 h », DayAct s&apos;occupe du reste.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/signup" className="min-h-[52px] px-7 inline-flex items-center rounded-full bg-primary text-on-fill text-base font-medium hover:bg-primary-hover">
+              Créer mon compte gratuit
             </Link>
+            <InstallApp variant="hero" />
           </div>
+          <p className="mt-5 text-sm text-ink-muted">Gratuit · Sans carte bancaire · Tes données restent à toi</p>
+        </div>
+        <PhonePreview />
+      </section>
+
+      {/* A day with DayAct */}
+      <section id="journee" className="border-y border-line bg-panel/70">
+        <div className="mx-auto max-w-6xl px-5 lg:px-8 py-20">
+          <h2 className="font-display font-normal text-4xl lg:text-5xl tracking-tight max-w-2xl">
+            Une journée avec <em className="text-primary">DayAct</em>
+          </h2>
+          <div className="mt-12 grid gap-10 md:grid-cols-3">
+            {moments.map((m) => (
+              <div key={m.when} className="border-t-2 pt-5" style={{ borderColor: m.color }}>
+                <p className="text-sm font-semibold uppercase tracking-[0.06em]" style={{ color: m.color }}>
+                  {m.when}
+                </p>
+                <h3 className="font-display text-2xl mt-2">{m.title}</h3>
+                <p className="mt-2 text-base leading-relaxed text-ink-muted">{m.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Modules */}
+      <section id="modules" className="mx-auto max-w-6xl px-5 lg:px-8 py-20">
+        <h2 className="font-display font-normal text-4xl lg:text-5xl tracking-tight">
+          Tout pour <em className="text-primary">agir</em>, au même endroit
+        </h2>
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="sm:col-span-2 rounded-[28px] bg-primary text-on-fill p-8 min-h-[240px] flex flex-col justify-end">
+            <h3 className="font-display text-3xl">Assistant IA</h3>
+            <p className="mt-2 text-base leading-relaxed text-cream max-w-md">
+              Écris ou parle normalement : il crée, déplace et planifie tes tâches, et te propose une journée réaliste.
+            </p>
+          </div>
+          <div className="rounded-[28px] border border-line bg-surface p-7">
+            <h3 className="font-display text-2xl">Agenda</h3>
+            <p className="mt-2 text-ink-muted">Mois, semaine, jour, glisser-déposer et alertes de chevauchement.</p>
+          </div>
+          <div className="rounded-[28px] border border-line bg-surface p-7">
+            <h3 className="font-display text-2xl">Tâches</h3>
+            <p className="mt-2 text-ink-muted">Priorités, durées, récurrence, rappels. Fait, reporté ou annulé en un geste.</p>
+          </div>
+          <div className="rounded-[28px] bg-sage p-7 text-ink">
+            <h3 className="font-display text-2xl">Habitudes</h3>
+            <p className="mt-2 text-ink/80">Coche chaque jour et garde tes séries vivantes.</p>
+          </div>
+          <div className="rounded-[28px] border border-line bg-surface p-7">
+            <h3 className="font-display text-2xl">Focus</h3>
+            <p className="mt-2 text-ink-muted">Minuteur Pomodoro qui compte ton vrai temps de concentration.</p>
+          </div>
+          <div className="sm:col-span-2 rounded-[28px] bg-cream p-7">
+            <h3 className="font-display text-2xl">Analyses et bien-être</h3>
+            <p className="mt-2 text-ink/80 max-w-lg">
+              Activité, objectifs, humeur, énergie et coach santé, pour comprendre ce qui te réussit.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Install on phone */}
+      <section id="telephone" className="mx-auto max-w-6xl px-5 lg:px-8 pb-20">
+        <div className="rounded-[36px] bg-secondary text-on-fill p-8 lg:p-14 grid gap-10 lg:grid-cols-2 items-center">
+          <div>
+            <h2 className="font-display font-normal text-4xl tracking-tight">
+              Sur ton téléphone, <em>sans passer par un store</em>
+            </h2>
+            <p className="mt-4 text-lg leading-relaxed text-on-fill/85">
+              DayAct s&apos;installe comme une vraie appli, gratuitement, sur iPhone et Android.
+            </p>
+          </div>
+          <ol className="flex flex-col gap-3">
+            {[
+              "Ouvre DayAct dans ton navigateur",
+              "Touche Partager (iPhone) ou le menu ⋮ (Android)",
+              "Choisis « Sur l'écran d'accueil »",
+            ].map((step, i) => (
+              <li key={step} className="flex items-center gap-4 rounded-[18px] bg-canvas text-ink px-5 py-4 text-base">
+                <span className="font-display text-3xl text-primary">{i + 1}</span>
+                {step}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* Final call */}
+      <section className="bg-primary text-on-fill">
+        <div className="mx-auto max-w-6xl px-5 lg:px-8 py-20 text-center">
+          <h2 className="font-display font-normal text-4xl lg:text-6xl tracking-tight max-w-3xl mx-auto">
+            Prêt à reprendre ta journée <em className="text-cream">en main</em> ?
+          </h2>
+          <Link href="/signup" className="mt-9 inline-flex items-center min-h-[54px] px-8 rounded-full bg-canvas text-primary text-base font-semibold">
+            Commencer gratuitement
+          </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="mx-auto max-w-6xl px-5 lg:px-8 py-10 border-t border-line">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <LogoMark size={18} />
-            <span className="text-sm text-ink-muted">DayAct — Act on your day</span>
-          </div>
-          <div className="flex items-center gap-5 text-sm text-ink-muted">
-            <Link href="/login" className="hover:text-ink transition-colors">
-              Connexion
-            </Link>
-            <Link href="/signup" className="hover:text-ink transition-colors">
-              Inscription
-            </Link>
-          </div>
-        </div>
-        <p className="text-center text-xs text-ink-muted/60 mt-6">
-          © 2026 DayAct · Productivité & bien-être
-        </p>
+      <footer className="mx-auto max-w-6xl px-5 lg:px-8 py-8 flex flex-wrap items-center justify-between gap-4 text-sm text-ink-muted">
+        <span className="flex items-center gap-2">
+          <LogoMark size={18} /> © 2026 DayAct · Agis sur ta journée
+        </span>
+        <span className="flex gap-5">
+          <Link href="/login" className="hover:text-ink">Connexion</Link>
+          <Link href="/signup" className="hover:text-ink">Inscription</Link>
+        </span>
       </footer>
     </main>
   );

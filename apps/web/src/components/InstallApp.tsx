@@ -69,13 +69,13 @@ export function InstallApp({ variant = "button" }: { variant?: "button" | "hero"
 
   const cls =
     variant === "hero"
-      ? "px-6 py-3 rounded-[14px] glass text-sm font-medium hover:border-line-strong transition-colors"
+      ? "min-h-[52px] px-6 inline-flex items-center rounded-full border border-line-strong bg-surface text-base font-medium text-ink hover:border-primary transition-colors"
       : "flex items-center gap-2 px-4 py-2.5 rounded-[12px] bg-primary text-on-fill text-sm font-medium hover:opacity-90 transition-opacity";
 
   return (
     <>
       <button onClick={install} className={cls}>
-        📲 Installer l&apos;application
+        Installer sur mon téléphone
       </button>
 
       <Modal open={guideOpen} onClose={() => setGuideOpen(false)} title="Installer DayAct">

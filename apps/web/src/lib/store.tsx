@@ -244,6 +244,7 @@ export type Action =
     }
   | { type: "UPDATE_TASK"; id: string; patch: Partial<Task> }
   | { type: "DELETE_TASK"; id: string }
+  | { type: "RESTORE_TASK"; task: Task }
   | { type: "TOGGLE_TASK"; id: string }
   | { type: "ADD_TIME"; id: string; minutes: number }
   | { type: "LOG_MOOD"; date: string; score: number }
@@ -296,6 +297,11 @@ function reducer(state: State, action: Action): State {
 
     case "DELETE_TASK":
       return { ...state, tasks: state.tasks.filter((t) => t.id !== action.id) };
+
+    case "RESTORE_TASK":
+      // Undo of a deletion: put the exact same task back (same id).
+      if (state.tasks.some((t) => t.id === action.task.id)) return state;
+      return { ...state, tasks: [...state.tasks, action.task] };
 
     case "TOGGLE_TASK":
       return {

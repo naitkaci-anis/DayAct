@@ -23,50 +23,19 @@ function base({ size = 18, strokeWidth = 1.6, ...props }: IconProps) {
 }
 
 export function LogoMark({ size = 24, ...props }: IconProps) {
+  // Solid colours (no gradient id) so several logos can live on one page.
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
-      <defs>
-        <linearGradient
-          id="dayact-logo"
-          x1="4"
-          y1="5"
-          x2="27"
-          y2="27"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#590907" />
-          <stop offset="1" stopColor="#8E2C1F" />
-        </linearGradient>
-      </defs>
-      {/* ring */}
-      <circle cx="16" cy="16" r="12.5" stroke="url(#dayact-logo)" strokeWidth="2.1" fill="none" />
-      {/* sun rays */}
-      <g stroke="url(#dayact-logo)" strokeWidth="1.3" strokeLinecap="round">
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true" {...props}>
+      <circle cx="16" cy="16" r="12.5" stroke="#590907" strokeWidth="2.1" fill="none" />
+      <g stroke="#8E2C1F" strokeWidth="1.3" strokeLinecap="round">
         <path d="M12.8 8.2v1.5" />
         <path d="M8.3 13.2h1.5" />
         <path d="M9.6 10l1 1" />
         <path d="M16 10l-1 1" />
       </g>
-      {/* sun */}
       <circle cx="12.8" cy="13.4" r="2.5" fill="#A5A79B" />
-      {/* hills / river */}
-      <path
-        d="M7 19.5c2.2-2 4-0.2 6-0.2s3.8-2 6 0"
-        stroke="url(#dayact-logo)"
-        strokeWidth="1.3"
-        strokeLinecap="round"
-        fill="none"
-        opacity="0.75"
-      />
-      {/* checkmark */}
-      <path
-        d="M12 17.6l3 3L23.2 12"
-        stroke="url(#dayact-logo)"
-        strokeWidth="2.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
+      <path d="M7 19.5c2.2-2 4-0.2 6-0.2s3.8-2 6 0" stroke="#A66A1C" strokeWidth="1.3" strokeLinecap="round" fill="none" opacity="0.8" />
+      <path d="M12 17.6l3 3L23.2 12" stroke="#590907" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
     </svg>
   );
 }

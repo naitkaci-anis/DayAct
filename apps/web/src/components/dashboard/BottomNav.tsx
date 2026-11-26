@@ -16,17 +16,18 @@ import {
   MoreIcon,
 } from "@/components/icons";
 
-// Phone-only tab bar (hidden from md up, where the top nav takes over).
-// 4 tabs + a central "new task" button; less-used pages live in "Plus".
+// Phone-only tab bar (hidden from md up, where the sidebar takes over).
+// Aujourd'hui · Agenda · [+] · Habitudes · Plus (Tâches, Analyses, Bien-être,
+// Réglages, Pomodoro).
 
 const tabs = [
   { href: "/dashboard", label: "Aujourd'hui", icon: TodayIcon },
-  { href: "/dashboard/tasks", label: "Tâches", icon: TasksIcon },
   { href: "/dashboard/calendar", label: "Agenda", icon: CalendarIcon },
+  { href: "/dashboard/habits", label: "Habitudes", icon: FlameIcon },
 ];
 
 const more = [
-  { href: "/dashboard/habits", label: "Habitudes", icon: FlameIcon },
+  { href: "/dashboard/tasks", label: "Tâches", icon: TasksIcon },
   { href: "/dashboard/insights", label: "Analyses", icon: InsightsIcon },
   { href: "/dashboard/wellbeing", label: "Bien-être", icon: WellbeingIcon },
   { href: "/dashboard/settings", label: "Réglages", icon: SettingsIcon },
