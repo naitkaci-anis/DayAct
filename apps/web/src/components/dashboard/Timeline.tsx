@@ -45,20 +45,20 @@ export function Timeline() {
   const nowVisible = nowPct != null && nowPct >= 0 && nowPct <= 100;
 
   return (
-    <section className="rounded-md border border-border bg-deep p-5">
+    <section className="rounded-md border border-line bg-surface p-5">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
-          <ClockIcon size={16} className="text-act-cyan" />
-          <h2 className="text-sm font-medium text-text">Planning du jour</h2>
+          <ClockIcon size={16} className="text-primary" />
+          <h2 className="text-sm font-medium text-ink">Planning du jour</h2>
         </div>
-        <span className="text-xs text-text-muted">08:00 — 21:00</span>
+        <span className="text-xs text-ink-muted">08:00 — 21:00</span>
       </div>
 
-      <div className="relative h-[88px] rounded-sm bg-[#0a0a14] border border-border overflow-hidden">
+      <div className="relative h-[88px] rounded-sm bg-field border border-line overflow-hidden">
         {Array.from({ length: 14 }).map((_, i) => (
           <div
             key={i}
-            className="absolute top-0 h-full w-px bg-border/50"
+            className="absolute top-0 h-full w-px bg-line/50"
             style={{ left: `${(i / 13) * 100}%` }}
           />
         ))}
@@ -85,29 +85,29 @@ export function Timeline() {
             >
               <p
                 className={`text-[10px] leading-tight truncate ${
-                  task.done ? "line-through text-text-muted" : "text-text"
+                  task.done ? "line-through text-ink-muted" : "text-ink"
                 }`}
               >
                 {task.title}
               </p>
-              <p className="text-[9px] leading-tight text-text-muted">{task.time}</p>
+              <p className="text-[9px] leading-tight text-ink-muted">{task.time}</p>
             </button>
           );
         })}
 
         {nowVisible && (
           <div
-            className="absolute top-0 h-full w-px bg-act-cyan z-10"
-            style={{ left: `${nowPct}%`, boxShadow: "0 0 8px rgba(6,182,212,0.6)" }}
+            className="absolute top-0 h-full w-px bg-primary z-10"
+            style={{ left: `${nowPct}%`, boxShadow: "0 0 8px rgba(89,9,7,0.6)" }}
           >
-            <span className="absolute top-0 -translate-x-1/2 w-2 h-2 rounded-full bg-act-cyan" />
+            <span className="absolute top-0 -translate-x-1/2 w-2 h-2 rounded-full bg-primary" />
           </div>
         )}
       </div>
 
       <div className="flex justify-between mt-2 px-0.5">
         {["08h", "11h", "14h", "17h", "20h"].map((h) => (
-          <span key={h} className="text-[10px] text-text-muted">
+          <span key={h} className="text-[10px] text-ink-muted">
             {h}
           </span>
         ))}
@@ -117,7 +117,7 @@ export function Timeline() {
         {Object.entries(categoryMeta).map(([key, meta]) => (
           <div key={key} className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full" style={{ background: meta.color }} />
-            <span className="text-[11px] text-text-muted">{meta.label}</span>
+            <span className="text-[11px] text-ink-muted">{meta.label}</span>
           </div>
         ))}
       </div>

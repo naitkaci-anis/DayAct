@@ -6,8 +6,9 @@
       "dependsOn": ["^build"],
       "env": [
         "AI_PROVIDER",
-        "ANTHROPIC_API_KEY",
-        "ANTHROPIC_MODEL",
+        "GEMINI_API_KEY",
+        "GEMINI_MODEL",
+        "AI_DAILY_LIMIT",
         "OLLAMA_BASE_URL",
         "OLLAMA_MODEL",
         "NEXT_PUBLIC_SUPABASE_URL",

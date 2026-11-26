@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { TopNav } from "./TopNav";
+import { BottomNav } from "./BottomNav";
 import { Pomodoro } from "./Pomodoro";
 import { ReminderScheduler } from "./ReminderScheduler";
 import { AssistantChat } from "./AssistantChat";
@@ -52,7 +53,7 @@ export function UIShell({ children }: { children: ReactNode }) {
 
   return (
     <UIContext.Provider value={value}>
-      <div className="flex flex-col h-[100dvh] text-text overflow-hidden">
+      <div className="flex flex-col h-[100dvh] text-ink overflow-hidden">
         <TopNav
           onNewTask={() => value.openNew()}
           onFocus={() => setPomodoroOpen(true)}
@@ -67,11 +68,13 @@ export function UIShell({ children }: { children: ReactNode }) {
               children
             ) : (
               <div className="flex items-center justify-center py-32">
-                <span className="text-sm text-text-muted animate-pulse">Chargement…</span>
+                <span className="text-sm text-ink-muted animate-pulse">Chargement…</span>
               </div>
             )}
           </div>
         </main>
+
+        <BottomNav onNewTask={() => value.openNew()} onFocus={() => setPomodoroOpen(true)} />
       </div>
 
       <Composer composer={composer} onClose={() => setComposer({ open: false })} />

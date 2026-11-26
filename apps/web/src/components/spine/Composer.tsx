@@ -248,50 +248,50 @@ export function Composer({
       <div className="space-y-4">
         {/* Title */}
         <div>
-          <label className="block text-xs text-text-muted mb-1.5">Titre</label>
+          <label className="block text-xs text-ink-muted mb-1.5">Titre</label>
           <input
             autoFocus
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && save()}
             placeholder="Ex. Appeler le consulat"
-            className="w-full px-3 py-2 rounded-sm bg-[#0a0a14] border border-border text-sm text-text placeholder:text-text-muted/60 focus:border-act-cyan outline-none transition-colors"
+            className="w-full px-3 py-2 rounded-sm bg-field border border-line text-sm text-ink placeholder:text-ink-muted/60 focus:border-primary outline-none transition-colors"
           />
         </div>
 
         {/* Date */}
         <div>
-          <label className="block text-xs text-text-muted mb-1.5">Date</label>
+          <label className="block text-xs text-ink-muted mb-1.5">Date</label>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full px-3 py-2 rounded-sm bg-[#0a0a14] border border-border text-sm text-text focus:border-act-cyan outline-none transition-colors"
+            className="w-full px-3 py-2 rounded-sm bg-field border border-line text-sm text-ink focus:border-primary outline-none transition-colors"
           />
         </div>
 
         {/* Interval: start → end */}
         <div>
-          <label className="block text-xs text-text-muted mb-1.5">Créneau horaire</label>
+          <label className="block text-xs text-ink-muted mb-1.5">Créneau horaire</label>
           <div className="flex items-center gap-2">
             <input
               type="time"
               value={startTime}
               onChange={(e) => changeStart(e.target.value)}
-              className="flex-1 px-3 py-2 rounded-sm bg-[#0a0a14] border border-border text-sm text-text focus:border-act-cyan outline-none transition-colors"
+              className="flex-1 px-3 py-2 rounded-sm bg-field border border-line text-sm text-ink focus:border-primary outline-none transition-colors"
             />
-            <span className="text-text-muted text-sm">→</span>
+            <span className="text-ink-muted text-sm">→</span>
             <input
               type="time"
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="flex-1 px-3 py-2 rounded-sm bg-[#0a0a14] border border-border text-sm text-text focus:border-act-cyan outline-none transition-colors"
+              className="flex-1 px-3 py-2 rounded-sm bg-field border border-line text-sm text-ink focus:border-primary outline-none transition-colors"
             />
           </div>
           <div className="flex items-center justify-between mt-1.5">
-            <p className="text-[11px] text-text-muted">
+            <p className="text-[11px] text-ink-muted">
               Durée estimée :{" "}
-              <span className={estimatedMin > 0 ? "text-act-cyan" : "text-alert-red"}>
+              <span className={estimatedMin > 0 ? "text-primary" : "text-danger"}>
                 {estimatedMin > 0 ? formatDuration(estimatedMin) : "fin avant le début"}
               </span>
             </p>
@@ -302,7 +302,7 @@ export function Composer({
                   key={m}
                   type="button"
                   onClick={() => setEndTime(addMinutes(startTime, m))}
-                  className="px-1.5 py-0.5 rounded-[4px] border border-border text-[10px] text-text-muted hover:text-text hover:border-act-cyan transition-colors"
+                  className="px-1.5 py-0.5 rounded-[4px] border border-line text-[10px] text-ink-muted hover:text-ink hover:border-primary transition-colors"
                 >
                   {m < 60 ? `${m}min` : `${m / 60}h`}
                 </button>
@@ -313,13 +313,13 @@ export function Composer({
 
         {/* Conflict warning */}
         {conflicts.length > 0 && (
-          <div className="rounded-sm border border-alert-red/40 bg-alert-red/10 px-3 py-2.5">
-            <p className="text-xs text-alert-red font-medium">
+          <div className="rounded-sm border border-danger/40 bg-danger/10 px-3 py-2.5">
+            <p className="text-xs text-danger font-medium">
               ⚠ Chevauchement avec {conflicts.length} tâche{conflicts.length > 1 ? "s" : ""}
             </p>
             <ul className="mt-1 space-y-0.5">
               {conflicts.slice(0, 3).map((c) => (
-                <li key={c.id} className="text-[11px] text-text-muted">
+                <li key={c.id} className="text-[11px] text-ink-muted">
                   {c.title} ({c.time} · {formatDuration(c.durationMin)})
                 </li>
               ))}
@@ -329,7 +329,7 @@ export function Composer({
 
         {/* Priority */}
         <div>
-          <label className="block text-xs text-text-muted mb-1.5">Priorité</label>
+          <label className="block text-xs text-ink-muted mb-1.5">Priorité</label>
           <div className="flex gap-2">
             {priorities.map((p) => {
               const meta = priorityMeta[p];
@@ -339,7 +339,7 @@ export function Composer({
                   key={p}
                   onClick={() => setPriority(p)}
                   className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-sm border text-sm transition-colors ${
-                    active ? "border-transparent text-text" : "border-border text-text-muted"
+                    active ? "border-transparent text-ink" : "border-line text-ink-muted"
                   }`}
                   style={active ? { background: `color-mix(in srgb, ${meta.color} 18%, transparent)` } : undefined}
                 >
@@ -353,7 +353,7 @@ export function Composer({
 
         {/* Category */}
         <div>
-          <label className="block text-xs text-text-muted mb-1.5">Catégorie</label>
+          <label className="block text-xs text-ink-muted mb-1.5">Catégorie</label>
           <div className="grid grid-cols-4 gap-2">
             {categories.map((c) => {
               const meta = categoryMeta[c];
@@ -363,7 +363,7 @@ export function Composer({
                   key={c}
                   onClick={() => setCategory(c)}
                   className={`px-2 py-2 rounded-sm border text-xs transition-colors ${
-                    active ? "border-transparent text-text" : "border-border text-text-muted"
+                    active ? "border-transparent text-ink" : "border-line text-ink-muted"
                   }`}
                   style={active ? { background: `color-mix(in srgb, ${meta.color} 18%, transparent)`, color: meta.color } : undefined}
                 >
@@ -377,7 +377,7 @@ export function Composer({
         {/* Recurrence (only meaningful for new tasks) */}
         {!editing && (
           <div>
-            <label className="block text-xs text-text-muted mb-1.5">Répétition</label>
+            <label className="block text-xs text-ink-muted mb-1.5">Répétition</label>
             <div className="flex flex-wrap gap-2">
               {recurrenceOptions.map((opt) => {
                 const active = recMode === opt.id;
@@ -388,8 +388,8 @@ export function Composer({
                     onClick={() => setRecMode(opt.id)}
                     className={`px-3 py-2 rounded-sm border text-xs transition-colors ${
                       active
-                        ? "border-transparent bg-act-cyan/15 text-act-cyan"
-                        : "border-border text-text-muted hover:text-text"
+                        ? "border-transparent bg-primary/15 text-primary"
+                        : "border-line text-ink-muted hover:text-ink"
                     }`}
                   >
                     {opt.label}
@@ -400,8 +400,8 @@ export function Composer({
 
             {/* Custom weekday picker */}
             {recMode === "custom" && (
-              <div className="mt-3 rounded-sm border border-border bg-[#0a0a14] p-3">
-                <p className="text-[11px] text-text-muted mb-2">
+              <div className="mt-3 rounded-sm border border-line bg-field p-3">
+                <p className="text-[11px] text-ink-muted mb-2">
                   Choisis les jours de la semaine :
                 </p>
                 <div className="flex items-center gap-1.5">
@@ -415,8 +415,8 @@ export function Composer({
                         title={WEEKDAY_FULL[idx]}
                         className={`flex-1 h-9 rounded-sm border text-xs font-medium transition-colors ${
                           on
-                            ? "border-transparent bg-act-cyan text-[#0a0a14]"
-                            : "border-border text-text-muted hover:text-text hover:border-act-cyan/50"
+                            ? "border-transparent bg-primary text-on-fill"
+                            : "border-line text-ink-muted hover:text-ink hover:border-primary/50"
                         }`}
                       >
                         {lbl}
@@ -437,22 +437,22 @@ export function Composer({
                 <span
                   className={`flex items-center justify-center w-5 h-5 rounded-[5px] border transition-colors ${
                     repeatAlways
-                      ? "bg-act-cyan border-act-cyan text-[#0a0a14]"
-                      : "border-border text-transparent"
+                      ? "bg-primary border-primary text-on-fill"
+                      : "border-line text-transparent"
                   }`}
                 >
                   <CheckIcon size={13} />
                 </span>
-                <span className="text-xs text-text">
+                <span className="text-xs text-ink">
                   Répéter toujours ces jours
-                  <span className="text-text-muted"> (sur ~3 mois)</span>
+                  <span className="text-ink-muted"> (sur ~3 mois)</span>
                 </span>
               </button>
             )}
 
             {/* Info line */}
             {recMode !== "none" && (
-              <p className="text-[11px] text-text-muted mt-2">
+              <p className="text-[11px] text-ink-muted mt-2">
                 {recMode === "weekly"
                   ? `Chaque semaine, sur ${repeatAlways ? "26" : "12"} semaines.`
                   : recMode === "weekdays"
@@ -469,7 +469,7 @@ export function Composer({
 
         {/* Reminder */}
         <div>
-          <label className="block text-xs text-text-muted mb-1.5">Rappel avant la tâche</label>
+          <label className="block text-xs text-ink-muted mb-1.5">Rappel avant la tâche</label>
           <div className="flex flex-wrap gap-2">
             {reminderOptions.map((opt) => {
               const active = reminder === opt.id;
@@ -479,8 +479,8 @@ export function Composer({
                   onClick={() => setReminder(opt.id)}
                   className={`px-2.5 py-1.5 rounded-sm border text-xs transition-colors ${
                     active
-                      ? "border-transparent bg-act-cyan/15 text-act-cyan"
-                      : "border-border text-text-muted hover:text-text"
+                      ? "border-transparent bg-primary/15 text-primary"
+                      : "border-line text-ink-muted hover:text-ink"
                   }`}
                 >
                   {opt.label}
@@ -488,7 +488,7 @@ export function Composer({
               );
             })}
           </div>
-          <p className="text-[11px] text-text-muted mt-1.5">
+          <p className="text-[11px] text-ink-muted mt-1.5">
             {reminder === "auto"
               ? "Auto : rappel 1 jour avant ET 3 h avant (avec sonnerie)."
               : reminder === "none"
@@ -507,15 +507,15 @@ export function Composer({
             <span
               className={`flex items-center justify-center w-5 h-5 rounded-[5px] border transition-colors ${
                 ringAtStart
-                  ? "bg-act-cyan border-act-cyan text-[#0a0a14]"
-                  : "border-border text-transparent"
+                  ? "bg-primary border-primary text-on-fill"
+                  : "border-line text-transparent"
               }`}
             >
               <CheckIcon size={13} />
             </span>
-            <span className="text-xs text-text">🔔 Sonner à l'heure de la tâche</span>
+            <span className="text-xs text-ink">🔔 Sonner à l'heure de la tâche</span>
           </button>
-          <p className="text-[11px] text-text-muted mt-1.5">
+          <p className="text-[11px] text-ink-muted mt-1.5">
             {ringAtStart
               ? "Une alerte (son + notification) se déclenchera PILE à l'heure de début."
               : "Coche pour recevoir une alerte sonore exactement à l'heure de début."}
@@ -524,13 +524,13 @@ export function Composer({
 
         {/* Notes */}
         <div>
-          <label className="block text-xs text-text-muted mb-1.5">Notes (optionnel)</label>
+          <label className="block text-xs text-ink-muted mb-1.5">Notes (optionnel)</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={2}
             placeholder="Détails…"
-            className="w-full px-3 py-2 rounded-sm bg-[#0a0a14] border border-border text-sm text-text placeholder:text-text-muted/60 focus:border-act-cyan outline-none transition-colors resize-none"
+            className="w-full px-3 py-2 rounded-sm bg-field border border-line text-sm text-ink placeholder:text-ink-muted/60 focus:border-primary outline-none transition-colors resize-none"
           />
         </div>
 
@@ -539,14 +539,14 @@ export function Composer({
           <button
             onClick={save}
             disabled={!canSave}
-            className="flex-1 px-4 py-2.5 rounded-sm bg-act-cyan text-[#0a0a14] text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+            className="flex-1 px-4 py-2.5 rounded-sm bg-primary text-on-fill text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
           >
             {editing ? "Enregistrer" : "Ajouter"}
           </button>
           {editing && (
             <button
               onClick={remove}
-              className="px-3 py-2.5 rounded-sm border border-border text-alert-red hover:bg-alert-red/10 transition-colors"
+              className="px-3 py-2.5 rounded-sm border border-line text-danger hover:bg-danger/10 transition-colors"
               aria-label="Supprimer"
             >
               <TrashIcon size={16} />

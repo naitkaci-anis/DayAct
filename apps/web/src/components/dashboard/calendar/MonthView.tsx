@@ -35,13 +35,13 @@ export function MonthView({
   }
 
   return (
-    <div className="rounded-md border border-border bg-deep overflow-hidden">
+    <div className="rounded-md border border-line bg-surface overflow-hidden">
       {/* weekday header */}
-      <div className="grid grid-cols-7 border-b border-border">
+      <div className="grid grid-cols-7 border-b border-line">
         {WEEKDAYS.map((d) => (
           <div
             key={d}
-            className="py-2 text-center text-[11px] text-text-muted border-r border-border last:border-r-0"
+            className="py-2 text-center text-[11px] text-ink-muted border-r border-line last:border-r-0"
           >
             {d}
           </div>
@@ -51,7 +51,7 @@ export function MonthView({
       {/* weeks */}
       <div className="grid grid-rows-6">
         {weeks.map((week, wi) => (
-          <div key={wi} className="grid grid-cols-7 border-b border-border last:border-b-0">
+          <div key={wi} className="grid grid-cols-7 border-b border-line last:border-b-0">
             {week.map((date) => {
               const inMonth = sameMonth(date, anchor);
               const isToday = date === today;
@@ -65,14 +65,17 @@ export function MonthView({
               return (
                 <div
                   key={date}
-                  onClick={() => openNew({ date, time: "09:00" })}
+                  onClick={() =>
+                    // Phone: open the day. Larger screens: quick-add a task.
+                    window.innerWidth < 640 ? onOpenDay(date) : openNew({ date, time: "09:00" })
+                  }
                   title="Cliquer pour ajouter une tâche"
-                  className={`min-h-[96px] border-r border-border last:border-r-0 p-1.5 cursor-copy hover:bg-act-cyan/[0.04] transition-colors ${
-                    inMonth ? "" : "bg-[#0a0a14]/40"
+                  className={`min-h-[60px] sm:min-h-[96px] border-r border-line last:border-r-0 p-1.5 cursor-copy hover:bg-primary/[0.04] transition-colors ${
+                    inMonth ? "" : "bg-field/40"
                   }`}
                 >
                   {/* day number */}
-                  <div className="flex justify-end mb-1">
+                  <div className="flex justify-center sm:justify-end mb-1">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -80,18 +83,34 @@ export function MonthView({
                       }}
                       className={`flex items-center justify-center w-6 h-6 rounded-full text-xs transition-colors ${
                         isToday
-                          ? "bg-act-cyan text-[#0a0a14] font-medium"
+                          ? "bg-primary text-on-fill font-medium"
                           : inMonth
-                          ? "text-text hover:bg-[#1f2937]"
-                          : "text-text-muted/50 hover:bg-[#1f2937]"
+                          ? "text-ink hover:bg-line"
+                          : "text-ink-muted/50 hover:bg-line"
                       }`}
                     >
                       {dayNum}
                     </button>
                   </div>
 
-                  {/* task chips */}
-                  <div className="space-y-1">
+                  {/* phone: one dot per task (max 4) */}
+                  {dayTasks.length > 0 && (
+                    <div className="sm:hidden flex justify-center gap-[3px] mt-0.5">
+                      {dayTasks.slice(0, 4).map((t) => (
+                        <span
+                          key={t.id}
+                          className="w-[5px] h-[5px] rounded-full"
+                          style={{
+                            background: categoryMeta[t.category].color,
+                            opacity: t.done ? 0.35 : 1,
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {/* task chips (tablet & desktop) */}
+                  <div className="hidden sm:block space-y-1">
                     {shown.map((t) => {
                       const color = categoryMeta[t.category].color;
                       return (
@@ -114,7 +133,7 @@ export function MonthView({
                           />
                           <span
                             className={`text-[10px] truncate ${
-                              t.done ? "line-through text-text-muted" : "text-text"
+                              t.done ? "line-through text-ink-muted" : "text-ink"
                             }`}
                           >
                             {t.title}
@@ -128,7 +147,7 @@ export function MonthView({
                           e.stopPropagation();
                           onOpenDay(date);
                         }}
-                        className="text-[10px] text-text-muted hover:text-text px-1.5"
+                        className="text-[10px] text-ink-muted hover:text-ink px-1.5"
                       >
                         +{extra} autre{extra > 1 ? "s" : ""}
                       </button>
@@ -144,7 +163,7 @@ export function MonthView({
                     if (done.length === 0 && remaining === 0) return null;
                     return (
                       <div
-                        className="flex items-center gap-0.5 flex-wrap mt-1 px-1"
+                        className="hidden sm:flex items-center gap-0.5 flex-wrap mt-1 px-1"
                         title="Habitudes"
                       >
                         {done.slice(0, 6).map((c, i) => (
@@ -158,7 +177,7 @@ export function MonthView({
                           (_, i) => (
                             <span
                               key={`r${i}`}
-                              className="w-1.5 h-1.5 rounded-full border border-text-muted/40"
+                              className="w-1.5 h-1.5 rounded-full border border-ink-muted/40"
                             />
                           )
                         )}

@@ -59,11 +59,11 @@ function StatTile({
       >
         {icon}
       </span>
-      <p className="text-xl font-light text-text" style={{ letterSpacing: "-0.02em" }}>
+      <p className="text-xl font-light text-ink" style={{ letterSpacing: "-0.02em" }}>
         {value}
       </p>
-      <p className="text-[11px] text-text-muted mt-0.5">
-        {label} · <span className="text-text-muted/70">{hint}</span>
+      <p className="text-[11px] text-ink-muted mt-0.5">
+        {label} · <span className="text-ink-muted/70">{hint}</span>
       </p>
     </div>
   );
@@ -83,10 +83,10 @@ function HabitsQuickCard({ delay }: { delay: number }) {
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <FlameIcon size={15} className="text-energy-amber" />
-          <h2 className="text-sm font-medium text-text">Habitudes</h2>
+          <FlameIcon size={15} className="text-warning" />
+          <h2 className="text-sm font-medium text-ink">Habitudes</h2>
         </div>
-        <span className="text-xs text-text-muted">
+        <span className="text-xs text-ink-muted">
           {done}/{state.habits.length}
         </span>
       </div>
@@ -94,7 +94,7 @@ function HabitsQuickCard({ delay }: { delay: number }) {
       {habits.length === 0 ? (
         <Link
           href="/dashboard/habits"
-          className="flex-1 flex items-center justify-center text-xs text-act-cyan hover:underline py-6"
+          className="flex-1 flex items-center justify-center text-xs text-primary hover:underline py-6"
         >
           + Créer ta première habitude
         </Link>
@@ -107,11 +107,11 @@ function HabitsQuickCard({ delay }: { delay: number }) {
               <li key={h.id}>
                 <button
                   onClick={() => dispatch({ type: "TOGGLE_HABIT", habitId: h.id, date: today })}
-                  className="w-full flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 hover:bg-white/[0.04] transition-colors text-left"
+                  className="w-full flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 hover:bg-ink/[0.04] transition-colors text-left"
                 >
                   <span
                     className={`flex items-center justify-center w-[18px] h-[18px] shrink-0 rounded-[6px] border transition-colors ${
-                      checked ? "text-[#0a0a14]" : "border-[#374151]"
+                      checked ? "text-on-fill" : "border-line-strong"
                     }`}
                     style={checked ? { background: h.color, borderColor: h.color } : { color: h.color }}
                   >
@@ -120,13 +120,13 @@ function HabitsQuickCard({ delay }: { delay: number }) {
                   <span className="text-base leading-none">{h.emoji}</span>
                   <span
                     className={`flex-1 text-[13px] truncate ${
-                      checked ? "text-text-muted line-through" : "text-text"
+                      checked ? "text-ink-muted line-through" : "text-ink"
                     }`}
                   >
                     {h.name}
                   </span>
                   {streak > 0 && (
-                    <span className="text-[10px] text-energy-amber shrink-0">🔥{streak}</span>
+                    <span className="text-[10px] text-warning shrink-0">🔥{streak}</span>
                   )}
                 </button>
               </li>
@@ -137,7 +137,7 @@ function HabitsQuickCard({ delay }: { delay: number }) {
 
       <Link
         href="/dashboard/habits"
-        className="mt-2 flex items-center justify-center gap-1 text-[11px] text-text-muted hover:text-act-cyan transition-colors"
+        className="mt-2 flex items-center justify-center gap-1 text-[11px] text-ink-muted hover:text-primary transition-colors"
       >
         Tout voir <ChevronRightIcon size={12} />
       </Link>
@@ -182,39 +182,39 @@ export default function TodayPage() {
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                "radial-gradient(ellipse 70% 60% at 85% 20%, rgba(139,92,246,0.14), transparent 65%)",
+                "radial-gradient(ellipse 70% 60% at 85% 20%, rgba(95,101,86,0.14), transparent 65%)",
             }}
           />
           <div className="relative flex items-center gap-6">
             <div className="min-w-0 flex-1">
               <h1
-                className="text-2xl lg:text-3xl font-light text-text tracking-tight"
+                className="font-display text-[1.75rem] lg:text-4xl font-normal text-ink tracking-tight"
                 style={{ letterSpacing: "-0.02em" }}
               >
                 {name ? (
                   <>
                     {greeting},{" "}
-                    <span className="text-gradient-cyan gradient-flow">{name}</span>
+                    <span className="italic text-primary">{name}</span>
                   </>
                 ) : (
                   <>
-                    {greeting} <span className="text-gradient-cyan gradient-flow">toi</span>
+                    {greeting} <span className="italic text-primary">toi</span>
                   </>
                 )}{" "}
                 <span className="wave">👋</span>
               </h1>
               {!name && (
-                <p className="text-[11px] text-text-muted mt-1">
-                  <Link href="/dashboard/settings" className="text-act-cyan hover:underline">
+                <p className="text-[11px] text-ink-muted mt-1">
+                  <Link href="/dashboard/settings" className="text-primary hover:underline">
                     Ajoute ton prénom dans les paramètres
                   </Link>{" "}
                   pour une salutation personnalisée.
                 </p>
               )}
-              <p className="text-sm text-text-muted mt-1.5">
+              <p className="text-sm text-ink-muted mt-1.5">
                 {formatLongDate(state.selectedDate)}
               </p>
-              <p className="text-sm text-text-muted mt-4">
+              <p className="text-sm text-ink-muted mt-4">
                 {tasks.length === 0
                   ? "Journée libre — planifie ta première tâche."
                   : remaining === 0
@@ -225,14 +225,14 @@ export default function TodayPage() {
               <div className="flex flex-wrap items-center gap-2.5 mt-5">
                 <button
                   onClick={() => openNew()}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-[12px] bg-act-cyan text-[#050816] text-sm font-medium hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-[12px] bg-primary text-on-fill text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   <PlusIcon size={15} />
                   Nouvelle tâche
                 </button>
                 <Link
                   href="/dashboard/calendar"
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-[12px] glass text-sm text-text-muted hover:text-text transition-colors"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-[12px] glass text-sm text-ink-muted hover:text-ink transition-colors"
                 >
                   Voir le calendrier
                 </Link>
@@ -243,7 +243,7 @@ export default function TodayPage() {
             <div className="hidden sm:flex flex-col items-center shrink-0">
               <div className="relative w-[104px] h-[104px]">
                 <svg width="104" height="104" viewBox="0 0 104 104" className="-rotate-90">
-                  <circle cx="52" cy="52" r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="8" />
+                  <circle cx="52" cy="52" r={r} fill="none" stroke="rgba(89,9,7,0.08)" strokeWidth="8" />
                   <circle
                     cx="52"
                     cy="52"
@@ -258,14 +258,14 @@ export default function TodayPage() {
                   />
                   <defs>
                     <linearGradient id="heroRing" x1="0" y1="0" x2="104" y2="104">
-                      <stop stopColor="#5be7ff" />
-                      <stop offset="1" stopColor="#8b5cf6" />
+                      <stop stopColor="#590907" />
+                      <stop offset="1" stopColor="#5F6556" />
                     </linearGradient>
                   </defs>
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-xl font-light text-text">{pct}%</span>
-                  <span className="text-[9px] text-text-muted">du jour</span>
+                  <span className="text-xl font-light text-ink">{pct}%</span>
+                  <span className="text-[9px] text-ink-muted">du jour</span>
                 </div>
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function TodayPage() {
           label="Tâches"
           value={`${done}/${tasks.length}`}
           hint={remaining > 0 ? `${remaining} restantes` : "terminé 🎉"}
-          color="#5be7ff"
+          color="#590907"
           delay={0.1}
         />
         <StatTile
@@ -291,7 +291,7 @@ export default function TodayPage() {
           label="Focus"
           value={`${Math.floor(focusMin / 60)}h${String(focusMin % 60).padStart(2, "0")}`}
           hint="objectif 4h"
-          color="#8b5cf6"
+          color="#5F6556"
           delay={0.15}
         />
         <StatTile
@@ -299,7 +299,7 @@ export default function TodayPage() {
           label="Énergie"
           value={`${state.settings.energy}%`}
           hint={state.settings.energy >= 60 ? "en forme" : "à recharger"}
-          color="#f59e0b"
+          color="#A0661A"
           delay={0.2}
         />
         <StatTile
@@ -307,7 +307,7 @@ export default function TodayPage() {
           label="Humeur"
           value={mood != null ? `${mood}` : "—"}
           hint={mood != null ? "/100" : "à renseigner"}
-          color="#22c55e"
+          color="#4E6B35"
           delay={0.25}
         />
       </div>

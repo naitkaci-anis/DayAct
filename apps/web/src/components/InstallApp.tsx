@@ -69,8 +69,8 @@ export function InstallApp({ variant = "button" }: { variant?: "button" | "hero"
 
   const cls =
     variant === "hero"
-      ? "px-6 py-3 rounded-[14px] glass text-sm font-medium hover:border-white/20 transition-colors"
-      : "flex items-center gap-2 px-4 py-2.5 rounded-[12px] bg-act-cyan text-[#050816] text-sm font-medium hover:opacity-90 transition-opacity";
+      ? "px-6 py-3 rounded-[14px] glass text-sm font-medium hover:border-line-strong transition-colors"
+      : "flex items-center gap-2 px-4 py-2.5 rounded-[12px] bg-primary text-on-fill text-sm font-medium hover:opacity-90 transition-opacity";
 
   return (
     <>
@@ -80,7 +80,7 @@ export function InstallApp({ variant = "button" }: { variant?: "button" | "hero"
 
       <Modal open={guideOpen} onClose={() => setGuideOpen(false)} title="Installer DayAct">
         <div className="space-y-5">
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-ink-muted">
             DayAct s&apos;installe comme une vraie app — icône sur l&apos;écran d&apos;accueil,
             plein écran, gratuit.
           </p>
@@ -93,8 +93,8 @@ export function InstallApp({ variant = "button" }: { variant?: "button" | "hero"
                 "Fais défiler et touche « Sur l'écran d'accueil ».",
                 "Touche « Ajouter » — c'est fait ! 🎉",
               ].map((step, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm text-text">
-                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-act-cyan/15 text-act-cyan text-[11px] shrink-0 mt-0.5">
+                <li key={i} className="flex items-start gap-3 text-sm text-ink">
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/15 text-primary text-[11px] shrink-0 mt-0.5">
                     {i + 1}
                   </span>
                   {step}
@@ -104,23 +104,23 @@ export function InstallApp({ variant = "button" }: { variant?: "button" | "hero"
           ) : (
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-medium text-text mb-2">📱 Sur Android (Chrome)</p>
-                <p className="text-sm text-text-muted">
-                  Menu <span className="text-text">⋮</span> (en haut à droite) →{" "}
-                  <span className="text-text">« Installer l&apos;application »</span> ou
+                <p className="text-xs font-medium text-ink mb-2">📱 Sur Android (Chrome)</p>
+                <p className="text-sm text-ink-muted">
+                  Menu <span className="text-ink">⋮</span> (en haut à droite) →{" "}
+                  <span className="text-ink">« Installer l&apos;application »</span> ou
                   « Ajouter à l&apos;écran d&apos;accueil ».
                 </p>
               </div>
               <div>
-                <p className="text-xs font-medium text-text mb-2">💻 Sur ordinateur (Chrome/Edge)</p>
-                <p className="text-sm text-text-muted">
+                <p className="text-xs font-medium text-ink mb-2">💻 Sur ordinateur (Chrome/Edge)</p>
+                <p className="text-sm text-ink-muted">
                   Clique la petite icône d&apos;installation{" "}
-                  <span className="text-text">⊕</span> à droite de la barre d&apos;adresse.
+                  <span className="text-ink">⊕</span> à droite de la barre d&apos;adresse.
                 </p>
               </div>
               <div>
-                <p className="text-xs font-medium text-text mb-2">🍎 Sur iPhone/iPad</p>
-                <p className="text-sm text-text-muted">
+                <p className="text-xs font-medium text-ink mb-2">🍎 Sur iPhone/iPad</p>
+                <p className="text-sm text-ink-muted">
                   Ouvre le site dans Safari → bouton Partager →
                   « Sur l&apos;écran d&apos;accueil ».
                 </p>
@@ -130,7 +130,7 @@ export function InstallApp({ variant = "button" }: { variant?: "button" | "hero"
 
           <button
             onClick={() => setGuideOpen(false)}
-            className="w-full px-4 py-2.5 rounded-[12px] bg-act-cyan text-[#050816] text-sm font-medium hover:opacity-90 transition-opacity"
+            className="w-full px-4 py-2.5 rounded-[12px] bg-primary text-on-fill text-sm font-medium hover:opacity-90 transition-opacity"
           >
             Compris !
           </button>

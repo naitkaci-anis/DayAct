@@ -24,10 +24,10 @@ function Bar({ value, goal, color, label, valueLabel }: {
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-sm text-text">{label}</span>
-        <span className="text-xs text-text-muted">{valueLabel}</span>
+        <span className="text-sm text-ink">{label}</span>
+        <span className="text-xs text-ink-muted">{valueLabel}</span>
       </div>
-      <div className="h-2 rounded-full bg-[#0a0a14] overflow-hidden">
+      <div className="h-2 rounded-full bg-field overflow-hidden">
         <div
           className="h-full rounded-full transition-all"
           style={{ width: `${pct}%`, background: color }}
@@ -73,15 +73,15 @@ export function Goals() {
     .reduce((s, t) => s + t.timeSpentMin, 0);
 
   return (
-    <section className="rounded-md border border-border bg-deep p-5">
+    <section className="rounded-md border border-line bg-surface p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <TargetIcon size={16} className="text-act-cyan" />
-          <h2 className="text-sm font-medium text-text">Objectifs</h2>
+          <TargetIcon size={16} className="text-primary" />
+          <h2 className="text-sm font-medium text-ink">Objectifs</h2>
         </div>
         <button
           onClick={() => setEditing((e) => !e)}
-          className="text-xs text-text-muted hover:text-text"
+          className="text-xs text-ink-muted hover:text-ink"
         >
           {editing ? "Terminé" : "Modifier"}
         </button>
@@ -89,17 +89,17 @@ export function Goals() {
 
       {editing ? (
         <div className="space-y-3">
-          <label className="flex items-center justify-between gap-3 text-sm text-text">
+          <label className="flex items-center justify-between gap-3 text-sm text-ink">
             Tâches / jour
             <input
               type="number"
               min={1}
               value={goals.dailyTasks}
               onChange={(e) => save({ ...goals, dailyTasks: Math.max(1, Number(e.target.value) || 1) })}
-              className="w-20 px-2 py-1.5 rounded-sm bg-[#0a0a14] border border-border text-text text-right outline-none focus:border-act-cyan"
+              className="w-20 px-2 py-1.5 rounded-sm bg-field border border-line text-ink text-right outline-none focus:border-primary"
             />
           </label>
-          <label className="flex items-center justify-between gap-3 text-sm text-text">
+          <label className="flex items-center justify-between gap-3 text-sm text-ink">
             Focus / semaine (min)
             <input
               type="number"
@@ -109,7 +109,7 @@ export function Goals() {
               onChange={(e) =>
                 save({ ...goals, weeklyFocusMin: Math.max(0, Number(e.target.value) || 0) })
               }
-              className="w-20 px-2 py-1.5 rounded-sm bg-[#0a0a14] border border-border text-text text-right outline-none focus:border-act-cyan"
+              className="w-20 px-2 py-1.5 rounded-sm bg-field border border-line text-ink text-right outline-none focus:border-primary"
             />
           </label>
         </div>
@@ -119,14 +119,14 @@ export function Goals() {
             label="Tâches du jour"
             value={doneToday}
             goal={goals.dailyTasks}
-            color="var(--act-cyan)"
+            color="var(--primary)"
             valueLabel={`${doneToday} / ${goals.dailyTasks}`}
           />
           <Bar
             label="Focus cette semaine"
             value={weekFocus}
             goal={goals.weeklyFocusMin}
-            color="var(--focus-violet)"
+            color="var(--secondary)"
             valueLabel={`${Math.floor(weekFocus / 60)}h${String(weekFocus % 60).padStart(2, "0")} / ${Math.floor(
               goals.weeklyFocusMin / 60
             )}h`}

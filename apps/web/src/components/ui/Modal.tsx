@@ -37,17 +37,17 @@ export function Modal({
     >
       {/* backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-[fadeIn_0.15s_ease]"
+        className="absolute inset-0 bg-ink/35 backdrop-blur-sm animate-[fadeIn_0.15s_ease]"
         onClick={onClose}
       />
 
       {/* panel */}
-      <div className="relative z-10 flex max-h-[90dvh] w-full max-w-lg flex-col rounded-md border border-border bg-deep shadow-2xl animate-[popIn_0.18s_ease]">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
-          <h3 className="text-sm font-medium text-text">{title}</h3>
+      <div className="relative z-10 flex max-h-[90dvh] w-full max-w-lg flex-col rounded-md border border-line bg-surface shadow-2xl animate-[popIn_0.18s_ease]">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-line shrink-0">
+          <h3 className="text-sm font-medium text-ink">{title}</h3>
           <button
             onClick={onClose}
-            className="text-text-muted hover:text-text transition-colors"
+            className="text-ink-muted hover:text-ink transition-colors"
             aria-label="Fermer"
           >
             <CloseIcon size={18} />

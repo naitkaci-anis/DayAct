@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { HABIT_COLORS } from "@/lib/theme";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { CheckIcon, TrashIcon, PlusIcon, FlameIcon, TargetIcon } from "@/components/icons";
 import {
@@ -17,7 +18,7 @@ import {
 
 const WEEKDAYS = ["L", "M", "M", "J", "V", "S", "D"];
 const EMOJIS = ["💧", "🏃", "🧘", "📚", "🥗", "😴", "✍️", "🎯", "🎸", "💊", "🚭", "🌱"];
-const COLORS = ["#06b6d4", "#4ade80", "#a78bfa", "#fbbf24", "#f87171", "#f9fafb"];
+const COLORS = HABIT_COLORS;
 
 function weekdayLetter(iso: string) {
   const [y, m, d] = iso.split("-").map(Number);
@@ -74,8 +75,8 @@ function HabitCard({ habit }: { habit: Habit }) {
           {habit.emoji}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium text-text truncate">{habit.name}</p>
-          <div className="flex items-center gap-3 mt-0.5 text-[11px] text-text-muted">
+          <p className="text-sm font-medium text-ink truncate">{habit.name}</p>
+          <div className="flex items-center gap-3 mt-0.5 text-[11px] text-ink-muted">
             <span className="flex items-center gap-1">
               <TargetIcon size={12} /> {rate}% ce mois
             </span>
@@ -84,7 +85,7 @@ function HabitCard({ habit }: { habit: Habit }) {
         </div>
         <button
           onClick={() => dispatch({ type: "DELETE_HABIT", id: habit.id })}
-          className="p-1.5 text-text-muted hover:text-alert-red opacity-0 group-hover:opacity-100 transition-opacity"
+          className="p-1.5 text-ink-muted hover:text-danger opacity-0 group-hover:opacity-100 transition-opacity"
           aria-label="Supprimer"
         >
           <TrashIcon size={14} />
@@ -94,15 +95,15 @@ function HabitCard({ habit }: { habit: Habit }) {
       <div className="flex items-center gap-2 mt-4">
         <FlameIcon
           size={18}
-          className={streak > 0 ? "text-energy-amber" : "text-text-muted/40"}
+          className={streak > 0 ? "text-warning" : "text-ink-muted/40"}
         />
-        <span className="text-2xl font-light text-text">{streak}</span>
-        <span className="text-xs text-text-muted">
+        <span className="text-2xl font-light text-ink">{streak}</span>
+        <span className="text-xs text-ink-muted">
           {streak > 0 ? `jour${streak > 1 ? "s" : ""} d'affilée 🔥` : "commence ta série !"}
         </span>
       </div>
 
-      <div className="mt-3 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+      <div className="mt-3 h-1.5 rounded-full bg-ink/[0.07] overflow-hidden">
         <div
           className="h-full rounded-full transition-all"
           style={{ width: `${rate}%`, background: habit.color }}
@@ -120,11 +121,11 @@ function HabitCard({ habit }: { habit: Habit }) {
               title={d}
               className="flex flex-col items-center gap-1"
             >
-              <span className="text-[9px] text-text-muted">{weekdayLetter(d)}</span>
+              <span className="text-[9px] text-ink-muted">{weekdayLetter(d)}</span>
               <span
                 className={`flex items-center justify-center w-full aspect-square rounded-[7px] border transition-all ${
-                  done ? "text-[#0a0a14]" : "border-[#374151] hover:border-current"
-                } ${isToday && !done ? "ring-1 ring-act-cyan/50" : ""}`}
+                  done ? "text-on-fill" : "border-line-strong hover:border-current"
+                } ${isToday && !done ? "ring-1 ring-primary/50" : ""}`}
                 style={
                   done ? { background: habit.color, borderColor: habit.color } : { color: habit.color }
                 }
@@ -140,8 +141,8 @@ function HabitCard({ habit }: { habit: Habit }) {
         onClick={() => dispatch({ type: "TOGGLE_HABIT", habitId: habit.id, date: today })}
         className={`w-full mt-4 py-2.5 rounded-[12px] text-sm font-medium transition-all ${
           doneToday
-            ? "bg-done-green/15 text-done-green border border-done-green/30"
-            : "text-[#0a0a14] hover:opacity-90"
+            ? "bg-success/15 text-success border border-success/30"
+            : "text-on-fill hover:opacity-90"
         }`}
         style={doneToday ? undefined : { background: habit.color }}
       >
@@ -199,7 +200,7 @@ export default function HabitsPage() {
         action={
           <button
             onClick={() => setAdding((a) => !a)}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-sm bg-act-cyan text-[#0a0a14] text-sm font-medium hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-sm bg-primary text-on-fill text-sm font-medium hover:opacity-90 transition-opacity"
           >
             <PlusIcon size={16} />
             Habitude
@@ -220,36 +221,36 @@ export default function HabitsPage() {
               className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(192,38,255,0.18), transparent 70%)",
+                  "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(142,44,31,0.18), transparent 70%)",
               }}
             />
           )}
           <div className="relative flex items-center gap-5">
             {/* level badge */}
             <div className="flex flex-col items-center shrink-0">
-              <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-act-cyan via-focus-violet to-accent text-[#050816]">
+              <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent text-on-fill">
                 <span className="text-2xl font-semibold">{level}</span>
               </div>
-              <span className="text-[10px] text-text-muted mt-1">Niveau</span>
+              <span className="text-[10px] text-ink-muted mt-1">Niveau</span>
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="text-sm text-text mb-2">{message}</p>
+              <p className="text-sm text-ink mb-2">{message}</p>
               {/* XP bar */}
               <div className="flex items-center gap-2">
-                <div className="flex-1 h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                <div className="flex-1 h-2 rounded-full bg-ink/[0.07] overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-act-cyan to-accent transition-all"
+                    className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all"
                     style={{ width: `${xpPct}%` }}
                   />
                 </div>
-                <span className="text-[11px] text-text-muted whitespace-nowrap">
+                <span className="text-[11px] text-ink-muted whitespace-nowrap">
                   {xpInLevel}/10 XP
                 </span>
               </div>
-              <div className="flex items-center gap-4 mt-2 text-[11px] text-text-muted">
+              <div className="flex items-center gap-4 mt-2 text-[11px] text-ink-muted">
                 <span className="flex items-center gap-1">
-                  <FlameIcon size={12} className="text-energy-amber" />
+                  <FlameIcon size={12} className="text-warning" />
                   {doneToday}/{total} aujourd'hui ({pct}%)
                 </span>
                 <span>🏆 {earnedCount}/{badges.length} trophées</span>
@@ -262,7 +263,7 @@ export default function HabitsPage() {
       {/* Badges */}
       {total > 0 && (
         <div className="glass rounded-[16px] p-4 mb-6">
-          <p className="text-xs text-text-muted mb-3">Trophées</p>
+          <p className="text-xs text-ink-muted mb-3">Trophées</p>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
             {badges.map((b) => (
               <div
@@ -270,13 +271,13 @@ export default function HabitsPage() {
                 title={b.desc}
                 className={`flex flex-col items-center text-center rounded-[12px] p-3 border transition-all ${
                   b.earned
-                    ? "border-focus-violet/40 bg-focus-violet/10"
-                    : "border-border bg-deep opacity-45 grayscale"
+                    ? "border-secondary/40 bg-secondary/10"
+                    : "border-line bg-surface opacity-45 grayscale"
                 }`}
               >
                 <span className="text-2xl">{b.icon}</span>
-                <span className="text-[11px] text-text mt-1 leading-tight">{b.label}</span>
-                <span className="text-[9px] text-text-muted leading-tight">{b.desc}</span>
+                <span className="text-[11px] text-ink mt-1 leading-tight">{b.label}</span>
+                <span className="text-[9px] text-ink-muted leading-tight">{b.desc}</span>
               </div>
             ))}
           </div>
@@ -292,7 +293,7 @@ export default function HabitsPage() {
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addHabit()}
             placeholder="Ex. Boire 2 L d'eau"
-            className="w-full px-3 py-2 rounded-sm bg-[#0a0a14] border border-border text-sm text-text placeholder:text-text-muted/60 focus:border-act-cyan outline-none mb-3"
+            className="w-full px-3 py-2 rounded-sm bg-field border border-line text-sm text-ink placeholder:text-ink-muted/60 focus:border-primary outline-none mb-3"
           />
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-1 flex-wrap">
@@ -301,7 +302,7 @@ export default function HabitsPage() {
                   key={e}
                   onClick={() => setEmoji(e)}
                   className={`w-8 h-8 rounded-sm text-lg transition-all ${
-                    emoji === e ? "bg-act-cyan/15 scale-110" : "opacity-60 hover:opacity-100"
+                    emoji === e ? "bg-primary/15 scale-110" : "opacity-60 hover:opacity-100"
                   }`}
                 >
                   {e}
@@ -314,7 +315,7 @@ export default function HabitsPage() {
                   key={c}
                   onClick={() => setColor(c)}
                   className={`w-6 h-6 rounded-full border-2 ${
-                    color === c ? "border-text" : "border-transparent"
+                    color === c ? "border-ink" : "border-transparent"
                   }`}
                   style={{ background: c }}
                 />
@@ -325,13 +326,13 @@ export default function HabitsPage() {
             <button
               onClick={addHabit}
               disabled={!name.trim()}
-              className="px-4 py-2 rounded-sm bg-act-cyan text-[#0a0a14] text-sm font-medium disabled:opacity-40"
+              className="px-4 py-2 rounded-sm bg-primary text-on-fill text-sm font-medium disabled:opacity-40"
             >
               Ajouter
             </button>
             <button
               onClick={() => setAdding(false)}
-              className="px-4 py-2 rounded-sm text-sm text-text-muted hover:text-text"
+              className="px-4 py-2 rounded-sm text-sm text-ink-muted hover:text-ink"
             >
               Annuler
             </button>
@@ -341,11 +342,11 @@ export default function HabitsPage() {
 
       {/* Habit cards */}
       {total === 0 ? (
-        <div className="py-16 text-center border border-dashed border-border rounded-[16px]">
-          <p className="text-sm text-text-muted">Aucune habitude pour l'instant.</p>
+        <div className="py-16 text-center border border-dashed border-line rounded-[16px]">
+          <p className="text-sm text-ink-muted">Aucune habitude pour l'instant.</p>
           <button
             onClick={() => setAdding(true)}
-            className="mt-3 text-sm text-act-cyan hover:underline"
+            className="mt-3 text-sm text-primary hover:underline"
           >
             + Créer ta première habitude
           </button>
@@ -358,7 +359,7 @@ export default function HabitsPage() {
         </div>
       )}
 
-      <p className="text-[11px] text-text-muted mt-5">
+      <p className="text-[11px] text-ink-muted mt-5">
         Chaque validation = +1 XP. Tes habitudes validées apparaissent aussi en pastilles sur le
         calendrier. 📅
       </p>

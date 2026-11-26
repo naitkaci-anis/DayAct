@@ -108,12 +108,12 @@ export function WeekView({
   }, [anchor]);
 
   return (
-    <div className="rounded-md border border-border bg-deep overflow-hidden">
+    <div className="rounded-md border border-line bg-surface overflow-hidden">
       <div className="overflow-x-auto">
         <div className="min-w-[640px]">
       {/* headers */}
-      <div className="grid grid-cols-[48px_repeat(7,1fr)] border-b border-border">
-        <div className="border-r border-border" />
+      <div className="grid grid-cols-[48px_repeat(7,1fr)] border-b border-line">
+        <div className="border-r border-line" />
         {dates.map((date, i) => {
           const isToday = date === today;
           const dayNum = Number(date.split("-")[2]);
@@ -121,12 +121,12 @@ export function WeekView({
             <button
               key={date}
               onClick={() => onOpenDay(date)}
-              className="flex flex-col items-center py-2 border-r border-border last:border-r-0 hover:bg-[#0a0a14] transition-colors"
+              className="flex flex-col items-center py-2 border-r border-line last:border-r-0 hover:bg-field transition-colors"
             >
-              <span className="text-[11px] text-text-muted">{WEEKDAYS[i]}</span>
+              <span className="text-[11px] text-ink-muted">{WEEKDAYS[i]}</span>
               <span
                 className={`mt-0.5 flex items-center justify-center w-7 h-7 rounded-full text-sm ${
-                  isToday ? "bg-act-cyan text-[#0a0a14] font-medium" : "text-text"
+                  isToday ? "bg-primary text-on-fill font-medium" : "text-ink"
                 }`}
               >
                 {dayNum}
@@ -138,11 +138,11 @@ export function WeekView({
 
       {/* body */}
       <div ref={bodyRef} className="grid grid-cols-[48px_repeat(7,1fr)] overflow-y-auto" style={{ maxHeight: 560 }}>
-        <div className="relative border-r border-border" style={{ height: HEIGHT }}>
+        <div className="relative border-r border-line" style={{ height: HEIGHT }}>
           {HOURS.map((h) => (
             <div
               key={h}
-              className="absolute right-2 -translate-y-1/2 text-[10px] text-text-muted"
+              className="absolute right-2 -translate-y-1/2 text-[10px] text-ink-muted"
               style={{ top: `${((h * 60 - DAY_START) / SPAN) * 100}%` }}
             >
               {h}h
@@ -166,13 +166,13 @@ export function WeekView({
                 openNew({ date, time: minutesToTime(min, DAY_START, DAY_END) });
               }}
               title="Cliquer pour ajouter une tâche"
-              className="relative border-r border-border last:border-r-0 cursor-copy hover:bg-act-cyan/[0.03]"
+              className="relative border-r border-line last:border-r-0 cursor-copy hover:bg-primary/[0.03]"
               style={{ height: HEIGHT }}
             >
               {HOURS.map((h) => (
                 <div
                   key={h}
-                  className="absolute left-0 w-full border-t border-border/30 pointer-events-none"
+                  className="absolute left-0 w-full border-t border-line/30 pointer-events-none"
                   style={{ top: `${((h * 60 - DAY_START) / SPAN) * 100}%` }}
                 />
               ))}
@@ -207,9 +207,9 @@ export function WeekView({
                     }}
                     className={`absolute left-0.5 right-0.5 rounded-[5px] px-1.5 py-1 overflow-hidden select-none ${
                       isDragged
-                        ? "cursor-grabbing z-30 ring-1 ring-act-cyan pointer-events-none"
+                        ? "cursor-grabbing z-30 ring-1 ring-primary pointer-events-none"
                         : conflicts.has(t.id)
-                        ? "cursor-grab z-10 ring-1 ring-alert-red hover:brightness-125"
+                        ? "cursor-grab z-10 ring-1 ring-danger hover:brightness-125"
                         : "cursor-grab z-10 hover:brightness-125"
                     }`}
                     style={{
@@ -222,8 +222,8 @@ export function WeekView({
                       touchAction: "none",
                     }}
                   >
-                    <p className="text-[10px] leading-tight text-text truncate">{t.title}</p>
-                    <p className="text-[9px] leading-tight text-text-muted">
+                    <p className="text-[10px] leading-tight text-ink truncate">{t.title}</p>
+                    <p className="text-[9px] leading-tight text-ink-muted">
                       {minutesToTime(startM, 0, 1440)}
                     </p>
                     <div
@@ -247,10 +247,10 @@ export function WeekView({
 
               {isToday && showNow && nowTop >= 0 && nowTop <= HEIGHT && (
                 <div
-                  className="absolute left-0 w-full h-px bg-act-cyan z-20 pointer-events-none"
-                  style={{ top: nowTop, boxShadow: "0 0 6px rgba(6,182,212,0.7)" }}
+                  className="absolute left-0 w-full h-px bg-primary z-20 pointer-events-none"
+                  style={{ top: nowTop, boxShadow: "0 0 6px rgba(89,9,7,0.7)" }}
                 >
-                  <span className="absolute -left-1 -top-1 w-2 h-2 rounded-full bg-act-cyan" />
+                  <span className="absolute -left-1 -top-1 w-2 h-2 rounded-full bg-primary" />
                 </div>
               )}
             </div>

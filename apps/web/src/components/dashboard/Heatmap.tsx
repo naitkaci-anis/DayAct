@@ -7,11 +7,11 @@ const WEEKS = 26; // ~6 months
 const DAY_LABELS = ["L", "", "M", "", "V", "", "D"];
 
 function level(count: number) {
-  if (count === 0) return "var(--border)";
-  if (count <= 1) return "color-mix(in srgb, var(--act-cyan) 30%, transparent)";
-  if (count <= 3) return "color-mix(in srgb, var(--act-cyan) 55%, transparent)";
-  if (count <= 5) return "color-mix(in srgb, var(--act-cyan) 80%, transparent)";
-  return "var(--act-cyan)";
+  if (count === 0) return "var(--line)";
+  if (count <= 1) return "color-mix(in srgb, var(--primary) 30%, transparent)";
+  if (count <= 3) return "color-mix(in srgb, var(--primary) 55%, transparent)";
+  if (count <= 5) return "color-mix(in srgb, var(--primary) 80%, transparent)";
+  return "var(--primary)";
 }
 
 export function Heatmap() {
@@ -36,17 +36,17 @@ export function Heatmap() {
   const total = state.tasks.filter((t) => t.done).length;
 
   return (
-    <section className="rounded-md border border-border bg-deep p-5">
+    <section className="rounded-md border border-line bg-surface p-5">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-medium text-text">Activité</h2>
-        <span className="text-xs text-text-muted">{total} tâches terminées (6 mois)</span>
+        <h2 className="text-sm font-medium text-ink">Activité</h2>
+        <span className="text-xs text-ink-muted">{total} tâches terminées (6 mois)</span>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-1">
         {/* day labels */}
         <div className="flex flex-col gap-[3px] pt-0.5 shrink-0">
           {DAY_LABELS.map((l, i) => (
-            <span key={i} className="h-[12px] text-[9px] text-text-muted leading-[12px]">
+            <span key={i} className="h-[12px] text-[9px] text-ink-muted leading-[12px]">
               {l}
             </span>
           ))}
@@ -66,7 +66,7 @@ export function Heatmap() {
                     className="w-[12px] h-[12px] rounded-[3px]"
                     style={{
                       background: future ? "transparent" : level(c),
-                      border: date === today ? "1px solid var(--act-cyan)" : undefined,
+                      border: date === today ? "1px solid var(--primary)" : undefined,
                       opacity: future ? 0.25 : 1,
                     }}
                   />
@@ -79,11 +79,11 @@ export function Heatmap() {
 
       {/* legend */}
       <div className="flex items-center gap-1.5 mt-3 justify-end">
-        <span className="text-[10px] text-text-muted">moins</span>
+        <span className="text-[10px] text-ink-muted">moins</span>
         {[0, 1, 3, 5, 6].map((n) => (
           <span key={n} className="w-[11px] h-[11px] rounded-[3px]" style={{ background: level(n) }} />
         ))}
-        <span className="text-[10px] text-text-muted">plus</span>
+        <span className="text-[10px] text-ink-muted">plus</span>
       </div>
     </section>
   );

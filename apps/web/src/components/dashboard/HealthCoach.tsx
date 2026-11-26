@@ -24,12 +24,12 @@ function numOrNull(v: string): number | null {
 
 function Metric({ label, value, sub, color }: { label: string; value: string; sub?: string; color?: string }) {
   return (
-    <div className="rounded-[12px] bg-deep border border-border p-3 text-center">
-      <p className="text-lg font-light" style={{ color: color ?? "var(--text)" }}>
+    <div className="rounded-[12px] bg-surface border border-line p-3 text-center">
+      <p className="text-lg font-light" style={{ color: color ?? "var(--ink)" }}>
         {value}
       </p>
-      <p className="text-[10px] text-text-muted">{label}</p>
-      {sub && <p className="text-[9px] text-text-muted/70">{sub}</p>}
+      <p className="text-[10px] text-ink-muted">{label}</p>
+      {sub && <p className="text-[9px] text-ink-muted/70">{sub}</p>}
     </div>
   );
 }
@@ -94,7 +94,7 @@ export function HealthCoach() {
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-sm bg-[#0a0a14] border border-border text-sm text-text placeholder:text-text-muted/60 focus:border-act-cyan outline-none";
+    "w-full px-3 py-2 rounded-sm bg-field border border-line text-sm text-ink placeholder:text-ink-muted/60 focus:border-primary outline-none";
 
   const summaryChips = complete
     ? [
@@ -108,13 +108,13 @@ export function HealthCoach() {
     : [];
 
   return (
-    <section className="rounded-md border border-border bg-deep p-5 mb-6">
+    <section className="rounded-md border border-line bg-surface p-5 mb-6">
       {/* header + edit toggle */}
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-sm font-medium text-text">Ton profil santé & coach</h2>
+          <h2 className="text-sm font-medium text-ink">Ton profil santé & coach</h2>
           {(editing || !complete) && (
-            <p className="text-[11px] text-text-muted mt-1">
+            <p className="text-[11px] text-ink-muted mt-1">
               Renseigne tes infos : DayAct calcule tes repères et te donne des conseils nutrition &
               sport. (Données stockées uniquement sur cet appareil.)
             </p>
@@ -124,7 +124,7 @@ export function HealthCoach() {
           <button
             type="button"
             onClick={() => setEditing((e) => !e)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm border border-border text-xs text-text-muted hover:text-text hover:border-act-cyan/50 transition-colors shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm border border-line text-xs text-ink-muted hover:text-ink hover:border-primary/50 transition-colors shrink-0"
           >
             {editing ? (
               <>
@@ -145,7 +145,7 @@ export function HealthCoach() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {/* sexe */}
             <div>
-              <label className="block text-xs text-text-muted mb-1.5">Sexe</label>
+              <label className="block text-xs text-ink-muted mb-1.5">Sexe</label>
               <div className="flex gap-2">
                 {([
                   ["male", "Homme"],
@@ -157,8 +157,8 @@ export function HealthCoach() {
                     onClick={() => set("sex", val)}
                     className={`flex-1 py-2 rounded-sm border text-xs transition-colors ${
                       profile.sex === val
-                        ? "border-transparent bg-act-cyan/15 text-act-cyan"
-                        : "border-border text-text-muted hover:text-text"
+                        ? "border-transparent bg-primary/15 text-primary"
+                        : "border-line text-ink-muted hover:text-ink"
                     }`}
                   >
                     {lbl}
@@ -169,7 +169,7 @@ export function HealthCoach() {
 
             {/* age */}
             <div>
-              <label className="block text-xs text-text-muted mb-1.5">Âge</label>
+              <label className="block text-xs text-ink-muted mb-1.5">Âge</label>
               <input
                 type="number"
                 min={10}
@@ -183,7 +183,7 @@ export function HealthCoach() {
 
             {/* activity */}
             <div>
-              <label className="block text-xs text-text-muted mb-1.5">Niveau d'activité</label>
+              <label className="block text-xs text-ink-muted mb-1.5">Niveau d'activité</label>
               <select
                 value={profile.activity}
                 onChange={(e) => set("activity", e.target.value as Activity)}
@@ -200,7 +200,7 @@ export function HealthCoach() {
 
             {/* height */}
             <div>
-              <label className="block text-xs text-text-muted mb-1.5">Taille (cm)</label>
+              <label className="block text-xs text-ink-muted mb-1.5">Taille (cm)</label>
               <input
                 type="number"
                 min={120}
@@ -214,7 +214,7 @@ export function HealthCoach() {
 
             {/* weight */}
             <div>
-              <label className="block text-xs text-text-muted mb-1.5">Poids (kg)</label>
+              <label className="block text-xs text-ink-muted mb-1.5">Poids (kg)</label>
               <input
                 type="number"
                 min={30}
@@ -228,7 +228,7 @@ export function HealthCoach() {
 
             {/* goal */}
             <div>
-              <label className="block text-xs text-text-muted mb-1.5">Objectif</label>
+              <label className="block text-xs text-ink-muted mb-1.5">Objectif</label>
               <select
                 value={profile.goal}
                 onChange={(e) => set("goal", e.target.value as Goal)}
@@ -245,7 +245,7 @@ export function HealthCoach() {
           </div>
 
           {!complete && (
-            <p className="text-[11px] text-text-muted mt-4">
+            <p className="text-[11px] text-ink-muted mt-4">
               Remplis tous les champs pour voir tes repères et débloquer les conseils.
             </p>
           )}
@@ -260,13 +260,13 @@ export function HealthCoach() {
             {summaryChips.map((chip) => (
               <span
                 key={chip}
-                className="px-2.5 py-1 rounded-full border border-border bg-[#0a0a14] text-xs text-text"
+                className="px-2.5 py-1 rounded-full border border-line bg-field text-xs text-ink"
               >
                 {chip}
               </span>
             ))}
           </div>
-          <span className="text-[10px] text-text-muted mt-1.5 inline-block group-hover:text-act-cyan transition-colors">
+          <span className="text-[10px] text-ink-muted mt-1.5 inline-block group-hover:text-primary transition-colors">
             Clique pour modifier tes infos
           </span>
         </button>
@@ -284,11 +284,11 @@ export function HealthCoach() {
           </div>
 
           <div className="mt-5">
-            <h3 className="text-xs font-medium text-text mb-2">Conseils personnalisés</h3>
+            <h3 className="text-xs font-medium text-ink mb-2">Conseils personnalisés</h3>
             <ul className="space-y-2">
               {result.tips.map((tip, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-sm text-text-muted">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-act-cyan shrink-0" />
+                <li key={i} className="flex items-start gap-2.5 text-sm text-ink-muted">
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
                   {tip}
                 </li>
               ))}
@@ -296,26 +296,26 @@ export function HealthCoach() {
           </div>
 
           {/* AI deep-dive */}
-          <div className="mt-5 rounded-[12px] border border-focus-violet/30 bg-focus-violet/[0.06] p-4">
+          <div className="mt-5 rounded-[12px] border border-secondary/30 bg-secondary/[0.06] p-4">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-2">
-                <SparkIcon size={16} className="text-focus-violet" />
-                <span className="text-xs text-text font-medium">Coach IA — conseils sur-mesure</span>
+                <SparkIcon size={16} className="text-secondary" />
+                <span className="text-xs text-ink font-medium">Coach IA — conseils sur-mesure</span>
               </div>
               <button
                 onClick={askAI}
                 disabled={aiState === "loading"}
-                className="px-3 py-1.5 rounded-sm bg-focus-violet/20 text-focus-violet text-xs font-medium hover:bg-focus-violet/30 transition-colors disabled:opacity-50"
+                className="px-3 py-1.5 rounded-sm bg-secondary/20 text-secondary text-xs font-medium hover:bg-secondary/30 transition-colors disabled:opacity-50"
               >
                 {aiState === "loading" ? "L'IA réfléchit…" : advice ? "Regénérer" : "Demander à l'IA"}
               </button>
             </div>
 
-            {aiState === "error" && <p className="text-[11px] text-alert-red mt-3">{aiError}</p>}
+            {aiState === "error" && <p className="text-[11px] text-danger mt-3">{aiError}</p>}
 
             {advice && (
               <div className="mt-3 space-y-3">
-                <p className="text-sm text-text">{advice.summary}</p>
+                <p className="text-sm text-ink">{advice.summary}</p>
                 {[
                   ["🥗 Nutrition", advice.nutrition],
                   ["🏋️ Sport", advice.sport],
@@ -323,11 +323,11 @@ export function HealthCoach() {
                 ].map(([title, items]) =>
                   (items as string[]).length ? (
                     <div key={title as string}>
-                      <p className="text-[11px] text-text-muted mb-1">{title as string}</p>
+                      <p className="text-[11px] text-ink-muted mb-1">{title as string}</p>
                       <ul className="space-y-1">
                         {(items as string[]).map((it, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-text-muted">
-                            <span className="mt-1.5 w-1 h-1 rounded-full bg-focus-violet shrink-0" />
+                          <li key={i} className="flex items-start gap-2 text-sm text-ink-muted">
+                            <span className="mt-1.5 w-1 h-1 rounded-full bg-secondary shrink-0" />
                             {it}
                           </li>
                         ))}

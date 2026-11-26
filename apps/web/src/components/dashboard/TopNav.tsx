@@ -54,14 +54,14 @@ export function TopNav({
   const { unread } = useNotifications();
 
   return (
-    <header className="relative z-30 mx-3 lg:mx-6 mt-3 rounded-[22px] glass">
+    <header className="relative z-30 mx-3 lg:mx-6 mt-[max(env(safe-area-inset-top),12px)] rounded-[22px] glass">
       {/* top row: brand + actions */}
-      <div className="flex items-center justify-between gap-4 px-5 lg:px-8 h-16">
+      <div className="flex items-center justify-between gap-3 px-4 sm:px-5 lg:px-8 h-16">
         <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0">
-          <div className="flex items-center justify-center w-9 h-9 rounded-md border border-border bg-deep glow-cyan">
+          <div className="flex items-center justify-center w-9 h-9 rounded-md border border-line bg-surface glow-primary">
             <LogoMark size={20} />
           </div>
-          <span className="hidden sm:inline text-lg font-light text-gradient-cyan tracking-tight">
+          <span className="font-display text-xl font-medium text-primary tracking-tight">
             DayAct
           </span>
         </Link>
@@ -78,16 +78,16 @@ export function TopNav({
                 key={item.href}
                 href={item.href}
                 className={`relative flex items-center gap-1.5 px-3 py-2 rounded-sm text-sm whitespace-nowrap transition-colors ${
-                  active ? "text-text" : "text-text-muted hover:text-text hover:bg-deep/50"
+                  active ? "text-ink" : "text-ink-muted hover:text-ink hover:bg-surface/50"
                 }`}
               >
                 <Icon
                   size={16}
-                  className={active ? "text-act-cyan" : "text-text-muted"}
+                  className={active ? "text-primary" : "text-ink-muted"}
                 />
                 {item.label}
                 {active && (
-                  <span className="absolute left-3 right-3 -bottom-[1px] h-[2px] rounded-full bg-act-cyan" />
+                  <span className="absolute left-3 right-3 -bottom-[1px] h-[2px] rounded-full bg-primary" />
                 )}
               </Link>
             );
@@ -96,16 +96,16 @@ export function TopNav({
 
         {/* right actions */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          <div className="hidden 2xl:flex items-center gap-2 px-3 py-2 rounded-sm border border-border bg-deep text-sm">
-            <BoltIcon size={15} className="text-energy-amber" />
-            <span className="text-text font-medium">{state.settings.energy}%</span>
+          <div className="hidden 2xl:flex items-center gap-2 px-3 py-2 rounded-sm border border-line bg-surface text-sm">
+            <BoltIcon size={15} className="text-warning" />
+            <span className="text-ink font-medium">{state.settings.energy}%</span>
           </div>
 
           {/* icon tools group */}
           <div className="flex items-center gap-1.5">
             <button
               onClick={onSearch}
-              className="flex items-center justify-center w-9 h-9 rounded-sm border border-border text-text-muted hover:text-text hover:border-[#2a3441] transition-colors"
+              className="flex items-center justify-center w-9 h-9 rounded-sm border border-line text-ink-muted hover:text-ink hover:border-line-strong transition-colors"
               aria-label="Rechercher (Ctrl+K)"
               title="Rechercher (Ctrl+K)"
             >
@@ -114,13 +114,13 @@ export function TopNav({
 
             <button
               onClick={onNotifications}
-              className="relative flex items-center justify-center w-9 h-9 rounded-sm border border-border text-text-muted hover:text-text hover:border-[#2a3441] transition-colors"
+              className="relative flex items-center justify-center w-9 h-9 rounded-sm border border-line text-ink-muted hover:text-ink hover:border-line-strong transition-colors"
               aria-label="Notifications"
               title="Notifications"
             >
               <BellIcon size={18} />
               {unread > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-alert-red text-[#0a0a14] text-[10px] font-bold">
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-danger text-on-fill text-[10px] font-bold">
                   {unread > 9 ? "9+" : unread}
                 </span>
               )}
@@ -128,7 +128,7 @@ export function TopNav({
 
             <button
               onClick={onChat}
-              className="flex items-center justify-center w-9 h-9 rounded-sm border border-focus-violet/40 text-focus-violet hover:bg-focus-violet/10 transition-colors"
+              className="flex items-center justify-center w-9 h-9 rounded-sm border border-secondary/40 text-secondary hover:bg-secondary/10 transition-colors"
               aria-label="Assistant IA"
               title="Parler à l'assistant"
             >
@@ -137,7 +137,7 @@ export function TopNav({
 
             <button
               onClick={onFocus}
-              className="hidden sm:flex items-center justify-center w-9 h-9 rounded-sm border border-border text-text-muted hover:text-act-cyan hover:border-[#2a3441] transition-colors"
+              className="hidden sm:flex items-center justify-center w-9 h-9 rounded-sm border border-line text-ink-muted hover:text-primary hover:border-line-strong transition-colors"
               aria-label="Minuteur Pomodoro"
               title="Minuteur Pomodoro"
             >
@@ -146,11 +146,11 @@ export function TopNav({
           </div>
 
           {/* divider */}
-          <span className="hidden sm:block w-px h-6 bg-border" />
+          <span className="hidden md:block w-px h-6 bg-line" />
 
           <button
             onClick={onNewTask}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-sm bg-act-cyan text-[#0a0a14] text-sm font-medium hover:opacity-90 transition-opacity"
+            className="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-sm bg-primary text-on-fill text-sm font-medium hover:opacity-90 transition-opacity"
           >
             <PlusIcon size={16} />
             <span className="hidden sm:inline">Tâche</span>
@@ -158,10 +158,10 @@ export function TopNav({
 
           <Link
             href="/dashboard/settings"
-            className={`flex items-center justify-center w-9 h-9 rounded-sm border transition-colors ${
+            className={`hidden md:flex items-center justify-center w-9 h-9 rounded-sm border transition-colors ${
               isActive(pathname, "/dashboard/settings")
-                ? "border-act-cyan text-act-cyan"
-                : "border-border text-text-muted hover:text-text hover:border-[#2a3441]"
+                ? "border-primary text-primary"
+                : "border-line text-ink-muted hover:text-ink hover:border-line-strong"
             }`}
             aria-label="Réglages"
           >
@@ -175,7 +175,7 @@ export function TopNav({
       </div>
 
       {/* compact nav tabs (scrollable second row) — shown below xl */}
-      <nav className="xl:hidden flex items-center gap-1 px-3 pb-2 overflow-x-auto">
+      <nav className="hidden md:flex xl:hidden items-center gap-1 px-3 pb-2 overflow-x-auto">
         {nav.map((item) => {
           const active = isActive(pathname, item.href);
           return (
@@ -183,7 +183,7 @@ export function TopNav({
               key={item.href}
               href={item.href}
               className={`shrink-0 px-3 py-1.5 rounded-sm text-sm transition-colors ${
-                active ? "bg-deep text-text border border-border" : "text-text-muted"
+                active ? "bg-surface text-ink border border-line" : "text-ink-muted"
               }`}
             >
               {item.label}

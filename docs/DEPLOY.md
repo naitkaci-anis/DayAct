@@ -2,7 +2,7 @@
 
 Le code est déjà prêt et committé. Suis ces 4 étapes.
 
-> ℹ️ L'IA bascule automatiquement : **Ollama en local**, **Claude en ligne**
+> ℹ️ L'IA bascule automatiquement : **Ollama en local**, **Gemini en ligne**
 > (via la variable `AI_PROVIDER`). Rien à changer dans le code.
 
 ---
@@ -23,13 +23,14 @@ git push -u origin main
 
 ---
 
-## 2. Créer une clé API Anthropic (pour l'IA en ligne)
+## 2. Créer une clé Gemini gratuite (pour l'IA en ligne)
 
-1. Va sur **https://console.anthropic.com** → connecte-toi.
-2. **Settings → Billing** : ajoute ~5 $ de crédit (et fixe une **limite de dépense**, ex. 5 $/mois).
-3. **API Keys → Create Key** → copie la clé (commence par `sk-ant-...`).
+1. Va sur **https://aistudio.google.com/apikey** et connecte-toi avec ton compte Google.
+2. Clique **Create API key** → copie la clé.
 
-> Avec le modèle Haiku, l'usage perso coûte des centimes. Garde cette clé secrète.
+> Offre gratuite : limites d'usage plus basses, et Google peut utiliser les
+> demandes pour améliorer ses produits. Chaque utilisateur de DayAct est limité
+> à `AI_DAILY_LIMIT` demandes par jour (30 par défaut). Garde cette clé secrète.
 
 ---
 
@@ -39,17 +40,17 @@ git push -u origin main
 2. **Add New → Project** → importe le dépôt **dayact**.
 3. ⚠️ **IMPORTANT (monorepo)** : dans **Root Directory**, clique **Edit** et choisis **`apps/web`**.
 4. Framework : **Next.js** (détecté automatiquement).
-5. Déplie **Environment Variables** et ajoute ces 6 lignes
-   (copie les 4 premières valeurs depuis ton fichier **`apps/web/.env.local`**) :
+5. Déplie **Environment Variables** et ajoute ces lignes
+   (copie les 3 premières valeurs depuis ton fichier **`apps/web/.env.local`**) :
 
 | Name | Value |
 |---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | *(depuis .env.local)* |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | *(depuis .env.local)* |
 | `SUPABASE_SERVICE_ROLE_KEY` | *(depuis .env.local)* |
-| `ANTHROPIC_API_KEY` | *(ta clé sk-ant-… de l'étape 2)* |
-| `AI_PROVIDER` | `anthropic` |
-| `ANTHROPIC_MODEL` | `claude-haiku-4-5` |
+| `GEMINI_API_KEY` | *(ta clé Gemini de l'étape 2)* |
+| `AI_PROVIDER` | `gemini` |
+| `AI_DAILY_LIMIT` | `30` |
 
 6. Clique **Deploy**. Attends ~2 min. Tu obtiens une URL du type
    **`https://dayact-xxx.vercel.app`** 🎉
@@ -71,7 +72,7 @@ Pour que la connexion fonctionne sur le site déployé :
 
 - Ouvre ton URL Vercel → crée ton compte → tes données sont les mêmes qu'en local
   (même base Supabase).
-- L'assistant IA marche **partout** maintenant (propulsé par Claude).
+- L'assistant IA marche **partout** maintenant (propulsé par Gemini).
 
 ### Mises à jour futures
 À chaque fois que tu modifies le code :
@@ -84,5 +85,5 @@ Vercel redéploie **automatiquement**. ✨
 
 ### Dépannage
 - **Build échoue** → vérifie que **Root Directory = apps/web**.
-- **IA ne répond pas en ligne** → vérifie `AI_PROVIDER=anthropic` + `ANTHROPIC_API_KEY` dans Vercel (Settings → Environment Variables), puis redéploie.
+- **IA ne répond pas en ligne** → vérifie `AI_PROVIDER=gemini` + `GEMINI_API_KEY` dans Vercel (Settings → Environment Variables), puis redéploie.
 - **Connexion impossible** → vérifie l'étape 4 (Site URL Supabase).

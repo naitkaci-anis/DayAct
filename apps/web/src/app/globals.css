@@ -2,48 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────────────────────────────────
+   DayAct theme — "Sauge"
+   Muted sage grey #A5A79B · Warm cream beige #E8D2B5 · Deep burgundy #590907
+   Colours are stored as "R G B" so Tailwind opacity modifiers work
+   (e.g. bg-primary/15). Change the look of the whole app here.
+   ───────────────────────────────────────────────────────────────────────── */
 :root {
-  /* Premium palette */
-  --void: #050816;
-  --panel: #0b1020;
-  --deep: rgba(255, 255, 255, 0.045); /* glass card surface */
-  --border: rgba(255, 255, 255, 0.08);
-  --act-cyan: #5be7ff;
-  --focus-violet: #8b5cf6;
-  --accent: #c026ff;
-  --done-green: #22c55e;
-  --energy-amber: #f59e0b;
-  --alert-red: #ef4444;
-  --text: #f5f7ff;
-  --text-muted: #8a93b2;
+  --canvas-rgb: 241 231 216;      /* page background (light cream) */
+  --panel-rgb: 247 240 229;       /* solid panels, menus */
+  --field-rgb: 255 253 249;       /* inputs */
+  --line-rgb: 221 207 188;        /* hairline borders */
+  --line-strong-rgb: 196 179 156; /* hover / checkbox borders */
+  --primary-rgb: 89 9 7;          /* deep burgundy — main actions */
+  --primary-hover-rgb: 116 19 15;
+  --secondary-rgb: 95 101 86;     /* deep sage — focus & AI */
+  --accent-rgb: 142 44 31;        /* rust — gradients, highlights */
+  --sage-rgb: 165 167 155;        /* muted sage grey — decoration */
+  --cream-rgb: 232 210 181;       /* warm cream beige — decoration */
+  --success-rgb: 78 107 53;       /* olive */
+  --warning-rgb: 140 90 18;       /* ochre */
+  --danger-rgb: 179 38 30;
+  --ink-rgb: 43 26 23;            /* main text */
+  --ink-muted-rgb: 111 98 90;     /* secondary text */
+  --on-fill-rgb: 251 243 232;     /* text on coloured buttons */
+
+  --surface: rgba(255, 252, 247, 0.74); /* translucent cards */
+
+  /* Full colours for inline styles: style={{ color: "var(--primary)" }} */
+  --primary: rgb(var(--primary-rgb));
+  --secondary: rgb(var(--secondary-rgb));
+  --accent: rgb(var(--accent-rgb));
+  --success: rgb(var(--success-rgb));
+  --warning: rgb(var(--warning-rgb));
+  --danger: rgb(var(--danger-rgb));
+  --ink: rgb(var(--ink-rgb));
+  --ink-muted: rgb(var(--ink-muted-rgb));
+  --line: rgb(var(--line-rgb));
+  --sage: rgb(var(--sage-rgb));
+  --cream: rgb(var(--cream-rgb));
+
+  /* Task categories — distinct hues that stay inside the palette */
+  --cat-work: #7A1612;      /* burgundy */
+  --cat-health: #4E6B35;    /* olive */
+  --cat-personal: #6E4E6B;  /* dusty plum */
+  --cat-learning: #A66A1C;  /* ochre */
 }
 
 @layer base {
   * {
     box-sizing: border-box;
-    border-color: var(--border);
+    border-color: var(--line);
   }
 
   html {
-    color-scheme: dark;
+    color-scheme: light;
     overflow-x: hidden;
   }
 
   body {
-    background-color: var(--void);
-    color: var(--text);
-    font-family: var(--font-geist-sans), Inter, system-ui, sans-serif;
+    background-color: rgb(var(--canvas-rgb));
+    color: var(--ink);
+    font-family: var(--font-sans), system-ui, sans-serif;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Never let a wide element push the page sideways on mobile. */
     overflow-x: hidden;
     max-width: 100%;
+    -webkit-tap-highlight-color: transparent;
   }
 
   ::selection {
-    background-color: rgba(91, 231, 255, 0.28);
-    color: var(--text);
+    background-color: rgb(var(--primary-rgb) / 0.16);
+    color: var(--ink);
   }
 
   ::-webkit-scrollbar {
@@ -54,45 +86,50 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgb(var(--ink-rgb) / 0.14);
     border-radius: 8px;
     border: 2px solid transparent;
     background-clip: content-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.22);
+    background: rgb(var(--ink-rgb) / 0.24);
     background-clip: content-box;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--primary-rgb) / 0.55);
+    outline-offset: 2px;
   }
 }
 
 @layer utilities {
-  /* Glassmorphism surface */
+  /* Frosted card surface */
   .glass {
-    background: rgba(255, 255, 255, 0.045);
-    backdrop-filter: blur(18px) saturate(150%);
-    -webkit-backdrop-filter: blur(18px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 252, 247, 0.72);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid var(--line);
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
-      0 18px 40px -18px rgba(0, 0, 0, 0.7);
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
+      0 18px 40px -24px rgb(var(--ink-rgb) / 0.28);
   }
 
-  .glow-cyan {
-    box-shadow: 0 0 28px rgba(91, 231, 255, 0.28);
+  .glow-primary {
+    box-shadow: 0 10px 26px -10px rgb(var(--primary-rgb) / 0.45);
   }
-  .glow-violet {
-    box-shadow: 0 0 28px rgba(139, 92, 246, 0.28);
+  .glow-secondary {
+    box-shadow: 0 10px 26px -10px rgb(var(--secondary-rgb) / 0.45);
   }
   .glow-accent {
-    box-shadow: 0 0 32px rgba(192, 38, 255, 0.3);
+    box-shadow: 0 10px 26px -10px rgb(var(--accent-rgb) / 0.45);
   }
 
   .border-subtle {
-    border: 0.5px solid var(--border);
+    border: 0.5px solid var(--line);
   }
 
-  .text-gradient-cyan {
-    background: linear-gradient(120deg, #5be7ff 0%, #8b5cf6 55%, #c026ff 100%);
+  .text-gradient-brand {
+    background: linear-gradient(120deg, var(--primary) 0%, var(--accent) 55%, var(--secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -105,10 +142,10 @@
   }
   .lift:hover {
     transform: translateY(-3px);
-    border-color: rgba(255, 255, 255, 0.16);
+    border-color: rgb(var(--line-strong-rgb));
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
-      0 26px 50px -20px rgba(0, 0, 0, 0.75);
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+      0 26px 50px -26px rgb(var(--ink-rgb) / 0.35);
   }
 
   /* Animated gradient border on hover */
@@ -121,7 +158,7 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(130deg, rgba(91, 231, 255, 0.5), rgba(192, 38, 255, 0.5));
+    background: linear-gradient(130deg, rgb(var(--primary-rgb) / 0.45), rgb(var(--sage-rgb) / 0.8));
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -132,15 +169,20 @@
   .border-glow:hover::after {
     opacity: 1;
   }
+
+  /* Leave room for the phone's home bar under the bottom tab bar */
+  .pb-safe {
+    padding-bottom: max(env(safe-area-inset-bottom), 0px);
+  }
 }
 
-/* ── Global glassification: turn every existing dark card into glass ─────── */
-[class~="bg-deep"] {
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
+/* Every card using bg-surface gets the frosted look */
+[class~="bg-surface"] {
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
-    0 16px 36px -20px rgba(0, 0, 0, 0.7);
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
+    0 16px 36px -26px rgb(var(--ink-rgb) / 0.3);
 }
 
 /* ── Animations ─────────────────────────────────────────────────────────── */

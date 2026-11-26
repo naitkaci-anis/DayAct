@@ -3,10 +3,10 @@
 import { useStore, tasksForDate, moodForDate } from "@/lib/store";
 
 const accentVar: Record<string, string> = {
-  cyan: "var(--act-cyan)",
-  violet: "var(--focus-violet)",
-  green: "var(--done-green)",
-  amber: "var(--energy-amber)",
+  cyan: "var(--primary)",
+  violet: "var(--secondary)",
+  green: "var(--success)",
+  amber: "var(--warning)",
 };
 
 function Card({
@@ -21,16 +21,16 @@ function Card({
   accent: keyof typeof accentVar;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-md border border-border bg-deep p-4 hover:border-[#2a3441] transition-colors">
+    <div className="relative overflow-hidden rounded-md border border-line bg-surface p-4 hover:border-line-strong transition-colors">
       <span
         className="absolute left-0 top-0 h-full w-[2px]"
         style={{ background: accentVar[accent], opacity: 0.7 }}
       />
-      <p className="text-xs text-text-muted">{label}</p>
-      <p className="mt-2 text-2xl font-light text-text" style={{ letterSpacing: "-0.02em" }}>
+      <p className="text-xs text-ink-muted">{label}</p>
+      <p className="mt-2 text-2xl font-light text-ink" style={{ letterSpacing: "-0.02em" }}>
         {value}
       </p>
-      <p className="mt-1 text-xs text-text-muted">{hint}</p>
+      <p className="mt-1 text-xs text-ink-muted">{hint}</p>
     </div>
   );
 }

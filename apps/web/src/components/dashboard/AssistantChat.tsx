@@ -181,24 +181,24 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
 
   return (
     <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-ink/35 backdrop-blur-sm" onClick={onClose} />
 
       <aside
-        className="absolute right-0 top-0 h-full w-full max-w-md bg-deep border-l border-border flex flex-col"
+        className="absolute right-0 top-0 h-full w-full max-w-md bg-surface border-l border-line flex flex-col"
         style={{ animation: "slideInRight 0.22s ease" }}
       >
         {/* header */}
-        <div className="flex items-center justify-between px-5 h-16 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-5 h-16 border-b border-line shrink-0">
           <div className="flex items-center gap-2">
-            <span className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-focus-violet/15 text-focus-violet">
+            <span className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-secondary/15 text-secondary">
               <SparkIcon size={16} />
             </span>
             <div>
-              <h2 className="text-sm font-medium text-text">Assistant</h2>
-              <p className="text-[10px] text-text-muted">local · llama3.2 · privé</p>
+              <h2 className="text-sm font-medium text-ink">Assistant</h2>
+              <p className="text-[10px] text-ink-muted">assistant IA</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-text-muted hover:text-text" aria-label="Fermer">
+          <button onClick={onClose} className="text-ink-muted hover:text-ink" aria-label="Fermer">
             <CloseIcon size={18} />
           </button>
         </div>
@@ -210,8 +210,8 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
               <div
                 className={`max-w-[85%] rounded-md px-3.5 py-2.5 text-sm ${
                   m.role === "user"
-                    ? "bg-act-cyan text-[#0a0a14]"
-                    : "bg-[#0a0a14] border border-border text-text"
+                    ? "bg-primary text-on-fill"
+                    : "bg-field border border-line text-ink"
                 }`}
               >
                 <p className="leading-relaxed whitespace-pre-wrap">{m.text}</p>
@@ -222,11 +222,11 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
                       return (
                         <li
                           key={j}
-                          className="flex items-center gap-2 rounded-sm bg-deep border border-border px-2 py-1.5"
+                          className="flex items-center gap-2 rounded-sm bg-surface border border-line px-2 py-1.5"
                         >
                           <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: cat.color }} />
-                          <span className="text-[12px] text-text truncate flex-1">{t.title}</span>
-                          <span className="text-[10px] font-mono text-text-muted">
+                          <span className="text-[12px] text-ink truncate flex-1">{t.title}</span>
+                          <span className="text-[10px] font-mono text-ink-muted">
                             {t.date.slice(5)} {t.time}
                           </span>
                         </li>
@@ -239,8 +239,8 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
           ))}
           {loading && (
             <div className="flex justify-start">
-              <div className="rounded-md px-3.5 py-2.5 bg-[#0a0a14] border border-border">
-                <span className="flex items-center gap-1.5 text-sm text-text-muted">
+              <div className="rounded-md px-3.5 py-2.5 bg-field border border-line">
+                <span className="flex items-center gap-1.5 text-sm text-ink-muted">
                   <SettingsIcon size={14} className="animate-spin" /> réflexion… (~30 s en local)
                 </span>
               </div>
@@ -249,14 +249,14 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
         </div>
 
         {/* input */}
-        <div className="p-3 border-t border-border shrink-0">
+        <div className="p-3 border-t border-line shrink-0">
           <div className="flex items-end gap-2">
             <button
               onClick={listening ? stopVoice : startVoice}
               className={`flex items-center justify-center w-10 h-10 rounded-sm border transition-colors shrink-0 ${
                 listening
-                  ? "border-alert-red text-alert-red bg-alert-red/10 animate-pulse"
-                  : "border-border text-text-muted hover:text-act-cyan"
+                  ? "border-danger text-danger bg-danger/10 animate-pulse"
+                  : "border-line text-ink-muted hover:text-primary"
               }`}
               aria-label="Dicter à la voix"
               title="Parler"
@@ -274,18 +274,18 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
               }}
               rows={1}
               placeholder={listening ? "Parle…" : "Écris ta demande…"}
-              className="flex-1 resize-none px-3 py-2.5 rounded-sm bg-[#0a0a14] border border-border text-sm text-text placeholder:text-text-muted/60 focus:border-act-cyan outline-none max-h-28"
+              className="flex-1 resize-none px-3 py-2.5 rounded-sm bg-field border border-line text-sm text-ink placeholder:text-ink-muted/60 focus:border-primary outline-none max-h-28"
             />
             <button
               onClick={send}
               disabled={loading || !input.trim()}
-              className="flex items-center justify-center w-10 h-10 rounded-sm bg-act-cyan text-[#0a0a14] disabled:opacity-40 transition-opacity shrink-0"
+              className="flex items-center justify-center w-10 h-10 rounded-sm bg-primary text-on-fill disabled:opacity-40 transition-opacity shrink-0"
               aria-label="Envoyer"
             >
               ↑
             </button>
           </div>
-          <p className="text-[10px] text-text-muted mt-1.5 text-center">
+          <p className="text-[10px] text-ink-muted mt-1.5 text-center">
             Entrée pour envoyer · les tâches sont créées automatiquement
           </p>
         </div>

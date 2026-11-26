@@ -71,7 +71,7 @@ export function Pomodoro({ open, onClose }: { open: boolean; onClose: () => void
   const mm = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
   const ss = String(secondsLeft % 60).padStart(2, "0");
   const pct = ((total - secondsLeft) / total) * 100;
-  const accent = mode === "focus" ? "var(--act-cyan)" : "var(--done-green)";
+  const accent = mode === "focus" ? "var(--primary)" : "var(--success)";
   const linked = todayTasks.find((t) => t.id === taskId);
 
   // SVG ring
@@ -80,11 +80,11 @@ export function Pomodoro({ open, onClose }: { open: boolean; onClose: () => void
   const offset = circ * (1 - pct / 100);
 
   return (
-    <div className="fixed bottom-4 right-4 z-40 w-[300px] rounded-md border border-border bg-deep shadow-2xl animate-[popIn_0.18s_ease]">
-      <div className="flex items-center justify-between px-4 h-12 border-b border-border">
+    <div className="fixed bottom-4 right-4 z-40 w-[300px] rounded-md border border-line bg-surface shadow-2xl animate-[popIn_0.18s_ease]">
+      <div className="flex items-center justify-between px-4 h-12 border-b border-line">
         <div className="flex items-center gap-2">
-          <ClockIcon size={15} className="text-act-cyan" />
-          <span className="text-sm font-medium text-text">Pomodoro</span>
+          <ClockIcon size={15} className="text-primary" />
+          <span className="text-sm font-medium text-ink">Pomodoro</span>
           <span
             className="text-[10px] px-1.5 py-0.5 rounded-full"
             style={{ color: accent, background: `color-mix(in srgb, ${accent} 16%, transparent)` }}
@@ -92,7 +92,7 @@ export function Pomodoro({ open, onClose }: { open: boolean; onClose: () => void
             {mode === "focus" ? "Focus" : "Pause"}
           </span>
         </div>
-        <button onClick={onClose} className="text-text-muted hover:text-text" aria-label="Fermer">
+        <button onClick={onClose} className="text-ink-muted hover:text-ink" aria-label="Fermer">
           <CloseIcon size={16} />
         </button>
       </div>
@@ -101,7 +101,7 @@ export function Pomodoro({ open, onClose }: { open: boolean; onClose: () => void
         {/* timer ring */}
         <div className="relative w-[170px] h-[170px]">
           <svg width="170" height="170" viewBox="0 0 170 170" className="-rotate-90">
-            <circle cx="85" cy="85" r={r} fill="none" stroke="var(--border)" strokeWidth="8" />
+            <circle cx="85" cy="85" r={r} fill="none" stroke="var(--line)" strokeWidth="8" />
             <circle
               cx="85"
               cy="85"
@@ -116,10 +116,10 @@ export function Pomodoro({ open, onClose }: { open: boolean; onClose: () => void
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl font-light text-text tabular-nums">
+            <span className="text-3xl font-light text-ink tabular-nums">
               {mm}:{ss}
             </span>
-            <span className="text-[11px] text-text-muted mt-0.5">
+            <span className="text-[11px] text-ink-muted mt-0.5">
               {completed} session{completed > 1 ? "s" : ""} ·{" "}
               {mode === "focus" ? `${FOCUS_MIN}min` : `${BREAK_MIN}min`}
             </span>
@@ -130,7 +130,7 @@ export function Pomodoro({ open, onClose }: { open: boolean; onClose: () => void
         <select
           value={taskId}
           onChange={(e) => setTaskId(e.target.value)}
-          className="mt-4 w-full px-2.5 py-1.5 rounded-sm bg-[#0a0a14] border border-border text-xs text-text focus:border-act-cyan outline-none"
+          className="mt-4 w-full px-2.5 py-1.5 rounded-sm bg-field border border-line text-xs text-ink focus:border-primary outline-none"
         >
           <option value="">— Lier à une tâche (optionnel) —</option>
           {todayTasks.map((t) => (
@@ -140,7 +140,7 @@ export function Pomodoro({ open, onClose }: { open: boolean; onClose: () => void
           ))}
         </select>
         {linked && (
-          <p className="text-[10px] text-text-muted mt-1.5">
+          <p className="text-[10px] text-ink-muted mt-1.5">
             Temps suivi : {Math.floor(linked.timeSpentMin / 60)}h
             {String(linked.timeSpentMin % 60).padStart(2, "0")}
           </p>
@@ -155,20 +155,20 @@ export function Pomodoro({ open, onClose }: { open: boolean; onClose: () => void
               }
               setRunning((r) => !r);
             }}
-            className="flex-1 px-4 py-2 rounded-sm text-sm font-medium text-[#0a0a14] hover:opacity-90 transition-opacity"
+            className="flex-1 px-4 py-2 rounded-sm text-sm font-medium text-on-fill hover:opacity-90 transition-opacity"
             style={{ background: accent }}
           >
             {running ? "Pause" : "Démarrer"}
           </button>
           <button
             onClick={reset}
-            className="px-3 py-2 rounded-sm border border-border text-sm text-text-muted hover:text-text transition-colors"
+            className="px-3 py-2 rounded-sm border border-line text-sm text-ink-muted hover:text-ink transition-colors"
           >
             Reset
           </button>
           <button
             onClick={skip}
-            className="px-3 py-2 rounded-sm border border-border text-sm text-text-muted hover:text-text transition-colors"
+            className="px-3 py-2 rounded-sm border border-line text-sm text-ink-muted hover:text-ink transition-colors"
             title="Passer à l'étape suivante"
           >
             Skip

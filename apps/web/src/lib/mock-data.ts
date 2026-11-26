@@ -246,21 +246,21 @@ export const aiSuggestion = {
 // Helpers shared by components --------------------------------------------
 
 export const priorityMeta: Record<Priority, { label: string; color: string }> = {
-  high: { label: "Haute", color: "var(--alert-red)" },
-  medium: { label: "Moyenne", color: "var(--energy-amber)" },
-  low: { label: "Basse", color: "var(--text-muted)" },
+  high: { label: "Haute", color: "var(--danger)" },
+  medium: { label: "Moyenne", color: "var(--warning)" },
+  low: { label: "Basse", color: "var(--ink-muted)" },
 };
 
 export const categoryMeta: Record<TaskCategory, { label: string; color: string }> = {
-  work: { label: "Travail", color: "var(--act-cyan)" },
-  health: { label: "Santé", color: "var(--done-green)" },
-  personal: { label: "Perso", color: "var(--focus-violet)" },
-  learning: { label: "Études", color: "var(--energy-amber)" },
+  work: { label: "Travail", color: "var(--cat-work)" },
+  health: { label: "Santé", color: "var(--cat-health)" },
+  personal: { label: "Perso", color: "var(--cat-personal)" },
+  learning: { label: "Études", color: "var(--cat-learning)" },
 };
 
 export const blockMeta: Record<BlockType, { label: string; color: string }> = {
-  focus: { label: "Focus", color: "var(--act-cyan)" },
-  meeting: { label: "Réunion", color: "var(--focus-violet)" },
-  break: { label: "Pause", color: "var(--done-green)" },
-  personal: { label: "Perso", color: "var(--energy-amber)" },
+  focus: { label: "Focus", color: "var(--cat-work)" },
+  meeting: { label: "Réunion", color: "var(--cat-personal)" },
+  break: { label: "Pause", color: "var(--cat-health)" },
+  personal: { label: "Perso", color: "var(--cat-learning)" },
 };

@@ -46,7 +46,7 @@ Ouvre **`apps/web/.env.local`** et remplis :
 NEXT_PUBLIC_SUPABASE_URL=https://TON-PROJET.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=ta_clef_anon
 SUPABASE_SERVICE_ROLE_KEY=ta_clef_service_role
-ANTHROPIC_API_KEY=
+GEMINI_API_KEY=
 ```
 
 ## 6. Redémarrer le serveur

@@ -41,20 +41,20 @@ export function SearchOverlay({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh] px-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-ink/35 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg rounded-md border border-border bg-deep shadow-2xl animate-[popIn_0.16s_ease] overflow-hidden">
+      <div className="relative w-full max-w-lg rounded-md border border-line bg-surface shadow-2xl animate-[popIn_0.16s_ease] overflow-hidden">
         {/* input */}
-        <div className="flex items-center gap-3 px-4 h-14 border-b border-border">
-          <SearchIcon size={18} className="text-text-muted shrink-0" />
+        <div className="flex items-center gap-3 px-4 h-14 border-b border-line">
+          <SearchIcon size={18} className="text-ink-muted shrink-0" />
           <input
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Rechercher une tâche…"
-            className="flex-1 bg-transparent text-sm text-text placeholder:text-text-muted/60 outline-none"
+            className="flex-1 bg-transparent text-sm text-ink placeholder:text-ink-muted/60 outline-none"
           />
-          <kbd className="text-[10px] text-text-muted border border-border rounded px-1.5 py-0.5">
+          <kbd className="text-[10px] text-ink-muted border border-line rounded px-1.5 py-0.5">
             Échap
           </kbd>
         </div>
@@ -62,12 +62,12 @@ export function SearchOverlay({
         {/* results */}
         <div className="max-h-[50vh] overflow-y-auto">
           {query.trim() === "" && (
-            <p className="text-xs text-text-muted text-center py-8">
+            <p className="text-xs text-ink-muted text-center py-8">
               Tape pour chercher dans toutes tes tâches.
             </p>
           )}
           {query.trim() !== "" && results.length === 0 && (
-            <p className="text-xs text-text-muted text-center py-8">Aucun résultat.</p>
+            <p className="text-xs text-ink-muted text-center py-8">Aucun résultat.</p>
           )}
           {results.map((t) => {
             const cat = categoryMeta[t.category];
@@ -75,12 +75,12 @@ export function SearchOverlay({
             return (
               <div
                 key={t.id}
-                className="group flex items-center gap-3 px-4 py-2.5 hover:bg-[#0a0a14] border-b border-border last:border-b-0"
+                className="group flex items-center gap-3 px-4 py-2.5 hover:bg-field border-b border-line last:border-b-0"
               >
                 <button
                   onClick={() => dispatch({ type: "TOGGLE_TASK", id: t.id })}
                   className={`flex items-center justify-center w-[17px] h-[17px] shrink-0 rounded-[5px] border ${
-                    t.done ? "bg-act-cyan border-act-cyan text-[#0a0a14]" : "border-[#374151]"
+                    t.done ? "bg-primary border-primary text-on-fill" : "border-line-strong"
                   }`}
                 >
                   {t.done && <CheckIcon size={11} />}
@@ -88,17 +88,17 @@ export function SearchOverlay({
                 <button onClick={() => onPick(t)} className="flex-1 min-w-0 text-left">
                   <span
                     className={`block text-sm truncate ${
-                      t.done ? "line-through text-text-muted" : "text-text"
+                      t.done ? "line-through text-ink-muted" : "text-ink"
                     }`}
                   >
                     {t.title}
                   </span>
                   <span className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[11px] text-text-muted">
+                    <span className="text-[11px] text-ink-muted">
                       {formatLongDate(t.date)} · {t.time}
                     </span>
                     {overdue && (
-                      <span className="text-[10px] text-alert-red">en retard</span>
+                      <span className="text-[10px] text-danger">en retard</span>
                     )}
                   </span>
                 </button>

@@ -104,21 +104,21 @@ export function DayView({ date }: { date: string }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
-      <div className="rounded-md border border-border bg-deep overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <h3 className="text-sm font-medium text-text capitalize">{frDayLong(date)}</h3>
-          <span className="text-xs text-text-muted">
+      <div className="rounded-md border border-line bg-surface overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-line">
+          <h3 className="text-sm font-medium text-ink capitalize">{frDayLong(date)}</h3>
+          <span className="text-xs text-ink-muted">
             {done}/{dayTasks.length} terminées
           </span>
         </div>
 
         <div ref={bodyRef} className="overflow-y-auto" style={{ maxHeight: 600 }}>
           <div className="grid grid-cols-[56px_1fr]">
-            <div className="relative border-r border-border" style={{ height: HEIGHT }}>
+            <div className="relative border-r border-line" style={{ height: HEIGHT }}>
               {HOURS.map((h) => (
                 <div
                   key={h}
-                  className="absolute right-2 -translate-y-1/2 text-[11px] text-text-muted font-mono"
+                  className="absolute right-2 -translate-y-1/2 text-[11px] text-ink-muted font-mono"
                   style={{ top: `${((h * 60 - DAY_START) / SPAN) * 100}%` }}
                 >
                   {String(h).padStart(2, "0")}:00
@@ -133,13 +133,13 @@ export function DayView({ date }: { date: string }) {
                 openNew({ date, time: minutesToTime(min, DAY_START, DAY_END) });
               }}
               title="Cliquer pour ajouter une tâche"
-              className="relative cursor-copy hover:bg-act-cyan/[0.02]"
+              className="relative cursor-copy hover:bg-primary/[0.02]"
               style={{ height: HEIGHT }}
             >
               {HOURS.map((h) => (
                 <div
                   key={h}
-                  className="absolute left-0 w-full border-t border-border/30 pointer-events-none"
+                  className="absolute left-0 w-full border-t border-line/30 pointer-events-none"
                   style={{ top: `${((h * 60 - DAY_START) / SPAN) * 100}%` }}
                 />
               ))}
@@ -172,9 +172,9 @@ export function DayView({ date }: { date: string }) {
                     }}
                     className={`absolute left-2 right-3 rounded-[6px] px-2.5 py-1.5 overflow-hidden select-none ${
                       isDragged
-                        ? "cursor-grabbing z-30 ring-1 ring-act-cyan"
+                        ? "cursor-grabbing z-30 ring-1 ring-primary"
                         : conflicts.has(t.id)
-                        ? "cursor-grab z-10 ring-1 ring-alert-red hover:brightness-125"
+                        ? "cursor-grab z-10 ring-1 ring-danger hover:brightness-125"
                         : "cursor-grab z-10 hover:brightness-125"
                     } transition-[filter]`}
                     style={{
@@ -189,12 +189,12 @@ export function DayView({ date }: { date: string }) {
                   >
                     <p
                       className={`text-xs leading-tight truncate ${
-                        t.done ? "line-through text-text-muted" : "text-text"
+                        t.done ? "line-through text-ink-muted" : "text-ink"
                       }`}
                     >
                       {t.title}
                     </p>
-                    <p className="text-[10px] leading-tight text-text-muted">
+                    <p className="text-[10px] leading-tight text-ink-muted">
                       {minutesToTime(startM, 0, 1440)} · {formatDuration(dur)}
                     </p>
 
@@ -220,10 +220,10 @@ export function DayView({ date }: { date: string }) {
 
               {isToday && nowMin != null && nowTop >= 0 && nowTop <= HEIGHT && (
                 <div
-                  className="absolute left-0 w-full h-px bg-act-cyan z-20 pointer-events-none"
-                  style={{ top: nowTop, boxShadow: "0 0 6px rgba(6,182,212,0.7)" }}
+                  className="absolute left-0 w-full h-px bg-primary z-20 pointer-events-none"
+                  style={{ top: nowTop, boxShadow: "0 0 6px rgba(89,9,7,0.7)" }}
                 >
-                  <span className="absolute -left-1 -top-1 w-2 h-2 rounded-full bg-act-cyan" />
+                  <span className="absolute -left-1 -top-1 w-2 h-2 rounded-full bg-primary" />
                 </div>
               )}
             </div>
@@ -232,15 +232,15 @@ export function DayView({ date }: { date: string }) {
       </div>
 
       {/* agenda list */}
-      <div className="rounded-md border border-border bg-deep p-4 lg:self-start">
-        <h3 className="text-sm font-medium text-text mb-3">Agenda</h3>
+      <div className="rounded-md border border-line bg-surface p-4 lg:self-start">
+        <h3 className="text-sm font-medium text-ink mb-3">Agenda</h3>
         <ul className="space-y-1">
           {dayTasks.length === 0 && (
-            <li className="text-xs text-text-muted py-6 text-center">
+            <li className="text-xs text-ink-muted py-6 text-center">
               Rien de prévu.
               <button
                 onClick={() => openNew({ date, time: "09:00" })}
-                className="block mx-auto mt-2 text-act-cyan hover:underline"
+                className="block mx-auto mt-2 text-primary hover:underline"
               >
                 + Ajouter
               </button>
@@ -250,20 +250,20 @@ export function DayView({ date }: { date: string }) {
             const cat = categoryMeta[t.category];
             const prio = priorityMeta[t.priority];
             return (
-              <li key={t.id} className="flex items-center gap-2.5 rounded-sm px-1.5 py-1.5 hover:bg-[#0a0a14]">
+              <li key={t.id} className="flex items-center gap-2.5 rounded-sm px-1.5 py-1.5 hover:bg-field">
                 <button
                   onClick={() => dispatch({ type: "TOGGLE_TASK", id: t.id })}
                   className={`flex items-center justify-center w-[16px] h-[16px] shrink-0 rounded-[4px] border transition-colors ${
-                    t.done ? "bg-act-cyan border-act-cyan text-[#0a0a14]" : "border-[#374151] hover:border-act-cyan"
+                    t.done ? "bg-primary border-primary text-on-fill" : "border-line-strong hover:border-primary"
                   }`}
                 >
                   {t.done && <CheckIcon size={10} />}
                 </button>
                 <button onClick={() => openEdit(t)} className="flex-1 min-w-0 text-left">
-                  <span className={`block text-[13px] truncate ${t.done ? "line-through text-text-muted" : "text-text"}`}>
+                  <span className={`block text-[13px] truncate ${t.done ? "line-through text-ink-muted" : "text-ink"}`}>
                     {t.title}
                   </span>
-                  <span className="text-[10px] font-mono text-text-muted">{t.time}</span>
+                  <span className="text-[10px] font-mono text-ink-muted">{t.time}</span>
                   <span className="text-[10px] ml-1.5" style={{ color: cat.color }}>
                     {cat.label}
                   </span>
@@ -273,7 +273,7 @@ export function DayView({ date }: { date: string }) {
             );
           })}
         </ul>
-        <p className="text-[10px] text-text-muted mt-3 text-center">
+        <p className="text-[10px] text-ink-muted mt-3 text-center">
           Glisse un bloc pour le déplacer · tire le bas pour la durée
         </p>
       </div>

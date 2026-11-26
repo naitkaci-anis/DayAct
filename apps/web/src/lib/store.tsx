@@ -11,6 +11,7 @@ import {
   type Dispatch,
 } from "react";
 import { priorityMeta, categoryMeta, user, type Priority, type TaskCategory } from "./mock-data";
+import { migrateHabitColors } from "./theme";
 import { createClient } from "./supabase/client";
 import {
   loadFromSupabase,
@@ -159,10 +160,10 @@ function seed(): State {
       { date: t, score: 72 },
     ],
     habits: [
-      { id: newId(), name: "Boire 2 L d'eau", emoji: "💧", color: "#06b6d4" },
-      { id: newId(), name: "Sport / mouvement", emoji: "🏃", color: "#4ade80" },
-      { id: newId(), name: "Méditation", emoji: "🧘", color: "#a78bfa" },
-      { id: newId(), name: "Lecture", emoji: "📚", color: "#fbbf24" },
+      { id: newId(), name: "Boire 2 L d'eau", emoji: "💧", color: "#7A1612" },
+      { id: newId(), name: "Sport / mouvement", emoji: "🏃", color: "#4E6B35" },
+      { id: newId(), name: "Méditation", emoji: "🧘", color: "#6E4E6B" },
+      { id: newId(), name: "Lecture", emoji: "📚", color: "#A66A1C" },
     ],
     habitLogs: [],
     settings: { notifications: true, aiSuggestions: true, energy: 72, displayName: "" },
@@ -420,7 +421,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
                   ...state,
                   tasks: data.tasks,
                   moods: data.moods,
-                  habits: data.habits,
+                  habits: migrateHabitColors(data.habits),
                   habitLogs: data.habitLogs,
                   settings: data.settings,
                   selectedDate: todayISO(),
@@ -440,7 +441,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw && !cancelled) {
           const saved = JSON.parse(raw) as State;
-          rawDispatch({ type: "HYDRATE", state: { ...saved, selectedDate: todayISO() } });
+          rawDispatch({
+            type: "HYDRATE",
+            state: {
+              ...saved,
+              habits: migrateHabitColors(saved.habits ?? []),
+              selectedDate: todayISO(),
+            },
+          });
         }
       } catch {
         // ignore corrupt storage

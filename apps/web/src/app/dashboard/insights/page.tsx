@@ -12,10 +12,10 @@ import {
 } from "@/lib/store";
 
 const accentVar: Record<string, string> = {
-  cyan: "var(--act-cyan)",
-  violet: "var(--focus-violet)",
-  green: "var(--done-green)",
-  amber: "var(--energy-amber)",
+  cyan: "var(--primary)",
+  violet: "var(--secondary)",
+  green: "var(--success)",
+  amber: "var(--warning)",
 };
 
 const DAY_LABELS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
@@ -27,10 +27,10 @@ function fmt(min: number) {
 }
 
 function moodColor(score: number) {
-  if (score >= 70) return "var(--done-green)";
-  if (score >= 55) return "var(--act-cyan)";
-  if (score >= 40) return "var(--energy-amber)";
-  return "var(--alert-red)";
+  if (score >= 70) return "var(--success)";
+  if (score >= 55) return "var(--primary)";
+  if (score >= 40) return "var(--warning)";
+  return "var(--danger)";
 }
 
 // Mon=0 weekday from an ISO date string (timezone-safe).
@@ -90,17 +90,17 @@ export default function InsightsPage() {
         {kpis.map((kpi) => (
           <div
             key={kpi.label}
-            className="relative overflow-hidden rounded-md border border-border bg-deep p-4"
+            className="relative overflow-hidden rounded-md border border-line bg-surface p-4"
           >
             <span
               className="absolute left-0 top-0 h-full w-[2px]"
               style={{ background: accentVar[kpi.accent], opacity: 0.7 }}
             />
-            <p className="text-xs text-text-muted">{kpi.label}</p>
-            <p className="mt-2 text-2xl font-light text-text" style={{ letterSpacing: "-0.02em" }}>
+            <p className="text-xs text-ink-muted">{kpi.label}</p>
+            <p className="mt-2 text-2xl font-light text-ink" style={{ letterSpacing: "-0.02em" }}>
               {kpi.value}
             </p>
-            <p className="mt-1 text-xs text-text-muted">{kpi.detail}</p>
+            <p className="mt-1 text-xs text-ink-muted">{kpi.detail}</p>
           </div>
         ))}
       </div>
@@ -115,8 +115,8 @@ export default function InsightsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Focus chart */}
-        <section className="lg:col-span-2 rounded-md border border-border bg-deep p-5">
-          <h2 className="text-sm font-medium text-text mb-5">Temps de focus par jour</h2>
+        <section className="lg:col-span-2 rounded-md border border-line bg-surface p-5">
+          <h2 className="text-sm font-medium text-ink mb-5">Temps de focus par jour</h2>
           <div className="flex items-end justify-between gap-3 h-48">
             {days.map((d) => (
               <div key={d.date} className="flex-1 flex flex-col items-center gap-2 h-full">
@@ -127,23 +127,23 @@ export default function InsightsPage() {
                       height: `${(d.focusMin / maxFocus) * 100}%`,
                       background:
                         d.focusMin > 0
-                          ? "linear-gradient(to top, #06b6d4, #a78bfa)"
-                          : "var(--border)",
+                          ? "linear-gradient(to top, #590907, #5F6556)"
+                          : "var(--line)",
                       minHeight: 4,
                     }}
                     title={`${d.label} · ${fmt(d.focusMin)}`}
                   />
                 </div>
-                <span className="text-[11px] text-text-muted">{d.label}</span>
-                <span className="text-[10px] text-text -mt-1">{fmt(d.focusMin)}</span>
+                <span className="text-[11px] text-ink-muted">{d.label}</span>
+                <span className="text-[10px] text-ink -mt-1">{fmt(d.focusMin)}</span>
               </div>
             ))}
           </div>
         </section>
 
         {/* Category breakdown */}
-        <section className="rounded-md border border-border bg-deep p-5">
-          <h2 className="text-sm font-medium text-text mb-5">Répartition (7j)</h2>
+        <section className="rounded-md border border-line bg-surface p-5">
+          <h2 className="text-sm font-medium text-ink mb-5">Répartition (7j)</h2>
           <div className="space-y-4">
             {byCategory.map(({ cat, count }) => {
               const meta = categoryMeta[cat];
@@ -151,12 +151,12 @@ export default function InsightsPage() {
               return (
                 <div key={cat}>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs text-text">{meta.label}</span>
-                    <span className="text-xs text-text-muted">
+                    <span className="text-xs text-ink">{meta.label}</span>
+                    <span className="text-xs text-ink-muted">
                       {count} · {pct}%
                     </span>
                   </div>
-                  <div className="h-2 rounded-full bg-[#0a0a14] overflow-hidden">
+                  <div className="h-2 rounded-full bg-field overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all"
                       style={{ width: `${pct}%`, background: meta.color }}
@@ -170,8 +170,8 @@ export default function InsightsPage() {
       </div>
 
       {/* Mood over week */}
-      <section className="mt-6 rounded-md border border-border bg-deep p-5 max-w-md">
-        <h2 className="text-sm font-medium text-text mb-4">Humeur (7 jours)</h2>
+      <section className="mt-6 rounded-md border border-line bg-surface p-5 max-w-md">
+        <h2 className="text-sm font-medium text-ink mb-4">Humeur (7 jours)</h2>
         <div className="flex items-end justify-between gap-2 h-20">
           {days.map((d) => (
             <div key={d.date} className="flex-1 flex flex-col items-center gap-1.5">
@@ -180,13 +180,13 @@ export default function InsightsPage() {
                   className="w-full max-w-[14px] rounded-[3px] transition-all"
                   style={{
                     height: `${d.mood != null ? d.mood : 4}%`,
-                    background: d.mood != null ? moodColor(d.mood) : "var(--border)",
+                    background: d.mood != null ? moodColor(d.mood) : "var(--line)",
                     opacity: d.mood != null ? 0.85 : 0.4,
                   }}
                   title={d.mood != null ? `${d.label} · ${d.mood}` : `${d.label} · —`}
                 />
               </div>
-              <span className="text-[10px] text-text-muted">{d.label}</span>
+              <span className="text-[10px] text-ink-muted">{d.label}</span>
             </div>
           ))}
         </div>

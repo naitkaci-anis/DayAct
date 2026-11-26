@@ -7,10 +7,10 @@ import { HealthCoach } from "@/components/dashboard/HealthCoach";
 import { useStore, moodForDate } from "@/lib/store";
 
 const accentVar: Record<string, string> = {
-  cyan: "var(--act-cyan)",
-  violet: "var(--focus-violet)",
-  green: "var(--done-green)",
-  amber: "var(--energy-amber)",
+  cyan: "var(--primary)",
+  violet: "var(--secondary)",
+  green: "var(--success)",
+  amber: "var(--warning)",
 };
 
 function Gauge({
@@ -31,10 +31,10 @@ function Gauge({
   const offset = circ * (1 - value / 100);
 
   return (
-    <div className="flex flex-col items-center rounded-md border border-border bg-deep p-5">
+    <div className="flex flex-col items-center rounded-md border border-line bg-surface p-5">
       <div className="relative w-[88px] h-[88px]">
         <svg width="88" height="88" viewBox="0 0 88 88" className="-rotate-90">
-          <circle cx="44" cy="44" r={r} fill="none" stroke="var(--border)" strokeWidth="6" />
+          <circle cx="44" cy="44" r={r} fill="none" stroke="var(--line)" strokeWidth="6" />
           <circle
             cx="44"
             cy="44"
@@ -49,12 +49,12 @@ function Gauge({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-lg font-light text-text">{value}</span>
-          <span className="text-[9px] text-text-muted -mt-1">{unit}</span>
+          <span className="text-lg font-light text-ink">{value}</span>
+          <span className="text-[9px] text-ink-muted -mt-1">{unit}</span>
         </div>
       </div>
-      <span className="mt-3 text-sm text-text">{label}</span>
-      {note && <span className="text-[11px] text-text-muted">{note}</span>}
+      <span className="mt-3 text-sm text-ink">{label}</span>
+      {note && <span className="text-[11px] text-ink-muted">{note}</span>}
     </div>
   );
 }
@@ -88,15 +88,15 @@ export default function WellbeingPage() {
       </div>
 
       {/* Interactive energy control */}
-      <div className="rounded-md border border-border bg-deep p-5 mb-6 max-w-3xl">
+      <div className="rounded-md border border-line bg-surface p-5 mb-6 max-w-3xl">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h2 className="text-sm font-medium text-text">Ton niveau d'énergie</h2>
-            <p className="text-[11px] text-text-muted">
+            <h2 className="text-sm font-medium text-ink">Ton niveau d'énergie</h2>
+            <p className="text-[11px] text-ink-muted">
               Ajuste-le : ton sommeil et ton stress estimés s'adaptent en direct.
             </p>
           </div>
-          <span className="text-lg font-light text-energy-amber">{energy}%</span>
+          <span className="text-lg font-light text-warning">{energy}%</span>
         </div>
         <input
           type="range"
@@ -107,9 +107,9 @@ export default function WellbeingPage() {
           onChange={(e) =>
             dispatch({ type: "SET_SETTING", key: "energy", value: Number(e.target.value) })
           }
-          className="w-full accent-[var(--energy-amber)] cursor-pointer"
+          className="w-full accent-[var(--warning)] cursor-pointer"
         />
-        <div className="flex justify-between text-[10px] text-text-muted mt-1">
+        <div className="flex justify-between text-[10px] text-ink-muted mt-1">
           <span>Épuisé</span>
           <span>En forme</span>
         </div>
@@ -124,8 +124,8 @@ export default function WellbeingPage() {
         <Assistant />
       </div>
 
-      <section className="mt-6 rounded-md border border-border bg-deep p-5 max-w-3xl">
-        <h2 className="text-sm font-medium text-text mb-3">Conseils du jour</h2>
+      <section className="mt-6 rounded-md border border-line bg-surface p-5 max-w-3xl">
+        <h2 className="text-sm font-medium text-ink mb-3">Conseils du jour</h2>
         <ul className="space-y-2.5">
           {[
             stress < 50
@@ -140,8 +140,8 @@ export default function WellbeingPage() {
               ? "Belle humeur aujourd'hui — capitalise dessus pour avancer sur l'important."
               : "Humeur en berne : accorde-toi une pause bien-être avant de reprendre.",
           ].map((tip, i) => (
-            <li key={i} className="flex items-start gap-3 text-sm text-text-muted">
-              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-done-green shrink-0" />
+            <li key={i} className="flex items-start gap-3 text-sm text-ink-muted">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-success shrink-0" />
               {tip}
             </li>
           ))}

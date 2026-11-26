@@ -1,32 +1,41 @@
 import type { Config } from "tailwindcss";
 
+// Every colour points at a CSS variable defined in src/app/globals.css.
+// To change the look of the whole app, edit the variables there — not here.
+const rgb = (name: string) => `rgb(var(--${name}-rgb) / <alpha-value>)`;
+
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        void: "#050816",
-        panel: "#0b1020",
-        deep: "rgba(255,255,255,0.045)",
-        border: "rgba(255,255,255,0.08)",
-        "act-cyan": "#5be7ff",
-        "focus-violet": "#8b5cf6",
-        accent: "#c026ff",
-        "done-green": "#22c55e",
-        "energy-amber": "#f59e0b",
-        "alert-red": "#ef4444",
-        text: "#f5f7ff",
-        "text-muted": "#8a93b2",
+        canvas: rgb("canvas"),
+        panel: rgb("panel"),
+        surface: "var(--surface)",
+        field: rgb("field"),
+        line: rgb("line"),
+        "line-strong": rgb("line-strong"),
+        primary: rgb("primary"),
+        "primary-hover": rgb("primary-hover"),
+        secondary: rgb("secondary"),
+        accent: rgb("accent"),
+        sage: rgb("sage"),
+        cream: rgb("cream"),
+        success: rgb("success"),
+        warning: rgb("warning"),
+        danger: rgb("danger"),
+        ink: rgb("ink"),
+        "ink-muted": rgb("ink-muted"),
+        "on-fill": rgb("on-fill"),
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "Inter", "system-ui", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "monospace"],
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Georgia", "serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       borderRadius: {
         sm: "10px",

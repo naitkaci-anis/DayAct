@@ -1,18 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { CinematicBackground } from "@/components/CinematicBackground";
+import { AmbientBackground } from "@/components/AmbientBackground";
 import { PWARegister } from "@/components/PWARegister";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+// Display serif for big titles (self-hosted: no network call at build time).
+const fraunces = localFont({
+  src: "./fonts/Fraunces-Variable.woff2",
+  variable: "--font-display",
+  weight: "100 900",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -22,14 +22,15 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "DayAct",
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050816",
+  themeColor: "#F1E7D8",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -38,9 +39,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="dark">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <CinematicBackground />
+    <html lang="fr">
+      <body
+        className={`${GeistSans.variable} ${GeistMono.variable} ${fraunces.variable} antialiased`}
+        style={
+          {
+            "--font-sans": "var(--font-geist-sans)",
+            "--font-mono": "var(--font-geist-mono)",
+          } as React.CSSProperties
+        }
+      >
+        <AmbientBackground />
         <PWARegister />
         {children}
         <Analytics />

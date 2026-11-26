@@ -55,7 +55,7 @@ export default function CalendarPage() {
         {Object.entries(categoryMeta).map(([key, meta]) => (
           <div key={key} className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full" style={{ background: meta.color }} />
-            <span className="text-[11px] text-text-muted">{meta.label}</span>
+            <span className="text-[11px] text-ink-muted">{meta.label}</span>
           </div>
         ))}
       </div>

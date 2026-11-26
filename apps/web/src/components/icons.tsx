@@ -34,9 +34,8 @@ export function LogoMark({ size = 24, ...props }: IconProps) {
           y2="27"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#22d3ee" />
-          <stop offset="0.55" stopColor="#6366f1" />
-          <stop offset="1" stopColor="#c026ff" />
+          <stop stopColor="#590907" />
+          <stop offset="1" stopColor="#8E2C1F" />
         </linearGradient>
       </defs>
       {/* ring */}
@@ -49,7 +48,7 @@ export function LogoMark({ size = 24, ...props }: IconProps) {
         <path d="M16 10l-1 1" />
       </g>
       {/* sun */}
-      <circle cx="12.8" cy="13.4" r="2.5" fill="url(#dayact-logo)" />
+      <circle cx="12.8" cy="13.4" r="2.5" fill="#A5A79B" />
       {/* hills / river */}
       <path
         d="M7 19.5c2.2-2 4-0.2 6-0.2s3.8-2 6 0"
@@ -220,5 +219,14 @@ export const BellIcon = (p: IconProps) => (
   <svg {...base(p)}>
     <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
     <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+  </svg>
+);
+
+export const MoreIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <rect x="4" y="4" width="6.5" height="6.5" rx="1.6" />
+    <rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6" />
+    <rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6" />
+    <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6" />
   </svg>
 );

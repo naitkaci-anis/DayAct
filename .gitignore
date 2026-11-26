@@ -30,3 +30,6 @@ pnpm-debug.log*
 
 # Turbo cache
 .turbo
+
+# Local assistant settings
+.claude/
