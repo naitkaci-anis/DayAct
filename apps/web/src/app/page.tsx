@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LogoMark } from "@/components/icons";
 import { InstallApp } from "@/components/InstallApp";
+import { Reveal, Stagger, StaggerItem, Float } from "@/components/motion/Reveal";
 
 export const metadata: Metadata = {
   title: "DayAct — Agis sur ta journée",
@@ -115,7 +116,7 @@ export default function Landing() {
 
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-5 lg:px-8 pt-10 lg:pt-16 pb-20 grid gap-14 lg:grid-cols-[1.15fr_1fr] items-center">
-        <div>
+        <Reveal y={20}>
           <p className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-line bg-surface text-sm text-secondary">
             <span className="w-2 h-2 rounded-full bg-success" />
             Productivité et bien-être, avec l&apos;IA
@@ -133,70 +134,78 @@ export default function Landing() {
             <InstallApp variant="hero" />
           </div>
           <p className="mt-5 text-sm text-ink-muted">Gratuit · Sans carte bancaire · Tes données restent à toi</p>
-        </div>
-        <PhonePreview />
+        </Reveal>
+        <Float>
+          <PhonePreview />
+        </Float>
       </section>
 
       {/* A day with DayAct */}
       <section id="journee" className="border-y border-line bg-panel/70">
         <div className="mx-auto max-w-6xl px-5 lg:px-8 py-20">
-          <h2 className="font-display font-normal text-4xl lg:text-5xl tracking-tight max-w-2xl">
-            Une journée avec <em className="text-primary">DayAct</em>
-          </h2>
-          <div className="mt-12 grid gap-10 md:grid-cols-3">
+          <Reveal>
+            <h2 className="font-display font-normal text-4xl lg:text-5xl tracking-tight max-w-2xl">
+              Une journée avec <em className="text-primary">DayAct</em>
+            </h2>
+          </Reveal>
+          <Stagger className="mt-12 grid gap-10 md:grid-cols-3">
             {moments.map((m) => (
-              <div key={m.when} className="border-t-2 pt-5" style={{ borderColor: m.color }}>
+              <StaggerItem key={m.when}>
+                <div style={{ borderColor: m.color }} className="border-t-2 pt-5">
                 <p className="text-sm font-semibold uppercase tracking-[0.06em]" style={{ color: m.color }}>
                   {m.when}
                 </p>
                 <h3 className="font-display text-2xl mt-2">{m.title}</h3>
                 <p className="mt-2 text-base leading-relaxed text-ink-muted">{m.text}</p>
-              </div>
+                </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
       {/* Modules */}
       <section id="modules" className="mx-auto max-w-6xl px-5 lg:px-8 py-20">
-        <h2 className="font-display font-normal text-4xl lg:text-5xl tracking-tight">
-          Tout pour <em className="text-primary">agir</em>, au même endroit
-        </h2>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="sm:col-span-2 rounded-[28px] bg-primary text-on-fill p-8 min-h-[240px] flex flex-col justify-end">
+        <Reveal>
+          <h2 className="font-display font-normal text-4xl lg:text-5xl tracking-tight">
+            Tout pour <em className="text-primary">agir</em>, au même endroit
+          </h2>
+        </Reveal>
+        <Stagger className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StaggerItem className="sm:col-span-2 rounded-[28px] bg-primary text-on-fill p-8 min-h-[240px] flex flex-col justify-end" hover>
             <h3 className="font-display text-3xl">Assistant IA</h3>
             <p className="mt-2 text-base leading-relaxed text-cream max-w-md">
               Écris ou parle normalement : il crée, déplace et planifie tes tâches, et te propose une journée réaliste.
             </p>
-          </div>
-          <div className="rounded-[28px] border border-line bg-surface p-7">
+          </StaggerItem>
+          <StaggerItem className="rounded-[28px] border border-line bg-surface p-7" hover>
             <h3 className="font-display text-2xl">Agenda</h3>
             <p className="mt-2 text-ink-muted">Mois, semaine, jour, glisser-déposer et alertes de chevauchement.</p>
-          </div>
-          <div className="rounded-[28px] border border-line bg-surface p-7">
+          </StaggerItem>
+          <StaggerItem className="rounded-[28px] border border-line bg-surface p-7" hover>
             <h3 className="font-display text-2xl">Tâches</h3>
             <p className="mt-2 text-ink-muted">Priorités, durées, récurrence, rappels. Fait, reporté ou annulé en un geste.</p>
-          </div>
-          <div className="rounded-[28px] bg-sage p-7 text-ink">
+          </StaggerItem>
+          <StaggerItem className="rounded-[28px] bg-sage p-7 text-ink" hover>
             <h3 className="font-display text-2xl">Habitudes</h3>
             <p className="mt-2 text-ink/80">Coche chaque jour et garde tes séries vivantes.</p>
-          </div>
-          <div className="rounded-[28px] border border-line bg-surface p-7">
+          </StaggerItem>
+          <StaggerItem className="rounded-[28px] border border-line bg-surface p-7" hover>
             <h3 className="font-display text-2xl">Focus</h3>
             <p className="mt-2 text-ink-muted">Minuteur Pomodoro qui compte ton vrai temps de concentration.</p>
-          </div>
-          <div className="sm:col-span-2 rounded-[28px] bg-cream p-7">
+          </StaggerItem>
+          <StaggerItem className="sm:col-span-2 rounded-[28px] bg-cream p-7" hover>
             <h3 className="font-display text-2xl">Analyses et bien-être</h3>
             <p className="mt-2 text-ink/80 max-w-lg">
               Activité, objectifs, humeur, énergie et coach santé, pour comprendre ce qui te réussit.
             </p>
-          </div>
-        </div>
+          </StaggerItem>
+        </Stagger>
       </section>
 
       {/* Install on phone */}
       <section id="telephone" className="mx-auto max-w-6xl px-5 lg:px-8 pb-20">
-        <div className="rounded-[36px] bg-secondary text-on-fill p-8 lg:p-14 grid gap-10 lg:grid-cols-2 items-center">
+        <Reveal className="rounded-[36px] bg-secondary text-on-fill p-8 lg:p-14 grid gap-10 lg:grid-cols-2 items-center">
           <div>
             <h2 className="font-display font-normal text-4xl tracking-tight">
               Sur ton téléphone, <em>sans passer par un store</em>
@@ -217,15 +226,17 @@ export default function Landing() {
               </li>
             ))}
           </ol>
-        </div>
+        </Reveal>
       </section>
 
       {/* Final call */}
       <section className="bg-primary text-on-fill">
         <div className="mx-auto max-w-6xl px-5 lg:px-8 py-20 text-center">
-          <h2 className="font-display font-normal text-4xl lg:text-6xl tracking-tight max-w-3xl mx-auto">
-            Prêt à reprendre ta journée <em className="text-cream">en main</em> ?
-          </h2>
+          <Reveal>
+            <h2 className="font-display font-normal text-4xl lg:text-6xl tracking-tight max-w-3xl mx-auto">
+              Prêt à reprendre ta journée <em className="text-cream">en main</em> ?
+            </h2>
+          </Reveal>
           <Link href="/signup" className="mt-9 inline-flex items-center min-h-[54px] px-8 rounded-full bg-canvas text-primary text-base font-semibold">
             Commencer gratuitement
           </Link>

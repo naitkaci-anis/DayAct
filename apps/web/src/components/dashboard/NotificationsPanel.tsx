@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { CloseIcon, BellIcon, AlertIcon, ClockIcon, TrashIcon } from "@/components/icons";
 import { useNotifications, type AppNotification } from "@/lib/notifications";
-import { useStore } from "@/lib/store";
 import { useUI } from "./UIShell";
 
 function timeAgo(ms: number) {
@@ -24,8 +23,7 @@ function Icon({ type }: { type: AppNotification["type"] }) {
 
 export function NotificationsPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { items, unread, markRead, markAllRead, remove, clear } = useNotifications();
-  const { state } = useStore();
-  const { openEdit } = useUI();
+  const { openNotification } = useUI();
 
   useEffect(() => {
     if (!open) return;
@@ -39,11 +37,8 @@ export function NotificationsPanel({ open, onClose }: { open: boolean; onClose: 
   function openTask(n: AppNotification) {
     markRead(n.id);
     if (n.taskId) {
-      const task = state.tasks.find((t) => t.id === n.taskId);
-      if (task) {
-        onClose();
-        openEdit(task);
-      }
+      onClose();
+      openNotification(n.taskId, n.id);
     }
   }
 

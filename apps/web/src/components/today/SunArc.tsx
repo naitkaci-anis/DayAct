@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { motion, animate, useMotionValue, useTransform } from "motion/react";
 import { categoryMeta, type Task } from "@/lib/store";
 
 // "Course du soleil": the day drawn as the sun's path from waking to bedtime.
@@ -55,8 +57,17 @@ export function SunArc({
   const { start, end } = dayBounds(tasks);
   const done = tasks.filter((t) => t.done).length;
   const left = tasks.length - done;
-  const sun = point(nowMin, start, end);
   const isDay = nowMin >= start && nowMin <= end;
+
+  // The sun travels along the arc (from sunrise on first load, then minute by minute).
+  const sunMin = useMotionValue(start);
+  const target = Math.min(Math.max(nowMin, start), end);
+  useEffect(() => {
+    const controls = animate(sunMin, target, { duration: 1.6, ease: [0.22, 1, 0.36, 1] });
+    return () => controls.stop();
+  }, [sunMin, target]);
+  const sunX = useTransform(sunMin, (m) => point(m, start, end).x);
+  const sunY = useTransform(sunMin, (m) => point(m, start, end).y);
   const now = new Date();
   const clock = `${now.getHours()} h ${String(now.getMinutes()).padStart(2, "0")}`;
 
@@ -81,25 +92,30 @@ export function SunArc({
           strokeLinecap="round"
         />
         {nowMin > start && (
-          <path
+          <motion.path
             d={`M${p0.x} ${p0.y} A${RX} ${RY} 0 0 1 ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`}
             fill="none"
             stroke="var(--primary)"
             strokeWidth="3"
             strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
           />
         )}
         <line x1="8" y1={CY} x2={W - 8} y2={CY} stroke="var(--line)" strokeWidth="1" />
 
-        {tasks.map((t) => {
+        {tasks.map((t, i) => {
           const p = point(toMin(t.time), start, end);
           const color = categoryMeta[t.category].color;
           return (
-            <circle
+            <motion.circle
               key={t.id}
               cx={p.x}
               cy={p.y}
-              r={6}
+              initial={{ r: 0 }}
+              animate={{ r: 6 }}
+              transition={{ delay: 0.3 + i * 0.06, type: "spring", stiffness: 500, damping: 18 }}
               fill={t.done ? color : "rgb(var(--canvas-rgb))"}
               stroke={color}
               strokeWidth={t.done ? 0 : 2.5}
@@ -107,14 +123,21 @@ export function SunArc({
               onClick={onPick ? () => onPick(t) : undefined}
             >
               <title>{`${t.time} · ${t.title}`}</title>
-            </circle>
+            </motion.circle>
           );
         })}
 
         {isDay && (
           <g aria-hidden="true">
-            <circle cx={sun.x} cy={sun.y} r={16} fill="var(--cream)" opacity="0.9" />
-            <circle cx={sun.x} cy={sun.y} r={10} fill="var(--cat-learning)" />
+            <motion.circle
+              cx={sunX}
+              cy={sunY}
+              r={16}
+              fill="var(--cream)"
+              animate={{ r: [15, 19, 15], opacity: [0.95, 0.6, 0.95] }}
+              transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.circle cx={sunX} cy={sunY} r={10} fill="var(--cat-learning)" />
           </g>
         )}
 

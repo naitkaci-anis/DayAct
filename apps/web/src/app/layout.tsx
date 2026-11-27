@@ -6,6 +6,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { AmbientBackground } from "@/components/AmbientBackground";
 import { PWARegister } from "@/components/PWARegister";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 import { SITE_URL } from "@/lib/site";
 
 // Display serif for big titles (self-hosted: no network call at build time).
@@ -62,7 +63,7 @@ export default function RootLayout({
       >
         <AmbientBackground />
         <PWARegister />
-        {children}
+        <MotionProvider>{children}</MotionProvider>
         <Analytics />
       </body>
     </html>

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { LaterList } from "@/components/today/LaterList";
 import { useUI } from "@/components/dashboard/UIShell";
 import { CheckIcon, PlusIcon, EditIcon, TrashIcon } from "@/components/icons";
 import {
@@ -66,6 +67,10 @@ export default function TasksPage() {
           </button>
         }
       />
+
+      <div className="mb-8">
+        <LaterList showEmpty={false} />
+      </div>
 
       <div className="flex items-center gap-1 mb-5 p-1 rounded-sm border border-line bg-surface w-fit">
         {filters.map((f) => (

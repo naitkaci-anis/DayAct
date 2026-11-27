@@ -84,6 +84,7 @@ export function ReminderScheduler() {
       taskId: string,
       ring: boolean
     ) => {
+      const url = `/dashboard?notif=${encodeURIComponent(taskId)}`;
       if (sent.current.has(key)) return;
       notify.add({ type, title, body, taskId });
       if (ring) playReminderSound();
@@ -96,9 +97,10 @@ export function ReminderScheduler() {
             if (reg?.showNotification) {
               await reg.showNotification(title, {
                 body,
-                icon: "/icon.svg",
-                badge: "/icon.svg",
+                icon: "/icons/icon-192.png",
+                badge: "/icons/icon-192.png",
                 tag: key,
+                data: { url, taskId },
               });
               return;
             }
@@ -106,7 +108,12 @@ export function ReminderScheduler() {
             /* fall through to the constructor */
           }
           try {
-            new Notification(title, { body, icon: "/icon.svg" });
+            const n = new Notification(title, { body, icon: "/icons/icon-192.png" });
+            n.onclick = () => {
+              window.focus();
+              window.dispatchEvent(new CustomEvent("dayact:open-notification", { detail: { taskId } }));
+              n.close();
+            };
           } catch {
             /* notification display unavailable */
           }
@@ -138,7 +145,7 @@ export function ReminderScheduler() {
             fire(
               `${t.id}|lead${lead}`,
               `🔔 ${leadLabel(lead)} : ${t.title}`,
-              `Prévue le ${t.date.slice(5)} à ${t.time} · ${formatDuration(t.durationMin)}.`,
+              `Prévue le ${t.date.slice(5)} à ${t.time}${t.location ? ` · ${t.location}` : ""} · ${formatDuration(t.durationMin)}.`,
               "reminder",
               t.id,
               true
@@ -151,7 +158,7 @@ export function ReminderScheduler() {
           fire(
             `${t.id}|now`,
             `⏰ ${t.title}`,
-            `C'est l'heure (${t.time}) · ${formatDuration(t.durationMin)}.`,
+            `C'est l'heure (${t.time})${t.location ? ` · ${t.location}` : ""} · ${formatDuration(t.durationMin)}.`,
             "reminder",
             t.id,
             true

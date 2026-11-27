@@ -1,4 +1,5 @@
 // Small reusable helper to call Ollama and get back parsed JSON.
+import { parseModelJSON } from "./json";
 import { OLLAMA_BASE_URL, OLLAMA_MODEL } from "./config";
 
 export async function ollamaJSON(
@@ -14,7 +15,7 @@ export async function ollamaJSON(
       stream: false,
       format: "json",
       keep_alive: "30m", // keep the model in RAM so next calls are fast
-      options: { temperature, num_predict: 500 }, // cap output → faster
+      options: { temperature, num_predict: 4096 },
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
@@ -25,11 +26,5 @@ export async function ollamaJSON(
 
   const data = (await res.json()) as { message?: { content?: string } };
   const content = data.message?.content ?? "{}";
-  try {
-    return JSON.parse(content);
-  } catch {
-    const m = content.match(/\{[\s\S]*\}/);
-    if (m) return JSON.parse(m[0]);
-    throw new Error("Réponse IA illisible");
-  }
+  return parseModelJSON(content);
 }

@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       today?: string;
       context?: ChatContextTask[];
     };
-    const message = (body.message ?? "").trim().slice(0, 2000);
+    const message = (body.message ?? "").trim().slice(0, 4000);
     const today = body.today ?? new Date().toISOString().slice(0, 10);
     const context = Array.isArray(body.context) ? body.context.slice(0, 60) : [];
 

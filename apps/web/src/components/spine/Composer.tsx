@@ -134,6 +134,7 @@ export function Composer({
   const [priority, setPriority] = useState<Priority>("medium");
   const [category, setCategory] = useState<TaskCategory>("work");
   const [notes, setNotes] = useState("");
+  const [location, setLocation] = useState("");
   const [recMode, setRecMode] = useState<RecMode>("none");
   const [customDays, setCustomDays] = useState<number[]>([]);
   const [repeatAlways, setRepeatAlways] = useState(false);
@@ -177,6 +178,7 @@ export function Composer({
       setPriority(editing.priority);
       setCategory(editing.category);
       setNotes(editing.notes ?? "");
+      setLocation(editing.location ?? "");
       setRecMode(editing.recurrence ?? "none");
       setCustomDays([]);
       setRepeatAlways(false);
@@ -196,6 +198,7 @@ export function Composer({
       setReminder("auto");
       setRingAtStart(false);
       setNotes("");
+      setLocation("");
     }
   }, [composer.open, composer.presetTime, composer.presetDate, editing, state.selectedDate]);
 
@@ -209,7 +212,7 @@ export function Composer({
       dispatch({
         type: "UPDATE_TASK",
         id: editing.id,
-        patch: { title: title.trim(), date, time: startTime, durationMin, priority, category, notes, recurrence, reminder, ringAtStart },
+        patch: { title: title.trim(), date, time: startTime, durationMin, priority, category, notes, location: location.trim() || undefined, recurrence, reminder, ringAtStart },
       });
     } else {
       // Materialize one task per occurrence date.
@@ -224,6 +227,7 @@ export function Composer({
             priority,
             category,
             notes,
+            location: location.trim() || undefined,
             recurrence,
             reminder,
             ringAtStart,
@@ -520,6 +524,18 @@ export function Composer({
               ? "Une alerte (son + notification) se déclenchera PILE à l'heure de début."
               : "Coche pour recevoir une alerte sonore exactement à l'heure de début."}
           </p>
+        </div>
+
+        {/* Location */}
+        <div>
+          <label htmlFor="task-location" className="block text-xs text-ink-muted mb-1.5">Lieu (optionnel)</label>
+          <input
+            id="task-location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="Consulat, 12 rue de la Paix"
+            className="w-full h-11 px-3 rounded-sm bg-field border border-line text-[15px] text-ink placeholder:text-ink-muted/60 focus:border-primary outline-none transition-colors"
+          />
         </div>
 
         {/* Notes */}

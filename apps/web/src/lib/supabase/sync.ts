@@ -26,6 +26,9 @@ interface TaskRow {
   recurrence: Recurrence;
   reminder: ReminderPref;
   ring_at_start: boolean;
+  someday?: boolean;
+  location?: string | null;
+  postpone_count?: number;
 }
 
 function rowToTask(r: TaskRow): Task {
@@ -43,10 +46,12 @@ function rowToTask(r: TaskRow): Task {
     recurrence: r.recurrence ?? "none",
     reminder: r.reminder ?? "auto",
     ringAtStart: r.ring_at_start ?? false,
+    location: r.location ?? undefined,
+    postponeCount: r.postpone_count ?? 0,
   };
 }
 
-function taskToRow(t: Task, userId: string): TaskRow {
+function taskToRow(t: Task, userId: string, someday = false): TaskRow {
   return {
     id: t.id,
     user_id: userId,
@@ -62,6 +67,9 @@ function taskToRow(t: Task, userId: string): TaskRow {
     recurrence: t.recurrence,
     reminder: t.reminder,
     ring_at_start: t.ringAtStart,
+    someday,
+    location: t.location?.trim() || null,
+    postpone_count: t.postponeCount ?? 0,
   };
 }
 
@@ -74,6 +82,7 @@ const DEFAULT_SETTINGS: Settings = {
 
 export interface LoadedData {
   tasks: Task[];
+  later: Task[];
   moods: MoodEntry[];
   habits: Habit[];
   habitLogs: HabitLog[];
@@ -93,7 +102,9 @@ export async function loadFromSupabase(
     supabase.from("habit_logs").select("*").eq("user_id", userId),
   ]);
 
-  const tasks = ((tasksRes.data as TaskRow[] | null) ?? []).map(rowToTask);
+  const rows = (tasksRes.data as TaskRow[] | null) ?? [];
+  const tasks = rows.filter((r) => !r.someday).map(rowToTask);
+  const later = rows.filter((r) => r.someday).map(rowToTask);
   const moods = ((moodsRes.data as { mood_date: string; score: number }[] | null) ?? []).map(
     (r) => ({ date: r.mood_date, score: r.score })
   );
@@ -115,7 +126,7 @@ export async function loadFromSupabase(
       }
     : DEFAULT_SETTINGS;
 
-  return { tasks, moods, habits, habitLogs, settings };
+  return { tasks, later, moods, habits, habitLogs, settings };
 }
 
 // Push the current State to Supabase. Upsert-only (never bulk-deletes) so a
@@ -138,8 +149,12 @@ export async function saveToSupabase(
     })
     .eq("id", userId);
 
-  if (data.tasks.length) {
-    await supabase.from("tasks").upsert(data.tasks.map((t) => taskToRow(t, userId)));
+  const taskRows = [
+    ...data.tasks.map((t) => taskToRow(t, userId, false)),
+    ...data.later.map((t) => taskToRow(t, userId, true)),
+  ];
+  if (taskRows.length) {
+    await supabase.from("tasks").upsert(taskRows);
   }
 
   if (data.moods.length) {

@@ -1,6 +1,7 @@
 // Google Gemini provider (REST, no SDK needed). Free tier: lower rate limits,
 // and Google may use free-tier prompts to improve its products.
 import { GEMINI_MODEL } from "./config";
+import { parseModelJSON } from "./json";
 
 export async function geminiJSON(
   system: string,
@@ -20,7 +21,7 @@ export async function geminiJSON(
         contents: [{ role: "user", parts: [{ text: user }] }],
         generationConfig: {
           temperature,
-          maxOutputTokens: 1024,
+          maxOutputTokens: 8192,
           responseMimeType: "application/json",
         },
       }),
@@ -34,11 +35,5 @@ export async function geminiJSON(
     candidates?: { content?: { parts?: { text?: string }[] } }[];
   };
   const text = data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
-  try {
-    return JSON.parse(text);
-  } catch {
-    const m = text.match(/\{[\s\S]*\}/);
-    if (m) return JSON.parse(m[0]);
-    throw new Error("Réponse IA illisible");
-  }
+  return parseModelJSON(text);
 }

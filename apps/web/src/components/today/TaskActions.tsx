@@ -34,10 +34,12 @@ export function TaskActionsSheet({
   const { dispatch } = useStore();
   const [mode, setMode] = useState<TaskActionsMode>(initialMode);
   const [customDate, setCustomDate] = useState("");
+  const [customTime, setCustomTime] = useState("");
 
   useEffect(() => {
     setMode(initialMode);
     setCustomDate("");
+    setCustomTime(task?.time ?? "");
   }, [task, initialMode]);
 
   useEffect(() => {
@@ -53,11 +55,20 @@ export function TaskActionsSheet({
   const tomorrow = addDays(base, 1);
   const cat = categoryMeta[task.category];
 
-  const postpone = (date: string) => {
-    const previous = task.date;
-    dispatch({ type: "UPDATE_TASK", id: task.id, patch: { date, done: false } });
-    onToast(`Reportée à ${shortDate(date)}`, () =>
-      dispatch({ type: "UPDATE_TASK", id: task.id, patch: { date: previous } })
+  const postpone = (date: string, time?: string) => {
+    const previous = { date: task.date, time: task.time, postponeCount: task.postponeCount ?? 0 };
+    dispatch({ type: "POSTPONE_TASK", id: task.id, date, time });
+    onToast(`Reportée à ${shortDate(date)}${time && time !== task.time ? ` à ${time}` : ""}`, () =>
+      dispatch({ type: "UPDATE_TASK", id: task.id, patch: previous })
+    );
+    onClose();
+  };
+
+  const postponeLater = () => {
+    const previous = { date: task.date, time: task.time };
+    dispatch({ type: "POSTPONE_LATER", id: task.id });
+    onToast("Mise dans « À reprogrammer »", () =>
+      dispatch({ type: "RESCHEDULE_LATER", id: task.id, ...previous, undo: true })
     );
     onClose();
   };
@@ -105,7 +116,7 @@ export function TaskActionsSheet({
             <button onClick={() => setMode("postpone")} className={`${big} bg-field border border-line text-ink hover:border-line-strong`}>
               <ChevronRightIcon size={20} className="text-secondary" />
               <span className="flex-1">Reporter</span>
-              <span className="text-sm font-normal text-ink-muted">demain par défaut</span>
+              <span className="text-sm font-normal text-ink-muted">plus tard ou à une date</span>
             </button>
             <button onClick={cancel} className={`${big} bg-field border border-line text-danger hover:border-danger/40`}>
               <TrashIcon size={20} />
@@ -124,32 +135,41 @@ export function TaskActionsSheet({
           </div>
         ) : (
           <div className="mt-5 flex flex-col gap-2">
-            <button onClick={() => postpone(tomorrow)} className={`${big} bg-primary text-on-fill hover:bg-primary-hover justify-center`}>
-              Reporter à {shortDate(tomorrow)}
+            <button onClick={postponeLater} className={`${big} bg-primary text-on-fill hover:bg-primary-hover`}>
+              <span className="flex-1">Plus tard, sans date</span>
+              <span className="text-sm font-normal text-on-fill/80">« À reprogrammer »</span>
             </button>
-            <button onClick={() => postpone(addDays(tomorrow, 1))} className={`${big} bg-field border border-line text-ink hover:border-line-strong justify-center`}>
-              Reporter à {shortDate(addDays(tomorrow, 1))}
+            <button onClick={() => postpone(tomorrow)} className={`${big} bg-field border border-line text-ink hover:border-line-strong`}>
+              <span className="flex-1">Demain, même heure</span>
+              <span className="text-sm font-normal text-ink-muted">{task.time}</span>
             </button>
 
-            <div className="mt-2 rounded-[16px] border border-line bg-field p-3">
-              <label htmlFor="postpone-date" className="block text-sm text-ink-muted mb-2">
-                Choisir un autre jour <span className="text-ink-muted/70">(facultatif)</span>
-              </label>
-              <div className="flex gap-2">
+            <div className="mt-1 rounded-[16px] border border-line bg-field p-3">
+              <p className="text-sm text-ink-muted mb-2">À un jour et une heure précis</p>
+              <div className="flex flex-wrap gap-2">
+                <label className="sr-only" htmlFor="postpone-date">Jour</label>
                 <input
                   id="postpone-date"
                   type="date"
-                  min={addDays(todayISO(), 1)}
+                  min={todayISO()}
                   value={customDate}
                   onChange={(e) => setCustomDate(e.target.value)}
-                  className="flex-1 min-w-0 h-11 px-3 rounded-[12px] border border-line bg-panel text-ink text-[15px] focus:border-primary outline-none"
+                  className="flex-[2_1_150px] min-w-0 h-11 px-3 rounded-[12px] border border-line bg-panel text-ink text-[15px] focus:border-primary outline-none"
+                />
+                <label className="sr-only" htmlFor="postpone-time">Heure</label>
+                <input
+                  id="postpone-time"
+                  type="time"
+                  value={customTime}
+                  onChange={(e) => setCustomTime(e.target.value)}
+                  className="flex-[1_1_100px] min-w-0 h-11 px-3 rounded-[12px] border border-line bg-panel text-ink text-[15px] focus:border-primary outline-none"
                 />
                 <button
-                  onClick={() => customDate && postpone(customDate)}
+                  onClick={() => customDate && postpone(customDate, customTime || undefined)}
                   disabled={!customDate}
-                  className="h-11 px-4 rounded-[12px] bg-ink text-on-fill text-sm font-medium disabled:opacity-40"
+                  className="h-11 px-5 rounded-[12px] bg-ink text-on-fill text-sm font-medium disabled:opacity-40"
                 >
-                  OK
+                  Reporter
                 </button>
               </div>
             </div>
@@ -180,16 +200,16 @@ export function UndoToast({
 
   if (!toast) return null;
   return (
-    <div className="fixed left-1/2 -translate-x-1/2 bottom-[calc(96px+env(safe-area-inset-bottom))] md:bottom-8 z-50 animate-[popIn_0.2s_ease]" role="status">
-      <div className="flex items-center gap-4 pl-5 pr-2 py-2 rounded-full bg-ink text-on-fill shadow-2xl text-sm">
-        <span>{toast.message}</span>
+    <div className="fixed inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 bottom-[calc(96px+env(safe-area-inset-bottom))] md:bottom-8 z-50 flex justify-center animate-[popIn_0.2s_ease]" role="status">
+      <div className="flex w-full sm:w-auto sm:min-w-[320px] max-w-md items-center justify-between gap-4 pl-5 pr-2 py-2 rounded-full bg-ink text-on-fill shadow-2xl text-sm">
+        <span className="min-w-0 truncate">{toast.message}</span>
         {toast.undo && (
           <button
             onClick={() => {
               toast.undo?.();
               onDone();
             }}
-            className="min-h-[40px] px-4 rounded-full bg-on-fill/15 font-medium hover:bg-on-fill/25"
+            className="shrink-0 min-h-[40px] px-4 rounded-full bg-on-fill/15 font-medium hover:bg-on-fill/25"
           >
             Rétablir
           </button>

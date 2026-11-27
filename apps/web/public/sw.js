@@ -13,14 +13,20 @@ self.addEventListener("activate", (event) => {
 // Tapping a notification focuses the app (or opens it).
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
+  const data = event.notification.data || {};
+  const url = data.url || "/dashboard";
   event.waitUntil(
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((list) => {
         for (const client of list) {
-          if ("focus" in client) return client.focus();
+          if ("focus" in client) {
+            // App already open: ask it to show the notification's details.
+            client.postMessage({ type: "open-notification", taskId: data.taskId });
+            return client.focus();
+          }
         }
-        return self.clients.openWindow("/dashboard");
+        return self.clients.openWindow(url);
       })
   );
 });

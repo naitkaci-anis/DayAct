@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import {
   useStore,
@@ -16,6 +17,7 @@ import {
 import { useUI } from "@/components/dashboard/UIShell";
 import { SunArc } from "@/components/today/SunArc";
 import { TaskRow, CategoryGlyph } from "@/components/today/TaskRow";
+import { LaterList, LaterBadge } from "@/components/today/LaterList";
 import { MoodLogger } from "@/components/spine/MoodLogger";
 import { Assistant } from "@/components/spine/Assistant";
 import { AlertIcon, CheckIcon, PlusIcon, ChevronRightIcon, FlameIcon } from "@/components/icons";
@@ -87,11 +89,18 @@ function MomentTabs({ value, onChange }: { value: Moment; onChange: (m: Moment) 
             role="tab"
             aria-selected={active}
             onClick={() => onChange(m.id)}
-            className={`h-11 rounded-full text-[15px] font-medium transition-colors ${
-              active ? "bg-primary text-on-fill" : "text-ink/75 hover:text-ink"
+            className={`relative h-11 rounded-full text-[15px] font-medium transition-colors ${
+              active ? "text-on-fill" : "text-ink/75 hover:text-ink"
             }`}
           >
-            {m.label}
+            {active && (
+              <motion.span
+                layoutId="moment-pill"
+                className="absolute inset-0 rounded-full bg-primary"
+                transition={{ type: "spring", stiffness: 420, damping: 34 }}
+              />
+            )}
+            <span className="relative">{m.label}</span>
           </button>
         );
       })}
@@ -208,7 +217,12 @@ function NextCard({ task, now, onAllDone }: { task: Task | null; now: number; on
       : `En retard · depuis ${hoursLabel(now - start)}`;
 
   return (
-    <section className="rounded-[24px] bg-primary text-on-fill p-5 lg:p-6">
+    <motion.section
+      key={task.id}
+      initial={{ opacity: 0, y: 16, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      className="rounded-[24px] bg-primary text-on-fill p-5 lg:p-6"
+    >
       <div className="flex items-center gap-4">
         <span className="flex items-center justify-center w-12 h-12 shrink-0 rounded-[14px] bg-primary-hover text-cream">
           <CategoryGlyph category={task.category} size={24} />
@@ -222,7 +236,8 @@ function NextCard({ task, now, onAllDone }: { task: Task | null; now: number; on
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2 mt-4">
-        <button
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           onClick={() => {
             dispatch({ type: "TOGGLE_TASK", id: task.id });
             toast("Bravo, c'est fait");
@@ -230,20 +245,22 @@ function NextCard({ task, now, onAllDone }: { task: Task | null; now: number; on
           className="min-h-[48px] rounded-full bg-canvas text-primary font-semibold text-[15px]"
         >
           C'est fait
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           onClick={() => openActions(task, "postpone")}
           className="min-h-[48px] rounded-full border border-cream/40 text-on-fill font-medium text-[15px] hover:bg-on-fill/10"
         >
           Plus tard
-        </button>
+        </motion.button>
       </div>
-    </section>
+    </motion.section>
   );
 }
 
 function DayMoment({ tasks, now, goTo }: { tasks: Task[]; now: number; goTo: (m: Moment) => void }) {
   const { openActions } = useUI();
+  const [showLater, setShowLater] = useState(false);
   const todo = tasks.filter((t) => !t.done);
   // Next = the first unfinished task, overdue ones included (oldest first).
   const next = todo[0] ?? null;
@@ -269,12 +286,17 @@ function DayMoment({ tasks, now, goTo }: { tasks: Task[]; now: number; goTo: (m:
             {rest.length === 0 && next && (
               <p className="text-[15px] text-ink-muted py-2">Rien d'autre de prévu après ça.</p>
             )}
-            {rest.map((t) => (
-              <TaskRow key={t.id} task={t} hint={toMin(t.time) + t.durationMin < now ? "en retard" : undefined} />
-            ))}
+            <AnimatePresence initial={false}>
+              {rest.map((t) => (
+                <TaskRow key={t.id} task={t} hint={toMin(t.time) + t.durationMin < now ? "en retard" : undefined} />
+              ))}
+            </AnimatePresence>
             <AddTaskButton />
+            {!showLater && <LaterBadge onOpen={() => setShowLater(true)} />}
           </div>
         </section>
+
+        {showLater && <LaterList showEmpty={false} />}
 
         {done.length > 0 && (
           <details className="group">
@@ -331,10 +353,10 @@ function MorningMoment({ tasks, now, onValidate }: { tasks: Task[]; now: number;
               </p>
               <button
                 onClick={() => {
-                  const prev = candidate.date;
-                  dispatch({ type: "UPDATE_TASK", id: candidate.id, patch: { date: addDays(todayISO(), 1) } });
+                  const prev = { date: candidate.date, postponeCount: candidate.postponeCount ?? 0 };
+                  dispatch({ type: "POSTPONE_TASK", id: candidate.id, date: addDays(todayISO(), 1) });
                   toast("Reportée à demain", () =>
-                    dispatch({ type: "UPDATE_TASK", id: candidate.id, patch: { date: prev } })
+                    dispatch({ type: "UPDATE_TASK", id: candidate.id, patch: prev })
                   );
                 }}
                 className="mt-3 min-h-[44px] px-5 rounded-full bg-ink text-on-fill text-sm font-medium"
@@ -353,9 +375,11 @@ function MorningMoment({ tasks, now, onValidate }: { tasks: Task[]; now: number;
                 : "Tout ce qui était prévu est déjà fait."}
             </p>
           )}
-          {todo.map((t) => (
-            <TaskRow key={t.id} task={t} />
-          ))}
+          <AnimatePresence initial={false}>
+            {todo.map((t) => (
+              <TaskRow key={t.id} task={t} />
+            ))}
+          </AnimatePresence>
           {tasks.length > todo.length && (
             <p className="text-sm text-ink-muted px-1">
               {tasks.length - todo.length} déjà faite{tasks.length - todo.length > 1 ? "s" : ""} aujourd'hui
@@ -363,6 +387,8 @@ function MorningMoment({ tasks, now, onValidate }: { tasks: Task[]; now: number;
           )}
           <AddTaskButton />
         </div>
+
+        <LaterList showEmpty={false} />
 
         <button
           onClick={onValidate}
@@ -429,14 +455,25 @@ function EveningMoment({ tasks }: { tasks: Task[] }) {
                   </button>
                   <button
                     onClick={() => {
-                      dispatch({ type: "UPDATE_TASK", id: t.id, patch: { date: tomorrow } });
-                      toast("Reportée à demain", () =>
-                        dispatch({ type: "UPDATE_TASK", id: t.id, patch: { date: today } })
-                      );
+                      const prev = { date: t.date, postponeCount: t.postponeCount ?? 0 };
+                      dispatch({ type: "POSTPONE_TASK", id: t.id, date: tomorrow });
+                      toast("Reportée à demain", () => dispatch({ type: "UPDATE_TASK", id: t.id, patch: prev }));
                     }}
                     className="min-h-[44px] px-4 rounded-full border border-line-strong text-sm font-medium text-ink hover:border-primary hover:text-primary"
                   >
                     Demain
+                  </button>
+                  <button
+                    onClick={() => {
+                      const prev = { date: t.date, time: t.time };
+                      dispatch({ type: "POSTPONE_LATER", id: t.id });
+                      toast("Mise dans « À reprogrammer »", () =>
+                        dispatch({ type: "RESCHEDULE_LATER", id: t.id, ...prev, undo: true })
+                      );
+                    }}
+                    className="min-h-[44px] px-4 rounded-full border border-line-strong text-sm font-medium text-ink hover:border-primary hover:text-primary"
+                  >
+                    Plus tard
                   </button>
                 </div>
               ))}
@@ -515,9 +552,19 @@ export default function TodayPage() {
         <MomentTabs value={moment} onChange={setMoment} />
       </header>
 
-      {moment === "matin" && <MorningMoment tasks={tasks} now={now} onValidate={validate} />}
-      {moment === "journee" && <DayMoment tasks={tasks} now={now} goTo={setMoment} />}
-      {moment === "soir" && <EveningMoment tasks={tasks} />}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={moment}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {moment === "matin" && <MorningMoment tasks={tasks} now={now} onValidate={validate} />}
+          {moment === "journee" && <DayMoment tasks={tasks} now={now} goTo={setMoment} />}
+          {moment === "soir" && <EveningMoment tasks={tasks} />}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

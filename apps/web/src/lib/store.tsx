@@ -56,6 +56,8 @@ export interface Task {
   recurrence: Recurrence;
   reminder: ReminderPref;
   ringAtStart: boolean; // sonnerie + notif PILE à l'heure de début
+  location?: string; // lieu du rendez-vous (affiché dans les notifications)
+  postponeCount?: number; // nombre de fois où la tâche a été reportée
 }
 
 export interface MoodEntry {
@@ -102,6 +104,8 @@ export interface State {
   settings: Settings;
   suggestions: Suggestion[];
   dismissed: string[]; // suggestion ids
+  /** « À reprogrammer » : tâches reportées sans date, hors agenda. */
+  later: Task[];
 }
 
 // ── Date helpers ─────────────────────────────────────────────────────────
@@ -187,6 +191,7 @@ function seed(): State {
       },
     ],
     dismissed: [],
+    later: [],
   };
 }
 
@@ -245,6 +250,14 @@ export type Action =
   | { type: "UPDATE_TASK"; id: string; patch: Partial<Task> }
   | { type: "DELETE_TASK"; id: string }
   | { type: "RESTORE_TASK"; task: Task }
+  /** Report à une date (et une heure, facultative). */
+  | { type: "POSTPONE_TASK"; id: string; date: string; time?: string }
+  /** Report « plus tard », sans date : la tâche part dans « À reprogrammer ». */
+  | { type: "POSTPONE_LATER"; id: string }
+  /** Sortie de « À reprogrammer » vers l'agenda. */
+  | { type: "RESCHEDULE_LATER"; id: string; date: string; time?: string; undo?: boolean }
+  | { type: "DELETE_LATER"; id: string }
+  | { type: "RESTORE_LATER"; task: Task }
   | { type: "TOGGLE_TASK"; id: string }
   | { type: "ADD_TIME"; id: string; minutes: number }
   | { type: "LOG_MOOD"; date: string; score: number }
@@ -297,6 +310,61 @@ function reducer(state: State, action: Action): State {
 
     case "DELETE_TASK":
       return { ...state, tasks: state.tasks.filter((t) => t.id !== action.id) };
+
+    case "POSTPONE_TASK":
+      return {
+        ...state,
+        tasks: state.tasks.map((t) =>
+          t.id === action.id
+            ? {
+                ...t,
+                date: action.date,
+                time: action.time ?? t.time,
+                done: false,
+                postponeCount: (t.postponeCount ?? 0) + 1,
+              }
+            : t
+        ),
+      };
+
+    case "POSTPONE_LATER": {
+      const task = state.tasks.find((t) => t.id === action.id);
+      if (!task) return state;
+      return {
+        ...state,
+        tasks: state.tasks.filter((t) => t.id !== action.id),
+        later: [
+          { ...task, done: false, postponeCount: (task.postponeCount ?? 0) + 1 },
+          ...state.later.filter((t) => t.id !== action.id),
+        ],
+      };
+    }
+
+    case "RESCHEDULE_LATER": {
+      const task = state.later.find((t) => t.id === action.id);
+      if (!task) return state;
+      return {
+        ...state,
+        later: state.later.filter((t) => t.id !== action.id),
+        tasks: [
+          ...state.tasks,
+          {
+            ...task,
+            date: action.date,
+            time: action.time ?? task.time,
+            // Undoing a "plus tard" gives back the counter it took.
+            postponeCount: action.undo ? Math.max(0, (task.postponeCount ?? 1) - 1) : task.postponeCount,
+          },
+        ],
+      };
+    }
+
+    case "DELETE_LATER":
+      return { ...state, later: state.later.filter((t) => t.id !== action.id) };
+
+    case "RESTORE_LATER":
+      if (state.later.some((t) => t.id === action.task.id)) return state;
+      return { ...state, later: [action.task, ...state.later] };
 
     case "RESTORE_TASK":
       // Undo of a deletion: put the exact same task back (same id).
@@ -426,6 +494,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
                 state: {
                   ...state,
                   tasks: data.tasks,
+                  later: data.later,
                   moods: data.moods,
                   habits: migrateHabitColors(data.habits),
                   habitLogs: data.habitLogs,
@@ -451,6 +520,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             type: "HYDRATE",
             state: {
               ...saved,
+              later: saved.later ?? [],
               habits: migrateHabitColors(saved.habits ?? []),
               selectedDate: todayISO(),
             },
@@ -481,6 +551,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       saveTimer.current = setTimeout(() => {
         saveToSupabase(supabase, userId, {
           tasks: state.tasks,
+          later: state.later,
           moods: state.moods,
           habits: state.habits,
           habitLogs: state.habitLogs,
@@ -522,7 +593,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     rawDispatch(action);
 
     if (!remote) return;
-    if (action.type === "DELETE_TASK") {
+    if (action.type === "DELETE_TASK" || action.type === "DELETE_LATER") {
       deleteTaskRemote(remote.supabase, remote.userId, action.id).catch(() => {});
     } else if (action.type === "DELETE_HABIT") {
       deleteHabitRemote(remote.supabase, remote.userId, action.id).catch(() => {});

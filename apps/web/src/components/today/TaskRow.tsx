@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { categoryMeta, useStore, type Task, type TaskCategory } from "@/lib/store";
 import { useUI } from "@/components/dashboard/UIShell";
 import { CheckIcon } from "@/components/icons";
@@ -61,12 +62,17 @@ export function TaskRow({ task, hint }: { task: Task; hint?: string }) {
   const cat = categoryMeta[task.category];
 
   return (
-    <div
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -24, transition: { duration: 0.2 } }}
       className={`group flex items-center gap-3 rounded-[18px] border px-3 py-2.5 transition-colors ${
         task.done ? "border-transparent bg-cream/60" : "border-line bg-surface hover:border-line-strong"
       }`}
     >
-      <button
+      <motion.button
+        whileTap={{ scale: 0.98 }}
         onClick={() => openActions(task)}
         className="flex flex-1 min-w-0 items-center gap-3 text-left min-h-[44px]"
         aria-label={`${task.title}, ${task.time}. Ouvrir les actions`}
@@ -83,13 +89,15 @@ export function TaskRow({ task, hint }: { task: Task; hint?: string }) {
             {task.title}
           </span>
           <span className="block text-xs text-ink-muted mt-0.5">
-            {durationLabel(task.durationMin)} · {cat.label}
+            {durationLabel(task.durationMin)} · {task.location ? task.location : cat.label}
+            {(task.postponeCount ?? 0) >= 2 && <span className="text-warning"> · reportée {task.postponeCount} fois</span>}
             {hint && <span className="text-danger"> · {hint}</span>}
           </span>
         </span>
-      </button>
+      </motion.button>
 
-      <button
+      <motion.button
+        whileTap={{ scale: 0.8 }}
         onClick={() => {
           dispatch({ type: "TOGGLE_TASK", id: task.id });
           if (!task.done) toast("Bravo, c'est fait");
@@ -100,8 +108,16 @@ export function TaskRow({ task, hint }: { task: Task; hint?: string }) {
           task.done ? "bg-primary border-primary text-on-fill" : "border-line-strong text-transparent hover:border-primary hover:text-primary/40"
         }`}
       >
-        <CheckIcon size={18} />
-      </button>
-    </div>
+        <motion.span
+          key={task.done ? "done" : "todo"}
+          initial={task.done ? { scale: 0, rotate: -30 } : false}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 600, damping: 14 }}
+          className="flex"
+        >
+          <CheckIcon size={18} />
+        </motion.span>
+      </motion.button>
+    </motion.div>
   );
 }

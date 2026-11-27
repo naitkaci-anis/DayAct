@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { motion } from "motion/react";
 import {
   TodayIcon,
   TasksIcon,
@@ -119,13 +120,14 @@ export function BottomNav({
           {tab(tabs[1].href, tabs[1].label, tabs[1].icon)}
 
           <div className="flex flex-1 items-center justify-center">
-            <button
+            <motion.button
+              whileTap={{ scale: 0.85, rotate: 90 }}
               onClick={onNewTask}
               aria-label="Nouvelle tâche"
               className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-on-fill glow-primary"
             >
               <PlusIcon size={24} strokeWidth={2} />
-            </button>
+            </motion.button>
           </div>
 
           {tab(tabs[2].href, tabs[2].label, tabs[2].icon)}

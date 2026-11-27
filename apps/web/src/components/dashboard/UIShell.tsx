@@ -13,6 +13,7 @@ import { Onboarding } from "./Onboarding";
 import { Composer, type ComposerState } from "@/components/spine/Composer";
 import { useStore, type Task } from "@/lib/store";
 import { TaskActionsSheet, UndoToast, type TaskActionsMode } from "@/components/today/TaskActions";
+import { NotificationDetail } from "./NotificationDetail";
 
 interface UIContextValue {
   openNew: (preset?: { time?: string; date?: string }) => void;
@@ -22,6 +23,8 @@ interface UIContextValue {
   openChat: () => void;
   openFocus: () => void;
   toast: (message: string, undo?: () => void) => void;
+  /** Shows the "Rappel" window for a task (from a notification). */
+  openNotification: (taskId: string, notificationId?: string) => void;
 }
 
 const UIContext = createContext<UIContextValue | null>(null);
@@ -33,13 +36,14 @@ export function useUI() {
 }
 
 export function UIShell({ children }: { children: ReactNode }) {
-  const { hydrated } = useStore();
+  const { hydrated, state, dispatch } = useStore();
   const [composer, setComposer] = useState<ComposerState>({ open: false });
   const [pomodoroOpen, setPomodoroOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [actions, setActions] = useState<{ task: Task; mode: TaskActionsMode } | null>(null);
+  const [notifDetail, setNotifDetail] = useState<{ taskId: string; notificationId?: string } | null>(null);
   const [toastState, setToastState] = useState<{ id: number; message: string; undo?: () => void } | null>(null);
 
   const toast = useCallback(
@@ -57,7 +61,33 @@ export function UIShell({ children }: { children: ReactNode }) {
     openChat: () => setChatOpen(true),
     openFocus: () => setPomodoroOpen(true),
     toast,
+    openNotification: (taskId, notificationId) => setNotifDetail({ taskId, notificationId }),
   };
+
+  // A tapped phone notification opens the app on /dashboard?notif=<taskId>,
+  // or (app already open) sends a message: both show the "Rappel" window.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const fromUrl = url.searchParams.get("notif");
+    if (fromUrl) {
+      setNotifDetail({ taskId: fromUrl });
+      url.searchParams.delete("notif");
+      window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+    }
+    const onSwMessage = (e: MessageEvent) => {
+      if (e.data?.type === "open-notification" && e.data.taskId) setNotifDetail({ taskId: e.data.taskId });
+    };
+    const onWindowEvent = (e: Event) => {
+      const id = (e as CustomEvent<{ taskId?: string }>).detail?.taskId;
+      if (id) setNotifDetail({ taskId: id });
+    };
+    navigator.serviceWorker?.addEventListener("message", onSwMessage);
+    window.addEventListener("dayact:open-notification", onWindowEvent);
+    return () => {
+      navigator.serviceWorker?.removeEventListener("message", onSwMessage);
+      window.removeEventListener("dayact:open-notification", onWindowEvent);
+    };
+  }, []);
 
   // Ctrl/Cmd+K opens search.
   useEffect(() => {
@@ -125,6 +155,22 @@ export function UIShell({ children }: { children: ReactNode }) {
         onToast={toast}
       />
       <UndoToast toast={toastState} onDone={clearToast} />
+      <NotificationDetail
+        taskId={notifDetail?.taskId ?? null}
+        notificationId={notifDetail?.notificationId}
+        onClose={() => setNotifDetail(null)}
+        onPostpone={(id) => {
+          const task = state.tasks.find((t) => t.id === id);
+          if (task) setActions({ task, mode: "postpone" });
+        }}
+        onCancelTask={(id) => {
+          const task = state.tasks.find((t) => t.id === id);
+          if (!task) return;
+          const snapshot = { ...task };
+          dispatch({ type: "DELETE_TASK", id });
+          toast("Tâche annulée", () => dispatch({ type: "RESTORE_TASK", task: snapshot }));
+        }}
+      />
       <ReminderScheduler />
       {hydrated && <Onboarding />}
     </UIContext.Provider>

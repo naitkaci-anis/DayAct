@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { CloseIcon, SparkIcon, SettingsIcon } from "@/components/icons";
-import { useStore, todayISO, categoryMeta, type Task } from "@/lib/store";
+import { useStore, todayISO, addDays, categoryMeta, type Task } from "@/lib/store";
 import { findOverlapping } from "@/lib/conflicts";
 import type { ParsedTask, ChatAction } from "@/lib/ai/chat";
 
@@ -30,7 +30,7 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
     {
       role: "assistant",
       text:
-        "Salut 👋 Je gère ton agenda. Tu peux me dire :\n• « réunion équipe lundi 9h pendant 1h »\n• « décale mon sport à 19h »\n• « annule la méditation »\nÉcris ou parle 🎤.",
+        "Salut 👋 Je gère ton agenda. Tu peux me dire :\n• « réunion équipe lundi 9h pendant 1h »\n• colle tout ton planning de la journée, ligne par ligne\n• « décale mon sport à 19h » ou « annule la méditation »\n• « j'ai quoi demain ? »\nÉcris ou parle 🎤.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -38,6 +38,15 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
   const [listening, setListening] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // The message box grows with the text (up to ~40 % of the screen).
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, Math.round(window.innerHeight * 0.4))}px`;
+  }, [input]);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
   useEffect(() => {
@@ -89,9 +98,12 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
     setLoading(true);
 
     // Stable, ordered snapshot — the AI references tasks by their number here.
-    const ctx = [...state.tasks].sort((a, b) =>
-      (a.date + a.time).localeCompare(b.date + b.time)
-    );
+    // Only a useful window (yesterday → 2 months ahead) to keep the prompt short.
+    const from = addDays(todayISO(), -1);
+    const to = addDays(todayISO(), 60);
+    const ctx = state.tasks
+      .filter((t) => t.date >= from && t.date <= to)
+      .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
 
     try {
       const res = await fetch("/api/ai/chat", {
@@ -100,7 +112,13 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
         body: JSON.stringify({
           message,
           today: todayISO(),
-          context: ctx.map((t) => ({ title: t.title, date: t.date, time: t.time })),
+          context: ctx.map((t) => ({
+            title: t.title,
+            date: t.date,
+            time: t.time,
+            durationMin: t.durationMin,
+            done: t.done,
+          })),
         }),
       });
       const data = await res.json();
@@ -121,7 +139,9 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
 
       for (const a of actions) {
         if (a.type === "create") {
-          const t = a.task;
+          const t = { ...a.task };
+          // No hour given → next free slot that day, right after what's planned.
+          if (t.timeGiven === false) t.time = nextFreeSlot(pool, t.date, t.durationMin);
           const over = findOverlapping(pool, {
             date: t.date,
             time: t.time,
@@ -143,6 +163,7 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
               priority: t.priority,
               category: t.category,
               notes: "",
+              location: t.location,
             },
           });
         } else if (a.type === "update") {
@@ -264,6 +285,7 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
               🎤
             </button>
             <textarea
+              ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
@@ -274,7 +296,7 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
               }}
               rows={1}
               placeholder={listening ? "Parle…" : "Écris ta demande…"}
-              className="flex-1 resize-none px-3 py-2.5 rounded-sm bg-field border border-line text-sm text-ink placeholder:text-ink-muted/60 focus:border-primary outline-none max-h-28"
+              className="flex-1 resize-none overflow-y-auto px-3 py-2.5 rounded-sm bg-field border border-line text-[15px] leading-snug text-ink placeholder:text-ink-muted/60 focus:border-primary outline-none"
             />
             <button
               onClick={send}
@@ -286,10 +308,42 @@ export function AssistantChat({ open, onClose }: { open: boolean; onClose: () =>
             </button>
           </div>
           <p className="text-[10px] text-ink-muted mt-1.5 text-center">
-            Entrée pour envoyer · les tâches sont créées automatiquement
+            Entrée pour envoyer · Maj + Entrée pour aller à la ligne
           </p>
         </div>
       </aside>
     </div>
   );
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function toMin(hhmm: string) {
+  const [h, m] = hhmm.split(":").map(Number);
+  return h * 60 + (m || 0);
+}
+
+function toHHMM(min: number) {
+  const m = Math.max(0, Math.min(23 * 60 + 59, min));
+  return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+}
+
+/** First gap of `duration` minutes on `date`, starting now (today) or 9:00, never overlapping. */
+function nextFreeSlot(
+  pool: { date: string; time: string; durationMin: number }[],
+  date: string,
+  duration: number
+) {
+  const now = new Date();
+  const nowMin = Math.ceil((now.getHours() * 60 + now.getMinutes()) / 5) * 5;
+  let start = date === todayISO() ? Math.max(9 * 60, nowMin) : 9 * 60;
+  const busy = pool
+    .filter((p) => p.date === date)
+    .map((p) => [toMin(p.time), toMin(p.time) + p.durationMin] as const)
+    .sort((a, b) => a[0] - b[0]);
+  for (const [s, e] of busy) {
+    if (start + duration <= s) break;
+    if (e > start) start = e;
+  }
+  return toHHMM(start);
 }
