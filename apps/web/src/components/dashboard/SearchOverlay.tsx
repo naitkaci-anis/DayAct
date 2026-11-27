@@ -41,7 +41,7 @@ export function SearchOverlay({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh] px-4">
-      <div className="absolute inset-0 bg-ink/35 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-scrim backdrop-blur-sm" onClick={onClose} />
 
       <div className="relative w-full max-w-lg rounded-md border border-line bg-surface shadow-2xl animate-[popIn_0.16s_ease] overflow-hidden">
         {/* input */}

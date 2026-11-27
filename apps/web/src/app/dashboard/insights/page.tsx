@@ -127,7 +127,7 @@ export default function InsightsPage() {
                       height: `${(d.focusMin / maxFocus) * 100}%`,
                       background:
                         d.focusMin > 0
-                          ? "linear-gradient(to top, #590907, #5F6556)"
+                          ? "linear-gradient(to top, var(--secondary), var(--primary))"
                           : "var(--line)",
                       minHeight: 4,
                     }}

@@ -6,6 +6,7 @@ import { BoltIcon, BellIcon } from "@/components/icons";
 import { useStore, user } from "@/lib/store";
 import { InstallApp } from "@/components/InstallApp";
 import { playReminderSound } from "@/lib/sound";
+import { ThemePicker } from "@/components/dashboard/ThemePicker";
 
 function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
   return (
@@ -95,6 +96,13 @@ export default function SettingsPage() {
       <PageHeader title="Paramètres" subtitle="Gère ton compte et tes préférences" />
 
       <div className="max-w-2xl space-y-6">
+        {/* Appearance */}
+        <section className="rounded-md border border-line bg-surface p-5">
+          <h2 className="text-sm font-medium text-ink">Apparence</h2>
+          <p className="text-xs text-ink-muted mt-0.5 mb-4">Choisis les couleurs de l&apos;appli. Le choix est gardé sur cet appareil.</p>
+          <ThemePicker />
+        </section>
+
         {/* Profile */}
         <section className="rounded-md border border-line bg-surface p-5">
           <h2 className="text-sm font-medium text-ink mb-4">Profil</h2>

@@ -34,7 +34,7 @@ export function MoodLogger() {
     <section className="rounded-md border border-line bg-surface p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <WellbeingIcon size={15} className="text-secondary" />
+          <WellbeingIcon size={15} className="text-secondary-ink" />
           <h2 className="text-sm font-medium text-ink">Humeur</h2>
         </div>
         {current != null && <span className="text-xs text-ink-muted">{current}/100</span>}

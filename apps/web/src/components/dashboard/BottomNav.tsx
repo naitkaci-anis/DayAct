@@ -75,7 +75,7 @@ export function BottomNav({
       {/* "Plus" sheet */}
       {moreOpen && (
         <div className="md:hidden fixed inset-0 z-40" onClick={() => setMoreOpen(false)}>
-          <div className="absolute inset-0 bg-ink/25 animate-[fadeIn_0.15s_ease]" />
+          <div className="absolute inset-0 bg-scrim animate-[fadeIn_0.15s_ease]" />
           <div
             className="absolute left-3 right-3 bottom-[calc(76px+env(safe-area-inset-bottom))] glass rounded-[22px] p-2 animate-[popIn_0.2s_ease]"
             onClick={(e) => e.stopPropagation()}

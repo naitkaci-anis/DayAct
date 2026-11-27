@@ -65,10 +65,10 @@ export function Assistant() {
         />
         <div className="relative">
           <div className="flex items-center gap-2 mb-3">
-            <span className="flex items-center justify-center w-7 h-7 rounded-[7px] bg-secondary/15 text-secondary">
+            <span className="flex items-center justify-center w-7 h-7 rounded-[7px] bg-secondary/15 text-secondary-ink">
               <SparkIcon size={15} />
             </span>
-            <span className="text-xs font-medium text-secondary uppercase tracking-wider">
+            <span className="text-xs font-medium text-secondary-ink uppercase tracking-wider">
               Assistant IA
             </span>
             <span className="ml-auto text-[10px] text-ink-muted">IA</span>
@@ -77,7 +77,7 @@ export function Assistant() {
           <button
             onClick={planDay}
             disabled={loading}
-            className="w-full px-3 py-2 rounded-sm bg-secondary/15 text-secondary text-sm font-medium hover:bg-secondary/25 disabled:opacity-50 transition-colors"
+            className="w-full px-3 py-2 rounded-sm bg-secondary/15 text-secondary-ink text-sm font-medium hover:bg-secondary/25 disabled:opacity-50 transition-colors"
           >
             {loading ? "Analyse en cours…" : "✨ Planifier ma journée"}
           </button>
@@ -103,7 +103,7 @@ export function Assistant() {
                   <ol className="space-y-1">
                     {plan.order.map((title, i) => (
                       <li key={i} className="flex items-center gap-2 text-[13px] text-ink">
-                        <span className="flex items-center justify-center w-4 h-4 rounded-full bg-secondary/15 text-secondary text-[10px] shrink-0">
+                        <span className="flex items-center justify-center w-4 h-4 rounded-full bg-secondary/15 text-secondary-ink text-[10px] shrink-0">
                           {i + 1}
                         </span>
                         <span className="truncate">{title}</span>
@@ -139,7 +139,7 @@ export function Assistant() {
                   <div className="flex items-center gap-2 mt-3">
                     <button
                       onClick={() => dispatch({ type: "APPLY_SUGGESTION", id: s.id })}
-                      className="px-3 py-1.5 rounded-sm bg-secondary/15 text-secondary text-xs font-medium hover:bg-secondary/25 transition-colors"
+                      className="px-3 py-1.5 rounded-sm bg-secondary/15 text-secondary-ink text-xs font-medium hover:bg-secondary/25 transition-colors"
                     >
                       {s.task ? "Ajouter au planning" : "Appliquer"}
                     </button>
@@ -167,7 +167,7 @@ export function Assistant() {
             value={`${done} / ${tasks.length}`}
           />
           <StatRow
-            icon={<ClockIcon size={15} className="text-secondary" />}
+            icon={<ClockIcon size={15} className="text-secondary-ink" />}
             label="Focus effectué"
             value={`${Math.floor(focusMin / 60)}h${String(focusMin % 60).padStart(2, "0")}`}
           />

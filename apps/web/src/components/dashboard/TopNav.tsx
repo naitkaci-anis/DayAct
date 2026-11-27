@@ -36,7 +36,7 @@ export function TopNav({
             </span>
           )}
         </button>
-        <button onClick={onChat} className={`${btn} text-secondary`} aria-label="Assistant">
+        <button onClick={onChat} className={`${btn} text-secondary-ink`} aria-label="Assistant">
           <SparkIcon size={19} />
         </button>
       </div>

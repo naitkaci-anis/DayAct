@@ -44,7 +44,7 @@ export function NotificationsPanel({ open, onClose }: { open: boolean; onClose: 
 
   return (
     <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-ink/35 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-scrim backdrop-blur-sm" onClick={onClose} />
 
       <aside
         className="absolute right-0 top-0 h-full w-full max-w-sm bg-surface border-l border-line flex flex-col"

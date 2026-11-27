@@ -37,7 +37,7 @@ export function Modal({
     >
       {/* backdrop */}
       <div
-        className="absolute inset-0 bg-ink/35 backdrop-blur-sm animate-[fadeIn_0.15s_ease]"
+        className="absolute inset-0 bg-scrim backdrop-blur-sm animate-[fadeIn_0.15s_ease]"
         onClick={onClose}
       />
 

@@ -8,12 +8,16 @@ import { AmbientBackground } from "@/components/AmbientBackground";
 import { PWARegister } from "@/components/PWARegister";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { SITE_URL } from "@/lib/site";
+import { DEFAULT_THEME, THEME_SCRIPT } from "@/lib/themes";
 
 // Display serif for big titles (self-hosted: no network call at build time).
+// Real italic included: the big italic titles use it.
 const fraunces = localFont({
-  src: "./fonts/Fraunces-Variable.woff2",
+  src: [
+    { path: "./fonts/Fraunces-Variable.woff2", weight: "100 900", style: "normal" },
+    { path: "./fonts/Fraunces-Italic.woff2", weight: "100 900", style: "italic" },
+  ],
   variable: "--font-display",
-  weight: "100 900",
   display: "swap",
 });
 
@@ -34,12 +38,12 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "DayAct",
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F1E7D8",
+  themeColor: "#030407",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -51,7 +55,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
+    <html lang="fr" data-theme={DEFAULT_THEME} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} ${fraunces.variable} antialiased`}
         style={

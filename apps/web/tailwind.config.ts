@@ -22,6 +22,7 @@ const config: Config = {
         primary: rgb("primary"),
         "primary-hover": rgb("primary-hover"),
         secondary: rgb("secondary"),
+        "secondary-ink": rgb("secondary-ink"),
         accent: rgb("accent"),
         sage: rgb("sage"),
         cream: rgb("cream"),
@@ -31,6 +32,8 @@ const config: Config = {
         ink: rgb("ink"),
         "ink-muted": rgb("ink-muted"),
         "on-fill": rgb("on-fill"),
+        "on-secondary": rgb("on-secondary"),
+        scrim: "var(--scrim)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],

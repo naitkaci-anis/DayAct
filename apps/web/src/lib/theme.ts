@@ -1,24 +1,40 @@
-// Colour helpers for the "Sauge" theme.
+// Colour helpers shared by both themes (Nuit and Sauge).
 
-// Colours offered when creating a habit (all readable on the cream background).
-export const HABIT_COLORS = ["#7A1612", "#4E6B35", "#6E4E6B", "#A66A1C", "#5F6556", "#B3261E"];
+// Colours offered when creating a habit. They are CSS variables, so a habit
+// follows the active theme (see --hab-1 … --hab-6 in globals.css).
+export const HABIT_COLORS = [
+  "var(--hab-1)",
+  "var(--hab-2)",
+  "var(--hab-3)",
+  "var(--hab-4)",
+  "var(--hab-5)",
+  "var(--hab-6)",
+];
 
-// Habits created with the old neon theme keep their stored colour in the
-// database; translate those to the closest Sauge colour when loading.
+// Habits saved with older themes keep a fixed hex colour in the database;
+// translate those to the matching theme colour when loading.
 const LEGACY: Record<string, string> = {
-  "#5be7ff": "#7A1612",
-  "#06b6d4": "#7A1612",
-  "#22d3ee": "#7A1612",
-  "#22c55e": "#4E6B35",
-  "#4ade80": "#4E6B35",
-  "#8b5cf6": "#6E4E6B",
-  "#a78bfa": "#6E4E6B",
-  "#c026ff": "#6E4E6B",
-  "#f59e0b": "#A66A1C",
-  "#fbbf24": "#A66A1C",
-  "#f87171": "#B3261E",
-  "#ef4444": "#B3261E",
-  "#f9fafb": "#5F6556",
+  // Sauge
+  "#7a1612": "var(--hab-1)",
+  "#4e6b35": "var(--hab-2)",
+  "#6e4e6b": "var(--hab-3)",
+  "#a66a1c": "var(--hab-4)",
+  "#5f6556": "var(--hab-5)",
+  "#b3261e": "var(--hab-6)",
+  // Old neon theme
+  "#5be7ff": "var(--hab-1)",
+  "#06b6d4": "var(--hab-1)",
+  "#22d3ee": "var(--hab-1)",
+  "#22c55e": "var(--hab-2)",
+  "#4ade80": "var(--hab-2)",
+  "#8b5cf6": "var(--hab-3)",
+  "#a78bfa": "var(--hab-3)",
+  "#c026ff": "var(--hab-3)",
+  "#f59e0b": "var(--hab-4)",
+  "#fbbf24": "var(--hab-4)",
+  "#f87171": "var(--hab-6)",
+  "#ef4444": "var(--hab-6)",
+  "#f9fafb": "var(--hab-5)",
 };
 
 export function themeColor(color: string): string {

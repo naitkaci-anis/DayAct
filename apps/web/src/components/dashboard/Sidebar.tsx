@@ -93,7 +93,7 @@ export function Sidebar({
 
       <div className="flex flex-col gap-1 border-t border-line pt-4">
         <button onClick={onChat} className={tool}>
-          <SparkIcon size={19} className="text-secondary" />
+          <SparkIcon size={19} className="text-secondary-ink" />
           Assistant
         </button>
         <button onClick={onSearch} className={tool}>
@@ -115,11 +115,11 @@ export function Sidebar({
       <div className="mt-auto flex flex-col gap-3">
         <button
           onClick={onFocus}
-          className="flex items-center gap-3 rounded-[18px] bg-secondary text-on-fill p-4 text-left hover:opacity-95"
+          className="flex items-center gap-3 rounded-[18px] bg-secondary text-on-secondary p-4 text-left hover:opacity-95"
         >
           <ClockIcon size={22} />
           <span>
-            <span className="block text-xs uppercase tracking-[0.06em] text-on-fill/80">Focus</span>
+            <span className="block text-xs uppercase tracking-[0.14em] text-on-secondary/80">Focus</span>
             <span className="block font-display text-xl leading-tight">Lancer 25 min</span>
           </span>
         </button>

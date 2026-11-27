@@ -17,31 +17,31 @@ const steps = [
     icon: null, // logo
     title: "Bienvenue sur DayAct 👋",
     body: "Ton copilote productivité & bien-être. En 30 secondes, voici comment en tirer le meilleur.",
-    accent: "#590907",
+    accent: "var(--primary)",
   },
   {
     icon: CalendarIcon,
     title: "Planifie ta journée",
     body: "Crée des tâches avec un créneau horaire, fais-les glisser sur le calendrier (Mois · Semaine · Jour), et répète-les les jours que TU choisis.",
-    accent: "#590907",
+    accent: "var(--primary)",
   },
   {
     icon: SparkIcon,
     title: "L'IA travaille pour toi",
-    body: "Clique sur l'étincelle violette : parle ou écris « réunion lundi 9h » et l'assistant crée, déplace ou supprime tes tâches. Il peut aussi planifier ta journée entière.",
-    accent: "#5F6556",
+    body: "Touche l'étincelle : parle ou écris « réunion lundi 9h » et l'assistant crée, déplace ou supprime tes tâches. Il peut aussi planifier ta journée entière.",
+    accent: "var(--secondary-ink)",
   },
   {
     icon: FlameIcon,
     title: "Construis tes habitudes",
     body: "Valide tes habitudes chaque jour : gagne de l'XP, monte de niveau et débloque des trophées. Ta série 🔥 t'attend.",
-    accent: "#A0661A",
+    accent: "var(--warning)",
   },
   {
     icon: BellIcon,
     title: "Ne rate plus rien",
     body: "DayAct te prévient avant chaque tâche (sonnerie + notification). Active les notifications pour en profiter — même quand l'onglet est en arrière-plan.",
-    accent: "#4E6B35",
+    accent: "var(--success)",
   },
 ];
 
@@ -86,7 +86,7 @@ export function Onboarding() {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" role="dialog" aria-modal="true">
       {/* backdrop */}
-      <div className="absolute inset-0 bg-ink/40 backdrop-blur-md animate-[fadeIn_0.2s_ease]" />
+      <div className="absolute inset-0 bg-scrim backdrop-blur-md animate-[fadeIn_0.2s_ease]" />
 
       {/* card */}
       <div className="relative z-10 w-full max-w-md glass rounded-[24px] p-8 text-center animate-[popIn_0.25s_ease] overflow-hidden">
@@ -125,7 +125,7 @@ export function Onboarding() {
                 className="h-1.5 rounded-full transition-all duration-300"
                 style={{
                   width: i === step ? 22 : 6,
-                  background: i === step ? s.accent : "rgba(89,9,7,0.12)",
+                  background: i === step ? s.accent : "rgb(var(--ink-rgb) / 0.14)",
                 }}
               />
             ))}

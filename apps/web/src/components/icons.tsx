@@ -26,16 +26,16 @@ export function LogoMark({ size = 24, ...props }: IconProps) {
   // Solid colours (no gradient id) so several logos can live on one page.
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true" {...props}>
-      <circle cx="16" cy="16" r="12.5" stroke="#590907" strokeWidth="2.1" fill="none" />
-      <g stroke="#8E2C1F" strokeWidth="1.3" strokeLinecap="round">
+      <circle cx="16" cy="16" r="12.5" stroke="var(--primary)" strokeWidth="2.1" fill="none" />
+      <g stroke="var(--accent)" strokeWidth="1.3" strokeLinecap="round">
         <path d="M12.8 8.2v1.5" />
         <path d="M8.3 13.2h1.5" />
         <path d="M9.6 10l1 1" />
         <path d="M16 10l-1 1" />
       </g>
-      <circle cx="12.8" cy="13.4" r="2.5" fill="#A5A79B" />
-      <path d="M7 19.5c2.2-2 4-0.2 6-0.2s3.8-2 6 0" stroke="#A66A1C" strokeWidth="1.3" strokeLinecap="round" fill="none" opacity="0.8" />
-      <path d="M12 17.6l3 3L23.2 12" stroke="#590907" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <circle cx="12.8" cy="13.4" r="2.5" fill="var(--secondary-ink)" />
+      <path d="M7 19.5c2.2-2 4-0.2 6-0.2s3.8-2 6 0" stroke="var(--accent)" strokeWidth="1.3" strokeLinecap="round" fill="none" opacity="0.8" />
+      <path d="M12 17.6l3 3L23.2 12" stroke="var(--primary)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
     </svg>
   );
 }
@@ -115,6 +115,19 @@ export const PlusIcon = (p: IconProps) => (
 export const CheckIcon = (p: IconProps) => (
   <svg {...base({ ...p, strokeWidth: 2.4 })}>
     <path d="M5 12l5 5L20 6" />
+  </svg>
+);
+
+export const ArrowRightIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M5 12h14M13 6l6 6-6 6" />
+  </svg>
+);
+
+export const PhoneIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <rect x="6.5" y="2.5" width="11" height="19" rx="2.5" />
+    <path d="M10.5 18.5h3" />
   </svg>
 );
 

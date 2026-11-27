@@ -91,7 +91,7 @@ export function TaskActionsSheet({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label={`Actions pour ${task.title}`}>
-      <div className="absolute inset-0 bg-ink/35 animate-[fadeIn_0.15s_ease]" onClick={onClose} />
+      <div className="absolute inset-0 bg-scrim animate-[fadeIn_0.15s_ease]" onClick={onClose} />
 
       <div className="relative z-10 w-full sm:max-w-md bg-panel border border-line rounded-t-[28px] sm:rounded-[28px] p-5 pb-[max(env(safe-area-inset-bottom),20px)] animate-[popIn_0.2s_ease] shadow-2xl">
         <div className="flex items-start gap-3">
@@ -114,7 +114,7 @@ export function TaskActionsSheet({
               {task.done ? "Marquer comme pas faite" : "C'est fait"}
             </button>
             <button onClick={() => setMode("postpone")} className={`${big} bg-field border border-line text-ink hover:border-line-strong`}>
-              <ChevronRightIcon size={20} className="text-secondary" />
+              <ChevronRightIcon size={20} className="text-secondary-ink" />
               <span className="flex-1">Reporter</span>
               <span className="text-sm font-normal text-ink-muted">plus tard ou à une date</span>
             </button>

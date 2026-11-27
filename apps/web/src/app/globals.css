@@ -3,35 +3,138 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────────────────
-   DayAct theme — "Sauge"
-   Muted sage grey #A5A79B · Warm cream beige #E8D2B5 · Deep burgundy #590907
-   Colours are stored as "R G B" so Tailwind opacity modifiers work
-   (e.g. bg-primary/15). Change the look of the whole app here.
+   DayAct themes. Colours are stored as "R G B" so Tailwind opacity
+   modifiers work (e.g. bg-primary/15). The <html data-theme="…"> attribute
+   picks the theme; "nuit" is the default.
+
+   Nuit  — Midnight black #030407 · Electric cobalt blue #1558C9 · Acid lime #D4FF24
+   Sauge — Muted sage grey #A5A79B · Warm cream beige #E8D2B5 · Deep burgundy #590907
    ───────────────────────────────────────────────────────────────────────── */
-:root {
-  --canvas-rgb: 241 231 216;      /* page background (light cream) */
-  --panel-rgb: 247 240 229;       /* solid panels, menus */
-  --field-rgb: 255 253 249;       /* inputs */
-  --line-rgb: 221 207 188;        /* hairline borders */
-  --line-strong-rgb: 196 179 156; /* hover / checkbox borders */
-  --primary-rgb: 89 9 7;          /* deep burgundy — main actions */
+:root,
+[data-theme="nuit"] {
+  color-scheme: dark;
+
+  --canvas-rgb: 3 4 7;              /* midnight black */
+  --panel-rgb: 13 15 22;            /* solid panels, menus */
+  --field-rgb: 18 21 30;            /* inputs */
+  --line-rgb: 38 43 58;             /* hairline borders */
+  --line-strong-rgb: 66 74 98;      /* hover / checkbox borders */
+  --primary-rgb: 212 255 36;        /* acid lime — main actions */
+  --primary-hover-rgb: 228 255 112;
+  --secondary-rgb: 21 88 201;       /* electric cobalt blue — fills, AI */
+  --secondary-ink-rgb: 120 160 255; /* cobalt, light enough to read as text */
+  --accent-rgb: 143 176 255;        /* pale cobalt — light titles, gradients */
+  --sage-rgb: 16 34 72;             /* deep cobalt — decorative cards */
+  --cream-rgb: 24 28 40;            /* raised dark — tracks, chips */
+  --success-rgb: 107 227 154;
+  --warning-rgb: 255 181 71;
+  --danger-rgb: 255 96 96;
+  --ink-rgb: 238 241 247;           /* main text */
+  --ink-muted-rgb: 150 158 180;     /* secondary text */
+  --on-fill-rgb: 3 4 7;             /* text on lime and light fills */
+  --on-secondary-rgb: 255 255 255;  /* text on cobalt */
+
+  --surface: rgba(16, 19, 28, 0.66);
+  --glass-bg: rgba(14, 17, 26, 0.72);
+  --glass-highlight: rgba(255, 255, 255, 0.05);
+  --shadow-rgb: 0 0 0;
+
+  /* Ambient background */
+  --bg-top: #0A1022;
+  --bg-bottom: #020306;
+  --blob-1: 21 88 201;
+  --blob-1-a: 0.42;
+  --blob-2: 40 70 190;
+  --blob-2-a: 0.3;
+  --blob-3: 212 255 36;
+  --blob-3-a: 0.07;
+  --grain-opacity: 0.06;
+  --grain-blend: screen;
+
+  /* Sun on the day arc */
+  --scrim: rgba(0, 0, 0, 0.62);  /* dimmed page behind sheets and dialogs */
+  --device: #10131C;             /* phone frame on the landing page */
+  --sun: #D4FF24;
+  --sun-halo: rgba(212, 255, 36, 0.22);
+
+  /* Task categories */
+  --cat-work: #78A0FF;     /* cobalt */
+  --cat-health: #6BE39A;   /* mint */
+  --cat-personal: #C792FF; /* violet */
+  --cat-learning: #FFB547; /* amber */
+
+  /* Habit colours */
+  --hab-1: #78A0FF;
+  --hab-2: #6BE39A;
+  --hab-3: #C792FF;
+  --hab-4: #FFB547;
+  --hab-5: #D4FF24;
+  --hab-6: #FF6060;
+}
+
+[data-theme="sauge"] {
+  color-scheme: light;
+
+  --canvas-rgb: 241 231 216;
+  --panel-rgb: 247 240 229;
+  --field-rgb: 255 253 249;
+  --line-rgb: 221 207 188;
+  --line-strong-rgb: 196 179 156;
+  --primary-rgb: 89 9 7;            /* deep burgundy */
   --primary-hover-rgb: 116 19 15;
-  --secondary-rgb: 95 101 86;     /* deep sage — focus & AI */
-  --accent-rgb: 142 44 31;        /* rust — gradients, highlights */
-  --sage-rgb: 165 167 155;        /* muted sage grey — decoration */
-  --cream-rgb: 232 210 181;       /* warm cream beige — decoration */
-  --success-rgb: 78 107 53;       /* olive */
-  --warning-rgb: 140 90 18;       /* ochre */
+  --secondary-rgb: 95 101 86;       /* deep sage */
+  --secondary-ink-rgb: 95 101 86;
+  --accent-rgb: 142 44 31;          /* rust */
+  --sage-rgb: 165 167 155;
+  --cream-rgb: 232 210 181;
+  --success-rgb: 78 107 53;
+  --warning-rgb: 140 90 18;
   --danger-rgb: 179 38 30;
-  --ink-rgb: 43 26 23;            /* main text */
-  --ink-muted-rgb: 111 98 90;     /* secondary text */
-  --on-fill-rgb: 251 243 232;     /* text on coloured buttons */
+  --ink-rgb: 43 26 23;
+  --ink-muted-rgb: 111 98 90;
+  --on-fill-rgb: 251 243 232;
+  --on-secondary-rgb: 251 243 232;
 
-  --surface: rgba(255, 252, 247, 0.74); /* translucent cards */
+  --surface: rgba(255, 252, 247, 0.74);
+  --glass-bg: rgba(255, 252, 247, 0.72);
+  --glass-highlight: rgba(255, 255, 255, 0.7);
+  --shadow-rgb: 43 26 23;
 
-  /* Full colours for inline styles: style={{ color: "var(--primary)" }} */
+  --bg-top: #F7EFE3;
+  --bg-bottom: #EADCC8;
+  --blob-1: 165 167 155;
+  --blob-1-a: 0.45;
+  --blob-2: 232 210 181;
+  --blob-2-a: 0.9;
+  --blob-3: 89 9 7;
+  --blob-3-a: 0.1;
+  --grain-opacity: 0.05;
+  --grain-blend: multiply;
+
+  --scrim: rgba(43, 26, 23, 0.35);
+  --device: #2B1A17;
+  --sun: #A66A1C;
+  --sun-halo: #E8D2B5;
+
+  --cat-work: #7A1612;
+  --cat-health: #4E6B35;
+  --cat-personal: #6E4E6B;
+  --cat-learning: #A66A1C;
+
+  --hab-1: #7A1612;
+  --hab-2: #4E6B35;
+  --hab-3: #6E4E6B;
+  --hab-4: #A66A1C;
+  --hab-5: #5F6556;
+  --hab-6: #B3261E;
+}
+
+/* Full colours for inline styles: style={{ color: "var(--primary)" }} */
+:root,
+[data-theme] {
   --primary: rgb(var(--primary-rgb));
   --secondary: rgb(var(--secondary-rgb));
+  --secondary-ink: rgb(var(--secondary-ink-rgb));
   --accent: rgb(var(--accent-rgb));
   --success: rgb(var(--success-rgb));
   --warning: rgb(var(--warning-rgb));
@@ -41,12 +144,6 @@
   --line: rgb(var(--line-rgb));
   --sage: rgb(var(--sage-rgb));
   --cream: rgb(var(--cream-rgb));
-
-  /* Task categories — distinct hues that stay inside the palette */
-  --cat-work: #7A1612;      /* burgundy */
-  --cat-health: #4E6B35;    /* olive */
-  --cat-personal: #6E4E6B;  /* dusty plum */
-  --cat-learning: #A66A1C;  /* ochre */
 }
 
 @layer base {
@@ -56,7 +153,6 @@
   }
 
   html {
-    color-scheme: light;
     overflow-x: hidden;
   }
 
@@ -105,13 +201,13 @@
 @layer utilities {
   /* Frosted card surface */
   .glass {
-    background: rgba(255, 252, 247, 0.72);
+    background: var(--glass-bg);
     backdrop-filter: blur(18px) saturate(140%);
     -webkit-backdrop-filter: blur(18px) saturate(140%);
     border: 1px solid var(--line);
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
-      0 18px 40px -24px rgb(var(--ink-rgb) / 0.28);
+      inset 0 1px 0 0 var(--glass-highlight),
+      0 18px 40px -24px rgb(var(--shadow-rgb) / 0.45);
   }
 
   .glow-primary {
@@ -144,8 +240,8 @@
     transform: translateY(-3px);
     border-color: rgb(var(--line-strong-rgb));
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
-      0 26px 50px -26px rgb(var(--ink-rgb) / 0.35);
+      inset 0 1px 0 0 var(--glass-highlight),
+      0 26px 50px -26px rgb(var(--shadow-rgb) / 0.5);
   }
 
   /* Animated gradient border on hover */
@@ -181,8 +277,8 @@
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
-    0 16px 36px -26px rgb(var(--ink-rgb) / 0.3);
+    inset 0 1px 0 0 var(--glass-highlight),
+    0 16px 36px -26px rgb(var(--shadow-rgb) / 0.45);
 }
 
 /* ── Animations ─────────────────────────────────────────────────────────── */
@@ -293,9 +389,18 @@ button {
   animation: floatSoft 7s ease-in-out infinite;
 }
 
+/* Very slow turn for the decorative bloom on the landing page */
+@keyframes spinSlow {
+  to { transform: rotate(360deg); }
+}
+.spin-slow {
+  animation: spinSlow 90s linear infinite;
+  transform-origin: 50% 50%;
+}
+
 /* Respect users who prefer less motion */
 @media (prefers-reduced-motion: reduce) {
-  .wave, .gradient-flow, .breathe, .float-soft {
+  .wave, .gradient-flow, .breathe, .float-soft, .spin-slow {
     animation: none;
   }
 }

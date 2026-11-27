@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 import { motion, animate, useMotionValue, useTransform } from "motion/react";
 import { categoryMeta, type Task } from "@/lib/store";
 
@@ -74,6 +74,7 @@ export function SunArc({
   // Progress path from the start of the day to "now".
   const p0 = point(start, start, end);
   const p1 = point(Math.min(Math.max(nowMin, start), end), start, end);
+  const gradId = `arc-${useId().replace(/:/g, "")}`;
 
   return (
     <div className="relative w-full max-w-[420px] mx-auto">
@@ -83,6 +84,12 @@ export function SunArc({
         role="img"
         aria-label={`Course du soleil : il est ${clock}, ${done} tâche${done > 1 ? "s" : ""} faite${done > 1 ? "s" : ""} sur ${tasks.length}`}
       >
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" style={{ stopColor: "var(--secondary)" }} />
+            <stop offset="100%" style={{ stopColor: "var(--primary)" }} />
+          </linearGradient>
+        </defs>
         <path
           d={`M${CX - RX} ${CY} A${RX} ${RY} 0 0 1 ${CX + RX} ${CY}`}
           fill="none"
@@ -95,8 +102,8 @@ export function SunArc({
           <motion.path
             d={`M${p0.x} ${p0.y} A${RX} ${RY} 0 0 1 ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`}
             fill="none"
-            stroke="var(--primary)"
-            strokeWidth="3"
+            stroke={`url(#${gradId})`}
+            strokeWidth="3.5"
             strokeLinecap="round"
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
@@ -133,11 +140,11 @@ export function SunArc({
               cx={sunX}
               cy={sunY}
               r={16}
-              fill="var(--cream)"
+              fill="var(--sun-halo)"
               animate={{ r: [15, 19, 15], opacity: [0.95, 0.6, 0.95] }}
               transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
             />
-            <motion.circle cx={sunX} cy={sunY} r={10} fill="var(--cat-learning)" />
+            <motion.circle cx={sunX} cy={sunY} r={10} fill="var(--sun)" />
           </g>
         )}
 

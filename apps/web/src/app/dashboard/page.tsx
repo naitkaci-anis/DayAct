@@ -89,7 +89,7 @@ function MomentTabs({ value, onChange }: { value: Moment; onChange: (m: Moment) 
             role="tab"
             aria-selected={active}
             onClick={() => onChange(m.id)}
-            className={`relative h-11 rounded-full text-[15px] font-medium transition-colors ${
+            className={`relative h-11 rounded-full text-[12.5px] font-semibold uppercase tracking-[0.14em] transition-colors ${
               active ? "text-on-fill" : "text-ink/75 hover:text-ink"
             }`}
           >
@@ -194,7 +194,7 @@ function NextCard({ task, now, onAllDone }: { task: Task | null; now: number; on
     return (
       <section className="rounded-[24px] bg-primary text-on-fill p-6">
         <p className="font-display text-2xl">Tout est fait pour aujourd'hui</p>
-        <p className="mt-1 text-[15px] text-cream">Profite de ta soirée, ou prends un moment pour faire le bilan.</p>
+        <p className="mt-1 text-[15px] text-on-fill/75">Profite de ta soirée, ou prends un moment pour faire le bilan.</p>
         <button
           onClick={onAllDone}
           className="mt-4 min-h-[48px] px-6 rounded-full bg-canvas text-primary font-semibold text-[15px]"
@@ -224,13 +224,13 @@ function NextCard({ task, now, onAllDone }: { task: Task | null; now: number; on
       className="rounded-[24px] bg-primary text-on-fill p-5 lg:p-6"
     >
       <div className="flex items-center gap-4">
-        <span className="flex items-center justify-center w-12 h-12 shrink-0 rounded-[14px] bg-primary-hover text-cream">
+        <span className="flex items-center justify-center w-12 h-12 shrink-0 rounded-[14px] bg-on-fill/10 text-on-fill">
           <CategoryGlyph category={task.category} size={24} />
         </span>
         <div className="min-w-0">
-          <p className="text-xs font-medium tracking-[0.06em] uppercase text-cream">{label}</p>
+          <p className="text-xs font-medium tracking-[0.14em] uppercase text-on-fill/70">{label}</p>
           <p className="font-display text-[22px] leading-tight mt-0.5">{task.title}</p>
-          <p className="text-[13px] text-cream/90 mt-0.5">
+          <p className="text-[13px] text-on-fill/80 mt-0.5">
             {task.time} · {hoursLabel(task.durationMin)}
           </p>
         </div>
@@ -249,7 +249,7 @@ function NextCard({ task, now, onAllDone }: { task: Task | null; now: number; on
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={() => openActions(task, "postpone")}
-          className="min-h-[48px] rounded-full border border-cream/40 text-on-fill font-medium text-[15px] hover:bg-on-fill/10"
+          className="min-h-[48px] rounded-full border border-on-fill/30 text-on-fill font-medium text-[15px] hover:bg-on-fill/10"
         >
           Plus tard
         </motion.button>
@@ -268,7 +268,7 @@ function DayMoment({ tasks, now, goTo }: { tasks: Task[]; now: number; goTo: (m:
   const done = tasks.filter((t) => t.done);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
       <div className="flex flex-col gap-5">
         <SunArc tasks={tasks} nowMin={now} onPick={(t) => openActions(t)} />
         <NextCard task={next} now={now} onAllDone={() => goTo("soir")} />
@@ -425,17 +425,18 @@ function EveningMoment({ tasks }: { tasks: Task[] }) {
   ];
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
       <div className="flex flex-col gap-6">
-        <section className="rounded-[24px] bg-ink text-on-fill p-5 lg:p-6">
-          <p className="font-display text-2xl">
+        <section className="relative overflow-hidden rounded-[24px] bg-secondary text-on-secondary p-5 lg:p-6">
+          <span aria-hidden className="absolute -right-14 -top-14 w-44 h-44 rounded-full blur-3xl" style={{ background: "rgb(var(--accent-rgb) / 0.45)" }} />
+          <p className="relative font-display text-2xl">
             {left.length === 0 && tasks.length > 0 ? "Journée bouclée" : "Ta journée en bref"}
           </p>
           <div className="grid grid-cols-3 gap-2 mt-4">
             {stats.map((s) => (
-              <div key={s.label} className="rounded-[16px] bg-on-fill/10 px-3 py-3">
+              <div key={s.label} className="relative rounded-[16px] bg-on-secondary/10 px-3 py-3">
                 <p className="font-display text-2xl leading-none">{s.value}</p>
-                <p className="text-xs text-cream mt-1.5">{s.label}</p>
+                <p className="text-xs text-on-secondary/75 mt-1.5">{s.label}</p>
               </div>
             ))}
           </div>
@@ -531,14 +532,17 @@ export default function TodayPage() {
     <div className="flex flex-col gap-6 pb-4">
       <header className="flex flex-col gap-4">
         <div>
-          <p className="text-sm text-ink-muted">{formatLongDate(today)}</p>
-          <h1 className="font-display text-[2rem] lg:text-[2.6rem] leading-tight text-ink tracking-tight mt-1">
-            {moment === "matin" ? "Voici ta journée" : greeting}
-            {name ? (
-              <>
-                , <span className="italic text-primary">{name}</span>
-              </>
-            ) : null}
+          <p className="text-[11px] tracking-[0.22em] uppercase text-ink-muted">{formatLongDate(today)}</p>
+          <h1 className="mt-2 tracking-tight">
+            <span className="block font-sans font-extralight text-accent text-[1.9rem] lg:text-[2.4rem] leading-[1.05]">
+              {moment === "matin" ? "Voici ta journée" : greeting}
+              {name ? "," : ""}
+            </span>
+            {name && (
+              <span className="block font-display italic font-normal text-primary text-[3.1rem] lg:text-[4rem] leading-[0.95]">
+                {name}
+              </span>
+            )}
           </h1>
           {!name && (
             <p className="text-sm text-ink-muted mt-1">

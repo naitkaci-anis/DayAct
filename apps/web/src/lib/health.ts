@@ -56,10 +56,10 @@ export interface HealthResult {
 }
 
 function bmiCategory(bmi: number): { label: string; color: string } {
-  if (bmi < 18.5) return { label: "Insuffisance pondérale", color: "#590907" };
-  if (bmi < 25) return { label: "Corpulence normale", color: "#4E6B35" };
-  if (bmi < 30) return { label: "Surpoids", color: "#A0661A" };
-  return { label: "Obésité", color: "#B3261E" };
+  if (bmi < 18.5) return { label: "Insuffisance pondérale", color: "var(--cat-work)" };
+  if (bmi < 25) return { label: "Corpulence normale", color: "var(--success)" };
+  if (bmi < 30) return { label: "Surpoids", color: "var(--warning)" };
+  return { label: "Obésité", color: "var(--danger)" };
 }
 
 export function isComplete(p: HealthProfile): boolean {

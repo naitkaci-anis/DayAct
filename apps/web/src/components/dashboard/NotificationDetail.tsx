@@ -66,7 +66,7 @@ export function NotificationDetail({
 
   return (
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label="Rappel">
-      <div className="absolute inset-0 bg-ink/40 animate-[fadeIn_0.15s_ease]" onClick={() => { related.forEach((n) => markRead(n.id)); onClose(); }} />
+      <div className="absolute inset-0 bg-scrim animate-[fadeIn_0.15s_ease]" onClick={() => { related.forEach((n) => markRead(n.id)); onClose(); }} />
 
       <div className="relative z-10 w-full sm:max-w-md bg-panel border border-line rounded-t-[28px] sm:rounded-[28px] p-5 pb-[max(env(safe-area-inset-bottom),20px)] animate-[popIn_0.2s_ease] shadow-2xl">
         <div className="flex items-start justify-between gap-3">

@@ -299,13 +299,13 @@ export function HealthCoach() {
           <div className="mt-5 rounded-[12px] border border-secondary/30 bg-secondary/[0.06] p-4">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-2">
-                <SparkIcon size={16} className="text-secondary" />
+                <SparkIcon size={16} className="text-secondary-ink" />
                 <span className="text-xs text-ink font-medium">Coach IA — conseils sur-mesure</span>
               </div>
               <button
                 onClick={askAI}
                 disabled={aiState === "loading"}
-                className="px-3 py-1.5 rounded-sm bg-secondary/20 text-secondary text-xs font-medium hover:bg-secondary/30 transition-colors disabled:opacity-50"
+                className="px-3 py-1.5 rounded-sm bg-secondary/20 text-secondary-ink text-xs font-medium hover:bg-secondary/30 transition-colors disabled:opacity-50"
               >
                 {aiState === "loading" ? "L'IA réfléchit…" : advice ? "Regénérer" : "Demander à l'IA"}
               </button>

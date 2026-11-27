@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Modal } from "@/components/ui/Modal";
+import { PhoneIcon } from "@/components/icons";
 
 // beforeinstallprompt isn't in the TS DOM lib yet.
 interface BeforeInstallPromptEvent extends Event {
@@ -67,16 +68,27 @@ export function InstallApp({ variant = "button" }: { variant?: "button" | "hero"
     }
   }
 
-  const cls =
-    variant === "hero"
-      ? "min-h-[52px] px-6 inline-flex items-center rounded-full border border-line-strong bg-surface text-base font-medium text-ink hover:border-primary transition-colors"
-      : "flex items-center gap-2 px-4 py-2.5 rounded-[12px] bg-primary text-on-fill text-sm font-medium hover:opacity-90 transition-opacity";
-
   return (
     <>
-      <button onClick={install} className={cls}>
-        Installer sur mon téléphone
-      </button>
+      {variant === "hero" ? (
+        <button onClick={install} className="group inline-flex items-center gap-3 min-h-[52px] text-left">
+          <span className="flex items-center justify-center w-11 h-11 rounded-full border border-line-strong text-ink group-hover:border-primary group-hover:text-primary transition-colors">
+            <PhoneIcon size={18} />
+          </span>
+          <span className="text-[11px] leading-[1.45] tracking-[0.2em] uppercase text-ink">
+            Installer
+            <br />
+            sur mon téléphone
+          </span>
+        </button>
+      ) : (
+        <button
+          onClick={install}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-[12px] bg-primary text-on-fill text-sm font-medium hover:opacity-90 transition-opacity"
+        >
+          Installer sur mon téléphone
+        </button>
+      )}
 
       <Modal open={guideOpen} onClose={() => setGuideOpen(false)} title="Installer DayAct">
         <div className="space-y-5">
